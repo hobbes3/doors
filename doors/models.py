@@ -21,8 +21,8 @@ class Group( models.Model ) :
     p_property    = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
     p_location    = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
     p_vendor      = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
-    t_created     = models.DateTimeField( auto_now_add = True )
-    t_modified    = models.DateTimeField( auto_now = True )
+    t_created     = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
+    t_modified    = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
 
 class Vendor( models.Model ) :
     def __unicode__( self ) :
@@ -37,8 +37,8 @@ class Vendor( models.Model ) :
     city              = models.CharField( max_length = 135 )
     state             = models.CharField( max_length = 135 )
     zip_code          = models.CharField( max_length = 135 )
-    t_created         = models.DateTimeField( auto_now_add = True )
-    t_modified        = models.DateTimeField( auto_now = True )
+    t_created         = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
+    t_modified        = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
 
 class ItemType( models.Model ) :
     def __unicode__( self ) :
@@ -47,8 +47,8 @@ class ItemType( models.Model ) :
     name       = models.CharField( max_length = 135 )
     comment    = models.TextField( blank = True )
     vendors    = models.ManyToManyField( Vendor )
-    t_created  = models.DateTimeField( auto_now_add = True )
-    t_modified = models.DateTimeField( auto_now = True )
+    t_created  = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
+    t_modified = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
 
 class Property( models.Model ) :
     def __unicode__( self ) :
@@ -61,8 +61,8 @@ class Property( models.Model ) :
     city       = models.CharField( max_length = 135 )
     state      = models.CharField( max_length = 135 )
     zip_code   = models.CharField( max_length = 135 )
-    t_created  = models.DateTimeField( auto_now_add = True )
-    t_modified = models.DateTimeField( auto_now = True )
+    t_created  = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
+    t_modified = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
 
 class Location( models.Model ) :
     def __unicode__( self ) :
@@ -76,8 +76,8 @@ class Location( models.Model ) :
     floor      = models.CharField( max_length = 135, blank = True )
     building   = models.CharField( max_length = 135, blank = True )
     prop       = models.ForeignKey( Property )
-    t_created  = models.DateTimeField( auto_now_add = True )
-    t_modified = models.DateTimeField( auto_now = True )
+    t_created  = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
+    t_modified = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
 
 class Item( models.Model ) :
     def __unicode__( self ) :
@@ -87,8 +87,8 @@ class Item( models.Model ) :
     comment    = models.TextField( blank = True )
     item_type  = models.ForeignKey( ItemType )
     location   = models.ForeignKey( Location )
-    t_created  = models.DateTimeField( auto_now_add = True )
-    t_modified = models.DateTimeField( auto_now = True )
+    t_created  = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
+    t_modified = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
 
 class User( models.Model ) :
     def __unicode__( self ) :
@@ -110,8 +110,8 @@ class User( models.Model ) :
     phone      = models.CharField( max_length = 135, blank = True )
     status     = models.CharField( max_length = 1, choices = STATUS_CHOICES, default = 'p' )
     location   = models.ForeignKey( Location, null = True, blank = True )
-    t_created  = models.DateTimeField( auto_now_add = True )
-    t_modified = models.DateTimeField( auto_now = True )
+    t_created  = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
+    t_modified = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
 
 class Order( models.Model ) :
     def __unicode__( self ) :
@@ -131,13 +131,16 @@ class Order( models.Model ) :
     status         = models.CharField( max_length = 1, choices = STATUS_CHOICES, default = 'p' )
     t_status       = models.DateTimeField( null = True, blank = True )
     user_status    = models.ForeignKey( User, related_name = 'user_status', null = True, blank = True )
-    t_created      = models.DateTimeField( auto_now_add = True )
-    t_modified     = models.DateTimeField( auto_now = True )
+    t_created      = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
+    t_modified     = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
 
 class Log( models.Model ) :
     def __unicode__( self ) :
         return str( self.id )
 
+    class Meta :
+        ordering = [ 't_created' ]
+
     user      = models.ForeignKey( User )
     message   = models.CharField( max_length = 500 )
-    t_created = models.DateTimeField( auto_now_add = True )
+    t_created = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
