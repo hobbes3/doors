@@ -54,15 +54,15 @@ class Property( models.Model ) :
     def __unicode__( self ) :
         return self.name
 
-    name       = models.CharField( max_length = 135 )
-    comment    = models.TextField( blank = True )
-    address    = models.CharField( max_length = 135 )
-    address    = models.CharField( max_length = 135, blank = True )
-    city       = models.CharField( max_length = 135 )
-    state      = models.CharField( max_length = 135 )
-    zip_code   = models.CharField( max_length = 135 )
-    t_created  = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
-    t_modified = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
+    name             = models.CharField( max_length = 135 )
+    comment          = models.TextField( blank = True )
+    address_line_one = models.CharField( max_length = 135 )
+    address_line_two = models.CharField( max_length = 135, blank = True )
+    city             = models.CharField( max_length = 135 )
+    state            = models.CharField( max_length = 135 )
+    zip_code         = models.CharField( max_length = 135 )
+    t_created        = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
+    t_modified       = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
 
     class Meta:
          verbose_name_plural = "properties"
