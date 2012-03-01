@@ -64,6 +64,9 @@ class Property( models.Model ) :
     t_created  = models.DateTimeField( auto_now_add = True )
     t_modified = models.DateTimeField( auto_now = True )
 
+    class Meta:
+         verbose_name_plural = "properties"
+
 class Location( models.Model ) :
     def __unicode__( self ) :
         locations = filter( None, [ self.room, self.floor, self.building ] )
