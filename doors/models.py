@@ -50,11 +50,43 @@ class ItemType( models.Model ) :
     t_created  = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
     t_modified = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
 
+class User( models.Model ) :
+    def __unicode__( self ) :
+        return self.first_name + " " + self.last_name
+
+    STATUS_CHOICES = (
+        ( 'p', 'pending'  ),
+        ( 'a', 'active'   ),
+        ( 'i', 'inactive' ),
+        ( 'b', 'banned'   ),
+    )
+
+    TYPE_CHOICES = (
+        ( 't', 'tenant'           ),
+        ( 'o', 'property owner'   ),
+        ( 'v', 'vendor'           ),
+        ( 'm', 'property manager' ),
+    )
+
+    group      = models.ForeignKey( Group )
+    user_type  = models.CharField( max_length = 1, choices = TYPE_CHOICES, default = 't' )
+    comment    = models.TextField( blank = True )
+    email      = models.CharField( max_length = 135 )
+    password   = models.CharField( max_length = 135 )
+    first_name = models.CharField( max_length = 135 )
+    last_name  = models.CharField( max_length = 135 )
+    phone      = models.CharField( max_length = 135, blank = True )
+    status     = models.CharField( max_length = 1, choices = STATUS_CHOICES, default = 'p' )
+    location   = models.ForeignKey( 'Location', null = True, blank = True )
+    t_created  = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
+    t_modified = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
+
 class Property( models.Model ) :
     def __unicode__( self ) :
         return self.name
 
     name             = models.CharField( max_length = 135 )
+    owner            = models.ForeignKey( User )
     comment          = models.TextField( blank = True )
     address_line_one = models.CharField( max_length = 135 )
     address_line_two = models.CharField( max_length = 135, blank = True )
@@ -93,29 +125,6 @@ class Item( models.Model ) :
     t_created  = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
     t_modified = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
 
-class User( models.Model ) :
-    def __unicode__( self ) :
-        return self.first_name + " " + self.last_name
-
-    STATUS_CHOICES = (
-        ( 'p', 'pending'  ),
-        ( 'a', 'active'   ),
-        ( 'i', 'inactive' ),
-        ( 'b', 'banned'   ),
-    )
-
-    group      = models.ForeignKey( Group )
-    comment    = models.TextField( blank = True )
-    email      = models.CharField( max_length = 135 )
-    password   = models.CharField( max_length = 135 )
-    first_name = models.CharField( max_length = 135 )
-    last_name  = models.CharField( max_length = 135 )
-    phone      = models.CharField( max_length = 135, blank = True )
-    status     = models.CharField( max_length = 1, choices = STATUS_CHOICES, default = 'p' )
-    location   = models.ForeignKey( Location, null = True, blank = True )
-    t_created  = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
-    t_modified = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
-
 class Order( models.Model ) :
     def __unicode__( self ) :
         return str( self.id )
@@ -129,7 +138,7 @@ class Order( models.Model ) :
     order_previous = models.ForeignKey( 'self', null = True, blank = True )
     user_created   = models.ForeignKey( User, related_name = 'user_created' )
     user_modified  = models.ForeignKey( User, related_name = 'user_modified', null = True, blank = True )
-    items          = models.ManyToManyField( Item )
+    items          = models.ManyToManyField( Item, null = True, blank = True )
     comment        = models.TextField( blank = True )
     status         = models.CharField( max_length = 1, choices = STATUS_CHOICES, default = 'p' )
     t_status       = models.DateTimeField( null = True, blank = True )
@@ -144,6 +153,13 @@ class Log( models.Model ) :
     class Meta :
         ordering = [ 't_created' ]
 
+    TYPE_CHOICES = (
+        ( 'i', 'info'    ),
+        ( 'w', 'warning' ),
+        ( 'e', 'error'   ),
+    )
+
     user      = models.ForeignKey( User )
+    log_type  = models.CharField( max_length = 1, choices = TYPE_CHOICES, default = 'i' )
     message   = models.CharField( max_length = 500 )
     t_created = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
