@@ -50,6 +50,7 @@ class OrderAdmin( admin.ModelAdmin ) :
         'user_created',
         'action',
         'next_step',
+        'comments_count',
         't_created',
         't_modified',
     )
@@ -78,7 +79,7 @@ class OrderCommentAdmin( admin.ModelAdmin ) :
         't_created',
         't_modified',
     )
-    list_filter = ( 'order', )
+    list_filter = ( 'order', 'status', )
     date_hierarchy = 't_created'
     search_fields = ( 'order', 'user', 'comment', )
 
@@ -97,7 +98,8 @@ class LogAdmin( admin.ModelAdmin ) :
 class PropertyAdmin( admin.ModelAdmin ) :
     list_display = (
         'name',
-        'owner',
+        'user_owner',
+        'user_manager',
         'address_line_one',
         'address_line_two',
         'city',
@@ -106,11 +108,12 @@ class PropertyAdmin( admin.ModelAdmin ) :
         't_created',
         't_modified',
     )
-    list_filter = ( 'owner', 'city', 'zip_code', 'state', )
-    search_fields = ( 'name', 'owner', 'address_line_one', )
+    list_filter = ( 'user_owner', 'user_manager', 'city', 'zip_code', 'state', )
+    search_fields = ( 'name', 'user_owner', 'user_manager', 'address_line_one', )
 
 class UserAdmin( admin.ModelAdmin ) :
     list_display = (
+        'username',
         'email',
         'group',
         'first_name',

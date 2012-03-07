@@ -10,21 +10,21 @@ class Group( models.Model ) :
         ( 'w', 'read and write' ),
     )
 
-    name            = models.CharField( max_length = 135 )
-    comment         = models.TextField( blank = True )
-    p_group         = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
-    p_user          = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
-    p_order_self    = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
-    p_order_other   = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
-    p_comment_self  = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
-    p_comment_other = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
-    p_item_type     = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
-    p_item          = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
-    p_property      = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
-    p_location      = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
-    p_vendor        = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
-    t_created       = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
-    t_modified      = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
+    name                 = models.CharField( max_length = 135 )
+    comment              = models.TextField( blank = True )
+    p_group              = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
+    p_user               = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
+    p_order_self         = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
+    p_order_other        = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
+    p_ordercomment_self  = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
+    p_ordercomment_other = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
+    p_item_type          = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
+    p_item               = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
+    p_property           = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
+    p_location           = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
+    p_vendor             = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
+    t_created            = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
+    t_modified           = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
 
 class Vendor( models.Model ) :
     def __unicode__( self ) :
@@ -55,7 +55,7 @@ class ItemType( models.Model ) :
 
 class User( models.Model ) :
     def __unicode__( self ) :
-        return self.first_name + " " + self.last_name
+       return u"%s %s" % ( self.first_name, self.last_name )
 
     TYPE_CHOICES = (
         ( 't', 'tenant'           ),
@@ -63,6 +63,7 @@ class User( models.Model ) :
         ( 'v', 'vendor'           ),
         ( 'm', 'property manager' ),
         ( 'w', 'web user'         ),
+        ( 'x', 'other'            ),
     )
 
     STATUS_CHOICES = (
@@ -72,8 +73,9 @@ class User( models.Model ) :
         ( 'b', 'banned'   ),
     )
 
+    username   = models.CharField( max_length = 15 )
     email      = models.EmailField()
-    group      = models.ForeignKey( Group )
+    group      = models.ForeignKey( Group, null = True, blank = True )
     user_type  = models.CharField( max_length = 1, choices = TYPE_CHOICES, default = 't' )
     comment    = models.TextField( blank = True )
     password   = models.CharField( max_length = 135 )
@@ -90,7 +92,8 @@ class Property( models.Model ) :
         return self.name
 
     name             = models.CharField( max_length = 135 )
-    owner            = models.ForeignKey( User )
+    user_manager     = models.ForeignKey( User, related_name = 'user_manager', verbose_name = 'manager' )
+    user_owner       = models.ForeignKey( User, related_name = 'user_owner'  , verbose_name = 'owner'   )
     comment          = models.TextField( blank = True )
     address_line_one = models.CharField( max_length = 135 )
     address_line_two = models.CharField( max_length = 135, blank = True )
@@ -106,7 +109,7 @@ class Property( models.Model ) :
 class Location( models.Model ) :
     def __unicode__( self ) :
         locations = filter( None, [ self.room, self.floor, self.building ] )
-        locations.append( self.prop.__unicode__() )
+        locations.append( self.prop )
 
         return ", ".join( locations )
 
@@ -120,7 +123,7 @@ class Location( models.Model ) :
 
 class Item( models.Model ) :
     def __unicode__( self ) :
-        return self.name + " : " + self.location.__unicode__()
+        return u"%s : %s" % ( self.name, self.location )
 
     name       = models.CharField( max_length = 135 )
     comment    = models.TextField( blank = True )
@@ -131,25 +134,48 @@ class Item( models.Model ) :
 
 class Order( models.Model ) :
     def __unicode__( self ) :
-        return str( self.id )
+        return unicode( self.id )
+
+    def comments_count( self ) :
+        return OrderComment.objects.filter( order = self.id ).count()
+
+    def all_steps( self ) :
+        return self.STEPS
+
+    def get_datetime_step( self, step ) :
+        return self.STEPS[ step ][ 0 ]
 
     def next_step( self ) :
         user = self.user_created.first_name
 
+        step = 0
         if self.t_action is None :
-            return "1: Review, then either approve or reject the order."
-        elif self.t_followup is None :
-            return "2: Follow up with " + user + "."
+            step = 0
+        elif self.t_followup_one is None :
+            step = 1
         elif self.t_vendor_appt_one is None :
-            return "3: Contact the vendor to get a quote and arrange an appointment for " + user + "."
+            step = 2
         elif self.t_vendor_appt_two is None :
-            return "4: Review the quote, (get owner approval), then arrange a second appointment for the repairs."
+            step = 3
         elif self.t_work_done is None :
-            return "5: Confirm that the work is done and pay the vendor."
+            step = 4
         elif self.t_followup_two is None :
-            return "6: Follow up again with " + user + "."
+            step = 5
         elif self.paid is None :
-            return "7: Confirm payment and close the order."
+            step = 6
+
+        return str( step ) + ": " + self.STEPS[ step ][ 1 ].replace( '<user_created>', user )
+
+
+    STEPS = [
+        ( 't_created',         "Review, then either approve or reject the order." ),
+        ( 't_action',          "Follow up with <user_created>" ),
+        ( 't_followup_one',    "Contact the vendor to get a quote and arrange an appointment for <user_created>." ),
+        ( 't_vendor_appt_one', "Review the quote, (get owner approval), then arrange a second appointment for the repairs." ),
+        ( 't_vendor_appt_two', "Confirm the finished repairs and pay the vendor." ),
+        ( 't_work_done',       "Follow up again with <user_created>" ),
+        ( 't_followup_two',    "Confirm payment and close the order." ),
+    ]
 
     ACTION_CHOICES = (
         ( 'p', 'pending'  ),
@@ -158,7 +184,8 @@ class Order( models.Model ) :
         ( 'c', 'closed'   ),
     )
 
-    user_created      = models.ForeignKey( User, related_name = 'user_created' )
+    user_created      = models.ForeignKey( User, related_name = 'user_created', verbose_name = 'created by' )
+    user_action       = models.ForeignKey( User, related_name = 'user_status' , verbose_name = 'action by' , null = True, blank = True )
     t_created         = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
     t_action          = models.DateTimeField( null = True, blank = True, verbose_name = 'action'             )
     t_followup_one    = models.DateTimeField( null = True, blank = True, verbose_name = 'first follow-up'    )
@@ -168,7 +195,6 @@ class Order( models.Model ) :
     t_followup_two    = models.DateTimeField( null = True, blank = True, verbose_name = 'second follow-up'   )
     t_paid            = models.DateTimeField( null = True, blank = True, verbose_name = 'paid'               )
     action            = models.CharField( max_length = 1, choices = ACTION_CHOICES, default = 'p' )
-    user_action       = models.ForeignKey( User, related_name = 'user_status', null = True, blank = True )
     quote             = models.DecimalField( max_digits = 8, decimal_places = 2, null = True, blank = True )
     payment           = models.DecimalField( max_digits = 8, decimal_places = 2, null = True, blank = True )
     items             = models.ManyToManyField( Item, null = True, blank = True )
@@ -176,7 +202,7 @@ class Order( models.Model ) :
 
 class OrderComment( models.Model ) :
     def __unicode__( self ) :
-        return self.order.id
+        return unicode( self.order.id )
 
     STATUS_CHOICES = (
         ( 'v', 'visible' ),
@@ -192,7 +218,7 @@ class OrderComment( models.Model ) :
 
 class Log( models.Model ) :
     def __unicode__( self ) :
-        return str( self.id )
+        return unicode( self.id )
 
     class Meta :
         ordering = [ 't_created' ]

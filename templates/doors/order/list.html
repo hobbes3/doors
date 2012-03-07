@@ -1,0 +1,14 @@
+{% extends "doors/base.html" %}
+
+{% block title %}View all orders{% endblock %}
+
+{% block content %}
+<ul>
+    {% if orders %}
+        {% for order in orders %}
+            <li><a href="/doors/order/{{ order.id }}/">{{ order.id }}: [ {{ order.t_created }} ] {{ order.user_created }}</a></li>
+        {% endfor %}
+    {% else %}
+        <li>There are no orders.</li>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "doors/base.html" %}
+
+{% block title %}View order #{{ order.id }}{% endblock %}
+
+{% block content %}
+Order #{{ order.id }}<br />
+Created by {{ order.user_created }}<br />
+Created on {{ order.t_created }}<br />
+Status: {{ order.get_action_display }}
+
+<ul>
+    {% if order.all_steps %}
+        {% for step in order.all_steps %}
+            <li>{{ comment.user }} ({{ comment.t_created }}): {{ comment.comment }} </li>
+        {% endfor %}
+    {% else %}
+        <li>There are no comments.</li>
+    {% endif %}
+{% endblock %}
+
+<ul>
+    {% if comments %}
+        {% for comment in comments %}
+            <li>{{ comment.user }} ({{ comment.t_created }}): {{ comment.comment }} </li>
+        {% endfor %}
+    {% else %}
+        <li>There are no comments.</li>
+    {% endif %}
+{% endblock %}
