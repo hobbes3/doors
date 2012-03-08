@@ -2,3 +2,4 @@ settings.py
 mointor.py
 /apache/
 migrations/
+sql/

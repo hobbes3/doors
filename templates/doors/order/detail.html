@@ -6,18 +6,20 @@
 Order #{{ order.id }}<br />
 Created by {{ order.user_created }}<br />
 Created on {{ order.t_created }}<br />
-Status: {{ order.get_action_display }}
-
+Status: {{ order.get_action_display }}<br />
+<br />
+Steps:
 <ul>
     {% if order.all_steps %}
         {% for step in order.all_steps %}
-            <li>{{ comment.user }} ({{ comment.t_created }}): {{ comment.comment }} </li>
+            <li>{{ step.0 }} - {{ forloop.counter }}: {{ step.1 }} </li>
         {% endfor %}
     {% else %}
-        <li>There are no comments.</li>
+        <li>There are no steps?</li>
     {% endif %}
-{% endblock %}
+</ul>
 
+Comments:
 <ul>
     {% if comments %}
         {% for comment in comments %}
@@ -26,4 +28,5 @@ Status: {{ order.get_action_display }}
     {% else %}
         <li>There are no comments.</li>
     {% endif %}
+</ul>
 {% endblock %}

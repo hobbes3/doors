@@ -140,10 +140,24 @@ class Order( models.Model ) :
         return OrderComment.objects.filter( order = self.id ).count()
 
     def all_steps( self ) :
-        return self.STEPS
+        user = self.user_created.first_name
 
-    def get_datetime_step( self, step ) :
-        return self.STEPS[ step ][ 0 ]
+        steps = []
+        step_datetime = [
+            self.t_created,
+            self.t_action,
+            self.t_followup_one,
+            self.t_vendor_appt_one,
+            self.t_vendor_appt_two,
+            self.t_work_done,
+            self.t_followup_two,
+            self.t_paid,
+        ]
+
+        for ( i, step ) in enumerate( self.STEPS ) :
+            steps.append( ( step_datetime[ i ], step.replace( '<user_created>', user ), ) )
+
+        return steps
 
     def next_step( self ) :
         user = self.user_created.first_name
@@ -164,17 +178,17 @@ class Order( models.Model ) :
         elif self.paid is None :
             step = 6
 
-        return str( step ) + ": " + self.STEPS[ step ][ 1 ].replace( '<user_created>', user )
+        return str( step ) + ": " + self.STEPS[ step ].replace( '<user_created>', user )
 
 
     STEPS = [
-        ( 't_created',         "Review, then either approve or reject the order." ),
-        ( 't_action',          "Follow up with <user_created>" ),
-        ( 't_followup_one',    "Contact the vendor to get a quote and arrange an appointment for <user_created>." ),
-        ( 't_vendor_appt_one', "Review the quote, (get owner approval), then arrange a second appointment for the repairs." ),
-        ( 't_vendor_appt_two', "Confirm the finished repairs and pay the vendor." ),
-        ( 't_work_done',       "Follow up again with <user_created>" ),
-        ( 't_followup_two',    "Confirm payment and close the order." ),
+        "Review, then either approve or reject the order.",
+        "Follow up with <user_created>",
+        "Contact the vendor to get a quote and arrange an appointment for <user_created>.",
+        "Review the quote, (get owner approval), then arrange a second appointment for the repairs.",
+        "Confirm the finished repairs and pay the vendor.",
+        "Follow up again with <user_created>",
+        "Confirm payment and close the order.",
     ]
 
     ACTION_CHOICES = (
