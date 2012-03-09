@@ -1,4 +1,4 @@
-{% extends "doors/base.html" %}
+{% extends "base.html" %}
 
 {% block title %}View order #{{ order.id }}{% endblock %}
 
@@ -15,7 +15,7 @@ Steps:
             <li>{{ step.0 }} - {{ forloop.counter }}: {{ step.1 }} </li>
         {% endfor %}
     {% else %}
-        <li>There are no steps?</li>
+        <li>There are no steps? Please report this bug.</li>
     {% endif %}
 </ul>
 

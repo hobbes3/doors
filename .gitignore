@@ -1,5 +1,7 @@
 settings.py
 mointor.py
 /apache/
+/site-packages
 migrations/
 sql/
+

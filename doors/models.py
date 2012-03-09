@@ -55,7 +55,7 @@ class ItemType( models.Model ) :
 
 class User( models.Model ) :
     def __unicode__( self ) :
-       return u"%s %s" % ( self.first_name, self.last_name )
+       return "{} {}".format( self.first_name, self.last_name )
 
     TYPE_CHOICES = (
         ( 't', 'tenant'           ),
@@ -109,7 +109,7 @@ class Property( models.Model ) :
 class Location( models.Model ) :
     def __unicode__( self ) :
         locations = filter( None, [ self.room, self.floor, self.building ] )
-        locations.append( self.prop )
+        locations.append( unicode( self.prop ) )
 
         return ", ".join( locations )
 
@@ -123,7 +123,7 @@ class Location( models.Model ) :
 
 class Item( models.Model ) :
     def __unicode__( self ) :
-        return u"%s : %s" % ( self.name, self.location )
+        return "{} : {}".format( self.name, self.location )
 
     name       = models.CharField( max_length = 135 )
     comment    = models.TextField( blank = True )
@@ -142,54 +142,36 @@ class Order( models.Model ) :
     def all_steps( self ) :
         user = self.user_created.first_name
 
-        steps = []
-        step_datetime = [
-            self.t_created,
-            self.t_action,
-            self.t_followup_one,
-            self.t_vendor_appt_one,
-            self.t_vendor_appt_two,
-            self.t_work_done,
-            self.t_followup_two,
-            self.t_paid,
+        return [
+            ( getattr( self, attr ), task.format( user = user ) )
+            for ( attr, task ) in self.TASKS
         ]
-
-        for ( i, step ) in enumerate( self.STEPS ) :
-            steps.append( ( step_datetime[ i ], step.replace( '<user_created>', user ), ) )
-
-        return steps
 
     def next_step( self ) :
         user = self.user_created.first_name
 
-        step = 0
-        if self.t_action is None :
-            step = 0
-        elif self.t_followup_one is None :
-            step = 1
-        elif self.t_vendor_appt_one is None :
-            step = 2
-        elif self.t_vendor_appt_two is None :
-            step = 3
-        elif self.t_work_done is None :
-            step = 4
-        elif self.t_followup_two is None :
-            step = 5
-        elif self.paid is None :
-            step = 6
+        task_num = next(
+            ( i for ( i, ( attr, task ) ) in enumerate( self.TASKS ) if getattr( self, attr ) is None ),
+            None
+        )
 
-        return str( step ) + ": " + self.STEPS[ step ].replace( '<user_created>', user )
+        if task_num == None :
+            return "Done!"
+        else:
+            return "{number}: {task}".format(
+                number = str( task_num + 1 ),
+                task   = self.TASKS[ task_num ][ 1 ].format( user = user )
+            )
 
-
-    STEPS = [
-        "Review, then either approve or reject the order.",
-        "Follow up with <user_created>",
-        "Contact the vendor to get a quote and arrange an appointment for <user_created>.",
-        "Review the quote, (get owner approval), then arrange a second appointment for the repairs.",
-        "Confirm the finished repairs and pay the vendor.",
-        "Follow up again with <user_created>",
-        "Confirm payment and close the order.",
-    ]
+    TASKS = (
+        ( "t_action"         , "Review, then either approve or reject the order." ),
+        ( "t_followup_one"   , "Follow up with {user}." ),
+        ( "t_vendor_appt_one", "Contact the vendor to get a quote and arrange an appointment for {user}." ),
+        ( "t_vendor_appt_two", "Review the quote, (get owner approval), then arrange a second appointment for the repairs." ),
+        ( "t_work_done"      , "Confirm the finished repairs and pay the vendor." ),
+        ( "t_followup_two"   , "Follow up again with {user}." ),
+        ( "t_paid"           , "Confirm payment and close the order." ),
+    )
 
     ACTION_CHOICES = (
         ( 'p', 'pending'  ),
@@ -200,7 +182,6 @@ class Order( models.Model ) :
 
     user_created      = models.ForeignKey( User, related_name = 'user_created', verbose_name = 'created by' )
     user_action       = models.ForeignKey( User, related_name = 'user_status' , verbose_name = 'action by' , null = True, blank = True )
-    t_created         = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
     t_action          = models.DateTimeField( null = True, blank = True, verbose_name = 'action'             )
     t_followup_one    = models.DateTimeField( null = True, blank = True, verbose_name = 'first follow-up'    )
     t_vendor_appt_one = models.DateTimeField( null = True, blank = True, verbose_name = 'first appointment'  )
@@ -212,6 +193,7 @@ class Order( models.Model ) :
     quote             = models.DecimalField( max_digits = 8, decimal_places = 2, null = True, blank = True )
     payment           = models.DecimalField( max_digits = 8, decimal_places = 2, null = True, blank = True )
     items             = models.ManyToManyField( Item, null = True, blank = True )
+    t_created         = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
     t_modified        = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
 
 class OrderComment( models.Model ) :

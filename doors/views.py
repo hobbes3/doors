@@ -1,6 +1,5 @@
 from django.shortcuts import render_to_response, get_object_or_404
 from doors.models import *
-from pprint import pprint
 
 def index( request ) :
     pass
@@ -22,3 +21,6 @@ def order_username( request, username ) :
 def order_all( request ) :
     orders = Order.objects.all()
     return render_to_response( 'doors/order/list.html', { 'orders' : orders } )
+
+def order_create( request ) :
+    pass
