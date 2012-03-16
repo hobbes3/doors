@@ -1,130 +1,48 @@
 from django.contrib import admin
 from mysite.doors.models import *
 
-class GroupAdmin( admin.ModelAdmin ) :
+class DoorsGroupAdmin( admin.ModelAdmin ) :
     list_display = (
         'name',
-        't_created',
-        't_modified',
+        'comment',
+        'created',
+        'modified',
     )
     search_fields = ( 'name', )
 
-class ItemAdmin( admin.ModelAdmin ) :
+class PlaceAdmin( admin.ModelAdmin ) :
     list_display = (
         'name',
-        'comment',
-        'item_type',
-        'location',
-        't_created',
-        't_modified',
-    )
-    list_filter = ( 'item_type', )
-    search_fields = ( 'name', 'comment', )
-
-class ItemTypeAdmin( admin.ModelAdmin ) :
-    list_display = (
-        'name',
-        'comment',
-        't_created',
-        't_modified',
-    )
-    filter_horizontal = ( 'vendors', )
-    search_fields = ( 'name', 'comment', )
-
-class LocationAdmin( admin.ModelAdmin ) :
-    list_display = (
-        'comment',
-        'room',
-        'floor',
-        'building',
-        'prop',
-        't_created',
-        't_modified',
-    )
-    list_filter = ( 'prop', )
-    search_fields = ( 'comment', 'prop', )
-
-class OrderAdmin( admin.ModelAdmin ) :
-    list_display  = (
-        'id',
-        'user_created',
-        'action',
-        'next_step',
-        'comments_count',
-        't_created',
-        't_modified',
-    )
-    filter_horizontal = ( 'items', )
-    list_filter = (
-        'user_created',
-        'user_action',
-        't_created',
-        't_action',
-        't_followup_one',
-        't_vendor_appt_one',
-        't_vendor_appt_two',
-        't_work_done',
-        't_followup_two',
-        't_paid',
-    )
-    date_hierarchy = 't_created'
-    search_fields = ( 'user_created', 'user_action', )
-
-class OrderCommentAdmin( admin.ModelAdmin ) :
-    list_display = (
-        'order',
-        'user',
-        'comment',
-        'status',
-        't_created',
-        't_modified',
-    )
-    list_filter = ( 'order', 'status', )
-    date_hierarchy = 't_created'
-    search_fields = ( 'order', 'user', 'comment', )
-
-class LogAdmin( admin.ModelAdmin ) :
-    list_display = (
-        'id',
-        'log_type',
-        't_created',
-        'user',
-        'message',
-    )
-    list_filter    = ( 'log_type', 'user', 't_created', )
-    date_hierarchy = 't_created'
-    search_fields  = ( 'message', )
-
-class PropertyAdmin( admin.ModelAdmin ) :
-    list_display = (
-        'name',
-        'user_owner',
-        'user_manager',
+        'place_type',
+        'owner',
+        'manager',
+        'tenant_count',
         'address_line_one',
         'address_line_two',
         'city',
         'state',
         'zip_code',
-        't_created',
-        't_modified',
+        'website',
+        'phone',
+        'created',
+        'modified',
     )
-    list_filter = ( 'user_owner', 'user_manager', 'city', 'zip_code', 'state', )
-    search_fields = ( 'name', 'user_owner', 'user_manager', 'address_line_one', )
+    list_filter = ( 'owner', 'manager', 'city', 'zip_code', 'state', )
+    search_fields = ( 'name', 'owner', 'manager', 'address_line_one', )
 
-class UserAdmin( admin.ModelAdmin ) :
+class UserTypeAdmin( admin.ModelAdmin ) :
+    list_display = ( 'name', )
+
+class UserProfileAdmin( admin.ModelAdmin ) :
     list_display = (
-        'username',
-        'email',
-        'group',
-        'first_name',
-        'last_name',
-        'user_type',
-        'status',
-        'location',
-        't_created',
-        't_modified',
+        'user',
+        'doors_group',
+        'place',
+        'created',
+        'modified',
     )
-    list_filter = ( 'group', 'location', )
+    list_filter = ( 'doors_group', 'place', )
+    filter_horizontal = ( 'user_type', )
     search_fields = ( 'email', 'first_name', 'last_name', )
 
 class VendorAdmin( admin.ModelAdmin ) :
@@ -137,19 +55,69 @@ class VendorAdmin( admin.ModelAdmin ) :
         'city',
         'state',
         'zip_code',
-        't_created',
-        't_modified',
+        'created',
+        'modified',
     )
     list_filter = ( 'city', 'state', 'zip_code', )
+    filter_horizontal = ( 'representatives', )
     search_fields = ( 'name', 'email', 'phone', 'address_line_one', )
 
-admin.site.register( Group       , GroupAdmin        )
-admin.site.register( Item        , ItemAdmin         )
-admin.site.register( ItemType    , ItemTypeAdmin     )
-admin.site.register( Location    , LocationAdmin     )
-admin.site.register( Log         , LogAdmin          )
+class OrderAdmin( admin.ModelAdmin ) :
+    list_display  = (
+        'id',
+        'creator',
+        'approver',
+        'action',
+        'next_step',
+        'comment_count',
+        'created',
+        'modified',
+    )
+    list_filter = (
+        'creator',
+        'approver',
+        'created',
+        'action',
+        'first_appointment',
+        'second_appointment',
+        'work_done',
+        'follow_up',
+        'paid',
+        'modified',
+    )
+    date_hierarchy = 'created'
+    search_fields = ( 'creator', 'manager', 'comment', )
+
+class OrderCommentAdmin( admin.ModelAdmin ) :
+    list_display = (
+        'order',
+        'author',
+        'comment',
+        'status',
+        'created',
+        'modified',
+    )
+    list_filter = ( 'order', 'status', )
+    date_hierarchy = 'created'
+    search_fields = ( 'order', 'author', 'comment', )
+
+class LogAdmin( admin.ModelAdmin ) :
+    list_display = (
+        'id',
+        'log_type',
+        'created',
+        'user',
+        'message',
+    )
+    list_filter    = ( 'log_type', 'user', 'created', )
+    date_hierarchy = 'created'
+    search_fields  = ( 'message', )
+
+admin.site.register( UserProfile , UserProfileAdmin  )
+admin.site.register( UserType    , UserTypeAdmin     )
 admin.site.register( Order       , OrderAdmin        )
 admin.site.register( OrderComment, OrderCommentAdmin )
-admin.site.register( Property    , PropertyAdmin     )
-admin.site.register( User        , UserAdmin         )
+admin.site.register( DoorsGroup  , DoorsGroupAdmin   )
+admin.site.register( Place       , PlaceAdmin        )
 admin.site.register( Vendor      , VendorAdmin       )
+admin.site.register( Log         , LogAdmin          )

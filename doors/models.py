@@ -1,146 +1,138 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-class Group( models.Model ) :
+class DoorsGroup( models.Model ) :
     def __unicode__( self ) :
         return self.name
 
-    P_CHOICES = (
-        ( 'n', 'none'           ),
-        ( 'r', 'read only'      ),
-        ( 'w', 'read and write' ),
+    name    = models.CharField( max_length = 135 )
+    comment = models.TextField( blank = True )
+
+    # Permissions.
+    view_all_users   = models.BooleanField()
+    manage_all_users = models.BooleanField() # Assign to places or to vendors.
+
+    view_all_orders = models.BooleanField()
+    create_orders   = models.BooleanField()
+    edit_all_orders = models.BooleanField()
+    manage_orders   = models.BooleanField() # Can approve, reject, and close orders.
+    delete_orders   = models.BooleanField()
+
+    create_comments     = models.BooleanField()
+    create_any_comments = models.BooleanField() # Can comment on any orders.
+    delete_comments     = models.BooleanField()
+
+    view_vendors   = models.BooleanField()
+    modify_vendors = models.BooleanField() # Can create, edit, and delete vendors.
+
+    view_places   = models.BooleanField()
+    modify_places = models.BooleanField()
+
+    created  = models.DateTimeField( auto_now_add = True )
+    modified = models.DateTimeField( auto_now = True )
+
+class Place( models.Model ) :
+    def __unicode__( self ) :
+        return self.name
+
+    def tenant_count( self ) :
+        return self.userprofile_set.count()
+        #return UserProfile.objects.filter( place = self.id ).count()
+
+    PLACE_TYPE_CHOICES = (
+        ( 's', 'single-family house (detached)' ),
+        ( 'm', 'multi-family house'             ),
+        ( 't', 'terrance house (townhouse)'     ),
+        ( 'd', 'duplex, triplex, etc.'          ),
+        ( 'c', 'condominium'                    ),
+        ( 'a', 'apartment'                      ),
+        ( 'o', 'office'                         ),
     )
-
-    name                 = models.CharField( max_length = 135 )
-    comment              = models.TextField( blank = True )
-    p_group              = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
-    p_user               = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
-    p_order_self         = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
-    p_order_other        = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
-    p_ordercomment_self  = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
-    p_ordercomment_other = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
-    p_item_type          = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
-    p_item               = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
-    p_property           = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
-    p_location           = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
-    p_vendor             = models.CharField( max_length = 1, choices = P_CHOICES, default = 'n' )
-    t_created            = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
-    t_modified           = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
-
-class Vendor( models.Model ) :
-    def __unicode__( self ) :
-        return self.name
-
-    name              = models.CharField( max_length = 135 )
-    comment           = models.TextField( blank = True )
-    phone             = models.CharField( max_length = 135, blank = True )
-    email             = models.EmailField( blank = True )
-    website           = models.URLField( blank = True )
-    address_line_one  = models.CharField( max_length = 135 )
-    address_line_two  = models.CharField( max_length = 135, blank = True )
-    city              = models.CharField( max_length = 135 )
-    state             = models.CharField( max_length = 135 )
-    zip_code          = models.CharField( max_length = 135 )
-    t_created         = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
-    t_modified        = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
-
-class ItemType( models.Model ) :
-    def __unicode__( self ) :
-        return self.name
-
-    name       = models.CharField( max_length = 135 )
-    comment    = models.TextField( blank = True )
-    vendors    = models.ManyToManyField( Vendor )
-    t_created  = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
-    t_modified = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
-
-class User( models.Model ) :
-    def __unicode__( self ) :
-       return "{} {}".format( self.first_name, self.last_name )
-
-    TYPE_CHOICES = (
-        ( 't', 'tenant'           ),
-        ( 'o', 'property owner'   ),
-        ( 'v', 'vendor'           ),
-        ( 'm', 'property manager' ),
-        ( 'w', 'web user'         ),
-        ( 'x', 'other'            ),
-    )
-
-    STATUS_CHOICES = (
-        ( 'p', 'pending'  ),
-        ( 'a', 'active'   ),
-        ( 'i', 'inactive' ),
-        ( 'b', 'banned'   ),
-    )
-
-    username   = models.CharField( max_length = 15 )
-    email      = models.EmailField()
-    group      = models.ForeignKey( Group, null = True, blank = True )
-    user_type  = models.CharField( max_length = 1, choices = TYPE_CHOICES, default = 't' )
-    comment    = models.TextField( blank = True )
-    password   = models.CharField( max_length = 135 )
-    first_name = models.CharField( max_length = 135 )
-    last_name  = models.CharField( max_length = 135 )
-    phone      = models.CharField( max_length = 135, blank = True )
-    status     = models.CharField( max_length = 1, choices = STATUS_CHOICES, default = 'p' )
-    location   = models.ForeignKey( 'Location', null = True, blank = True )
-    t_created  = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
-    t_modified = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
-
-class Property( models.Model ) :
-    def __unicode__( self ) :
-        return self.name
 
     name             = models.CharField( max_length = 135 )
-    user_manager     = models.ForeignKey( User, related_name = 'user_manager', verbose_name = 'manager' )
-    user_owner       = models.ForeignKey( User, related_name = 'user_owner'  , verbose_name = 'owner'   )
+    place_type       = models.CharField( max_length = 1, choices = PLACE_TYPE_CHOICES, default = 's' )
+    manager          = models.ForeignKey( User, related_name = 'manager', limit_choices_to = { 'userprofile__user_type' : 2 } )
+    owner            = models.ForeignKey( User, related_name = 'owner'  , limit_choices_to = { 'userprofile__user_type' : 3 }, null = True, blank = True )
     comment          = models.TextField( blank = True )
     address_line_one = models.CharField( max_length = 135 )
     address_line_two = models.CharField( max_length = 135, blank = True )
     city             = models.CharField( max_length = 135 )
     state            = models.CharField( max_length = 135 )
     zip_code         = models.CharField( max_length = 135 )
-    t_created        = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
-    t_modified       = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
+    website          = models.URLField( blank = True )
+    phone            = models.CharField( max_length = 135, blank = True )
+    created          = models.DateTimeField( auto_now_add = True )
+    modified         = models.DateTimeField( auto_now = True )
 
-    class Meta:
-         verbose_name_plural = "properties"
-
-class Location( models.Model ) :
+class UserType( models.Model ) :
     def __unicode__( self ) :
-        locations = filter( None, [ self.room, self.floor, self.building ] )
-        locations.append( unicode( self.prop ) )
+        return self.name
 
-        return ", ".join( locations )
+    name     = models.CharField( max_length = 135 )
+    created  = models.DateTimeField( auto_now_add = True )
+    modified = models.DateTimeField( auto_now = True )
 
-    comment    = models.TextField( blank = True )
-    room       = models.CharField( max_length = 135, blank = True )
-    floor      = models.CharField( max_length = 135, blank = True )
-    building   = models.CharField( max_length = 135, blank = True )
-    prop       = models.ForeignKey( Property )
-    t_created  = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
-    t_modified = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
+    # id |       name
+    #----+------------------
+    #  1 | tenant
+    #  2 | property manager
+    #  3 | property owner
+    #  4 | vendor
+    #  5 | web user
 
-class Item( models.Model ) :
+class UserProfile( models.Model ) :
     def __unicode__( self ) :
-        return "{} : {}".format( self.name, self.location )
+        return "{username} - {full_name}".format(
+            username   = self.user.username,
+            full_name = self.user.get_full_name()
+        )
 
-    name       = models.CharField( max_length = 135 )
-    comment    = models.TextField( blank = True )
-    item_type  = models.ForeignKey( ItemType )
-    location   = models.ForeignKey( Location )
-    t_created  = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
-    t_modified = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
+    user        = models.ForeignKey( User, unique = True )
+    doors_group = models.ForeignKey( DoorsGroup )
+    user_type   = models.ManyToManyField( UserType, null = True, blank = True )
+    comment     = models.TextField( blank = True )
+    phone       = models.CharField( max_length = 135, blank = True )
+    room        = models.CharField( max_length = 135, blank = True )
+    floor       = models.CharField( max_length = 135, blank = True )
+    building    = models.CharField( max_length = 135, blank = True )
+    place       = models.ForeignKey( Place, null = True, blank = True )
+    created     = models.DateTimeField( auto_now_add = True )
+    modified    = models.DateTimeField( auto_now = True )
+
+User.profile = property( lambda u : UserProfile.objects.get_or_create( user = u )[ 0 ] )
+
+# Also don't forget to add
+# AUTH_PROFILE_MODULE = "doors.UserProfile"
+# in the project's setting.py.
+
+class Vendor( models.Model ) :
+    def __unicode__( self ) :
+        return self.name
+
+    name             = models.CharField( max_length = 135 )
+    comment          = models.TextField( blank = True )
+    phone            = models.CharField( max_length = 135, blank = True )
+    email            = models.EmailField( blank = True )
+    website          = models.URLField( blank = True )
+    address_line_one = models.CharField( max_length = 135 )
+    address_line_two = models.CharField( max_length = 135, blank = True )
+    city             = models.CharField( max_length = 135 )
+    state            = models.CharField( max_length = 135 )
+    zip_code         = models.CharField( max_length = 135 )
+    representatives  = models.ManyToManyField( User, limit_choices_to = { 'userprofile__user_type' : 4 }, null = True, blank = True )
+    created          = models.DateTimeField( auto_now_add = True )
+    modified         = models.DateTimeField( auto_now = True )
 
 class Order( models.Model ) :
     def __unicode__( self ) :
         return unicode( self.id )
 
-    def comments_count( self ) :
-        return OrderComment.objects.filter( order = self.id ).count()
+    def comment_count( self ) :
+        return self.ordercomment_set.count()
+        #return OrderComment.objects.filter( work_order = self.id ).count()
 
     def all_steps( self ) :
-        user = self.user_created.first_name
+        user = self.creator.first_name
 
         return [
             ( getattr( self, attr ), task.format( user = user ) )
@@ -148,7 +140,7 @@ class Order( models.Model ) :
         ]
 
     def next_step( self ) :
-        user = self.user_created.first_name
+        user = self.creator.first_name
 
         task_num = next(
             ( i for ( i, ( attr, task ) ) in enumerate( self.TASKS ) if getattr( self, attr ) is None ),
@@ -164,68 +156,82 @@ class Order( models.Model ) :
             )
 
     TASKS = (
-        ( "t_action"         , "Review, then either approve or reject the order." ),
-        ( "t_followup_one"   , "Follow up with {user}." ),
-        ( "t_vendor_appt_one", "Contact the vendor to get a quote and arrange an appointment for {user}." ),
-        ( "t_vendor_appt_two", "Review the quote, (get owner approval), then arrange a second appointment for the repairs." ),
-        ( "t_work_done"      , "Confirm the finished repairs and pay the vendor." ),
-        ( "t_followup_two"   , "Follow up again with {user}." ),
-        ( "t_paid"           , "Confirm payment and close the order." ),
+        ( "action"            , "Review, then either approve or reject the order." ),
+        ( "first_appointment" , "Contact a vendor to get a quote and arrange an appointment for {user}." ),
+        ( "second_appointment", "Review the quote, (get owner approval), then arrange a second appointment for the repairs." ),
+        ( "work_done"         , "Confirm the finished repairs and pay the vendor." ),
+        ( "follow_up"         , "Follow up with {user}." ),
+        ( "paid"              , "Confirm payment and close the order." ),
     )
 
-    ACTION_CHOICES = (
+    STATUS_CHOICES = (
         ( 'p', 'pending'  ),
         ( 'a', 'approved' ),
         ( 'r', 'rejected' ),
         ( 'c', 'closed'   ),
+        ( 'l', 'locked'   ),
     )
 
-    user_created      = models.ForeignKey( User, related_name = 'user_created', verbose_name = 'created by' )
-    user_action       = models.ForeignKey( User, related_name = 'user_status' , verbose_name = 'action by' , null = True, blank = True )
-    t_action          = models.DateTimeField( null = True, blank = True, verbose_name = 'action'             )
-    t_followup_one    = models.DateTimeField( null = True, blank = True, verbose_name = 'first follow-up'    )
-    t_vendor_appt_one = models.DateTimeField( null = True, blank = True, verbose_name = 'first appointment'  )
-    t_vendor_appt_two = models.DateTimeField( null = True, blank = True, verbose_name = 'second appointment' )
-    t_work_done       = models.DateTimeField( null = True, blank = True, verbose_name = 'work done'          )
-    t_followup_two    = models.DateTimeField( null = True, blank = True, verbose_name = 'second follow-up'   )
-    t_paid            = models.DateTimeField( null = True, blank = True, verbose_name = 'paid'               )
-    action            = models.CharField( max_length = 1, choices = ACTION_CHOICES, default = 'p' )
-    quote             = models.DecimalField( max_digits = 8, decimal_places = 2, null = True, blank = True )
-    payment           = models.DecimalField( max_digits = 8, decimal_places = 2, null = True, blank = True )
-    items             = models.ManyToManyField( Item, null = True, blank = True )
-    t_created         = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
-    t_modified        = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
+    WORK_TYPE_CHOICES = (
+        ( 'hc', 'Heating and cooling' ),
+        ( 'el', 'Electrical'          ),
+        ( 'pl', 'Plumbing'            ),
+        ( 'ap', 'Appliances'          ),
+        ( 'pe', 'Pests'               ),
+        ( 'ex', 'Exterior'            ),
+        ( 'in', 'Interior'            ),
+        ( 'sa', 'Safety'              ),
+        ( 'ot', 'Others'              ),
+    )
+
+    creator   = models.ForeignKey( User, related_name = 'creator' )
+    approver  = models.ForeignKey( User, related_name = 'approver' )
+    comments  = models.TextField( blank = True )
+    status    = models.CharField( max_length = 1, choices = STATUS_CHOICES, default = 'p' )
+    quote     = models.DecimalField( max_digits = 8, decimal_places = 2, null = True, blank = True )
+    payment   = models.DecimalField( max_digits = 8, decimal_places = 2, null = True, blank = True )
+    work_type = models.CharField( max_length = 2, choices = WORK_TYPE_CHOICES )
+    vendor    = models.ForeignKey( Vendor, null = True, blank = True )
+
+    created            = models.DateTimeField( auto_now_add = True )
+    action             = models.DateTimeField( null = True, blank = True )
+    first_appointment  = models.DateTimeField( null = True, blank = True )
+    second_appointment = models.DateTimeField( null = True, blank = True )
+    work_done          = models.DateTimeField( null = True, blank = True )
+    follow_up          = models.DateTimeField( null = True, blank = True, verbose_name = 'follow-up' )
+    paid               = models.DateTimeField( null = True, blank = True )
+    modified           = models.DateTimeField( auto_now = True )
 
 class OrderComment( models.Model ) :
     def __unicode__( self ) :
-        return unicode( self.order.id )
+        return unicode( self.id )
 
     STATUS_CHOICES = (
         ( 'v', 'visible' ),
         ( 'd', 'deleted' ),
     )
 
-    order      = models.ForeignKey( Order )
-    user       = models.ForeignKey( User )
-    comment    = models.TextField()
-    status     = models.CharField( max_length = 1, choices = STATUS_CHOICES, default = 'v' )
-    t_created  = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
-    t_modified = models.DateTimeField( auto_now = True, verbose_name = 'modified' )
+    order    = models.ForeignKey( Order )
+    author   = models.ForeignKey( User )
+    comment  = models.TextField()
+    status   = models.CharField( max_length = 1, choices = STATUS_CHOICES, default = 'v' )
+    created  = models.DateTimeField( auto_now_add = True )
+    modified = models.DateTimeField( auto_now = True )
 
 class Log( models.Model ) :
     def __unicode__( self ) :
         return unicode( self.id )
 
     class Meta :
-        ordering = [ 't_created' ]
+        ordering = [ 'created', ]
 
-    TYPE_CHOICES = (
+    LOG_TYPE_CHOICES = (
         ( 'i', 'info'    ),
         ( 'w', 'warning' ),
         ( 'e', 'error'   ),
     )
 
-    user      = models.ForeignKey( User )
-    log_type  = models.CharField( max_length = 1, choices = TYPE_CHOICES, default = 'i' )
-    message   = models.CharField( max_length = 500 )
-    t_created = models.DateTimeField( auto_now_add = True, verbose_name = 'created' )
+    user     = models.ForeignKey( User )
+    log_type = models.CharField( max_length = 1, choices = LOG_TYPE_CHOICES, default = 'i' )
+    message  = models.CharField( max_length = 500 )
+    created  = models.DateTimeField( auto_now_add = True )

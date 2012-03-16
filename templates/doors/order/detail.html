@@ -4,9 +4,29 @@
 
 {% block content %}
 Order #{{ order.id }}<br />
-Created by {{ order.user_created }}<br />
-Created on {{ order.t_created }}<br />
-Status: {{ order.get_action_display }}<br />
+Work type: {{ order.get_work_type_display }}<br />
+Created by {{ order.creator.get_full_name }}<br />
+Created on {{ order.created }}<br />
+Status: {{ order.get_status_display|capfirst }}<br />
+Vendor:
+    {% if order.vendor %}
+        {{ order.vendor.name }}
+    {% else %}
+        Not assigned yet.
+    {% endif %}<br />
+Quote:
+    {% if order.quote %}
+        ${{ order.quote }}
+    {% else %}
+        No quote yet.
+    {% endif %}<br />
+
+Payment:
+    {% if order.payment %}
+        ${{ order.payment }}
+    {% else %}
+        Not paid yet.
+    {% endif %}<br />
 <br />
 Steps:
 <ul>
@@ -21,9 +41,9 @@ Steps:
 
 Comments:
 <ul>
-    {% if comments %}
-        {% for comment in comments %}
-            <li>{{ comment.user }} ({{ comment.t_created }}): {{ comment.comment }} </li>
+    {% if order_comments %}
+        {% for order_comment in order_comments %}
+            <li>{{ order_comment.created }} - {{ order_comment.author.get_full_name }}: {{ order_comment.comment }} </li>
         {% endfor %}
     {% else %}
         <li>There are no comments.</li>

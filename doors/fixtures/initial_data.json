@@ -1,0 +1,120 @@
+[
+    {
+        "model" : "doors.usertype",
+        "pk" : 1,
+        "fields" : {
+          "name" : "tenant"
+        }
+    },
+    {
+        "model" : "doors.usertype",
+        "pk" : 2,
+        "fields" : {
+          "name" : "property manager"
+        }
+    },
+    {
+        "model" : "doors.usertype",
+        "pk" : 3,
+        "fields" : {
+          "name" : "property owner"
+        }
+    },
+        {
+        "model" : "doors.usertype",
+        "pk" : 4,
+        "fields" : {
+          "name" : "vendor"
+        }
+    },
+    {
+        "model" : "doors.usertype",
+        "pk" : 5,
+        "fields" : {
+          "name" : "web user"
+        }
+    },
+    {
+        "model" : "doors.doorsgroup",
+        "pk" : 1,
+        "fields" : {
+            "name"                : "Moderator",
+            "comment"             : "Moderators can create, edit, and delete all orders. They can also modify users, vendors, and places. They can comment on any orders and delete comments. They can view and manage all users.",
+            "view_all_users"      : true,
+            "manage_all_users"    : true,
+            "view_all_orders"     : true,
+            "create_orders"       : true,
+            "edit_all_orders"     : true,
+            "manage_orders"       : true,
+            "delete_orders"       : true,
+            "create_comments"     : true,
+            "create_any_comments" : true,
+            "delete_comments"     : true,
+            "view_vendors"        : true,
+            "modify_vendors"      : true,
+            "view_places"         : true,
+            "modify_places"       : true
+        }
+    },
+    {
+        "model" : "doors.doorsgroup",
+        "pk" : 2,
+        "fields" : {
+            "name"            : "Manager",
+            "comment"         : "Managers can view, edit, and delete all orders. They can also approve, reject, or close orders. They can view all users.",
+            "view_all_users"  : true,
+            "view_all_orders" : true,
+            "create_orders"   : true,
+            "edit_all_orders" : true,
+            "manage_orders"   : true,
+            "delete_orders"   : true,
+            "create_comments" : true,
+            "view_vendors"    : true,
+            "view_places"     : true
+        }
+    },
+    {
+        "model" : "doors.doorsgroup",
+        "pk" : 3,
+        "fields" : {
+            "name"            : "Tenant",
+            "comment"         : "Tenants can create orders, comment on their orders, and view vendors and places.",
+            "create_orders"   : true,
+            "create_comments" : true,
+            "view_vendors"    : true,
+            "view_places"     : true
+        }
+    },
+    {
+        "model" : "doors.doorsgroup",
+        "pk" : 4,
+        "fields" : {
+            "name"            : "Owner",
+            "comment"         : "Owners can create and view orders for their property. They can also comment on those orders. They can view vendors.",
+            "create_orders"   : true,
+            "create_comments" : true,
+            "view_vendors"    : true
+        }
+    },
+    {
+        "model" : "doors.doorsgroup",
+        "pk" : 5,
+        "fields" : {
+            "name"            : "Vendor",
+            "comment"         : "Vendors can only comment on the orders that are assigned to them.",
+            "create_comments" : true
+        }
+    },
+    {
+        "model" : "doors.doorsgroup",
+        "pk" : 6,
+        "fields" : {
+            "name"            : "Observer",
+            "comment"         : "Observers can view all users, orders, vendors, and places.",
+            "view_all_users"  : true,
+            "view_all_orders" : true,
+            "view_vendors"    : true,
+            "view_places"     : true
+        }
+    }
+]

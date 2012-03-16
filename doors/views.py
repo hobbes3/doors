@@ -6,12 +6,12 @@ def index( request ) :
     pass
 
 def order_detail( request, order_id ) :
-    order    = get_object_or_404( Order, pk = order_id )
-    comments = OrderComment.objects.filter( order = order_id )
+    order          = get_object_or_404( Order, pk = order_id )
+    order_comments = OrderComment.objects.filter( order = order_id )
 
     request_context = RequestContext( request, {
-        'order'    : order,
-        'comments' : comments,
+        'order'          : order,
+        'order_comments' : order_comments,
     } )
 
     return render_to_response( 'doors/order/detail.html', context_instance = request_context )
