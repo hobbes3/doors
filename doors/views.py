@@ -1,32 +1,44 @@
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
+from django.shortcuts import render, get_object_or_404
 from doors.models import *
+from doors.forms import AddComment
 
-def index( request ) :
-    pass
-
-def order_detail( request, order_id ) :
-    order          = get_object_or_404( Order, pk = order_id )
-    order_comments = OrderComment.objects.filter( order = order_id )
-
-    request_context = RequestContext( request, {
-        'order'          : order,
-        'order_comments' : order_comments,
-    } )
-
-    return render_to_response( 'doors/order/detail.html', context_instance = request_context )
-
-def order_username( request, username ) :
-    pass
-
-def order_all( request ) :
+def orders_list( request ) :
     orders = Order.objects.all()
 
-    request_context = RequestContext( request, {
+    dictionary = {
         'orders' : orders,
-    } )
+    }
 
-    return render_to_response( 'doors/order/list.html', context_instance = request_context )
+    return render( request, 'doors/orders/list.html', dictionary )
 
-def order_create( request ) :
+def orders_detail( request, order_id ) :
+    order          = get_object_or_404( Order, pk = order_id )
+    order_comments = order.ordercomment_set.all()
+
+    if request.method == 'POST' :
+        comment_form = AddComment( request.POST )
+
+        if comment_form.is_valid() :
+            cd = comment_form.cleaned_data
+
+            OrderComment.objects.create(
+                order   = order,
+                author  = request.user,
+                comment = cd[ 'comment' ],
+            )
+    else :
+        comment_form = AddComment()
+
+    dictionary = {
+        'order'          : order,
+        'order_comments' : order_comments,
+        'comment_form'   : comment_form,
+    }
+
+    return render( request, 'doors/orders/detail.html', dictionary )
+
+def orders_create( request ) :
+    pass
+
+def orders_comments_add( request ) :
     pass

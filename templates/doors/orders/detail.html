@@ -40,13 +40,24 @@ Steps:
 </ul>
 
 Comments:
-<ul>
+<div id = 'comments'>
     {% if order_comments %}
         {% for order_comment in order_comments %}
-            <li>{{ order_comment.created }} - {{ order_comment.author.get_full_name }}: {{ order_comment.comment }} </li>
+            <div>{{ order_comment.created }} - {{ order_comment.author.get_full_name }}: {{ order_comment.comment }} </div>
         {% endfor %}
     {% else %}
-        <li>There are no comments.</li>
+        <div>There are no comments.</div>
     {% endif %}
-</ul>
+</div>
+
+    {% if comment_form.errors %}
+        Please correct the error{{ comment_form.error|pluralize }} below.
+    {% endif %}
+
+<form action = "" method = "post">
+    {% csrf_token %}
+    {{ comment_form.comment }}
+    <input type = "submit" />
+</form>
 {% endblock %}
+

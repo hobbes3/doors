@@ -37,7 +37,6 @@ class Place( models.Model ) :
 
     def tenant_count( self ) :
         return self.userprofile_set.count()
-        #return UserProfile.objects.filter( place = self.id ).count()
 
     PLACE_TYPE_CHOICES = (
         ( 's', 'single-family house (detached)' ),
@@ -129,7 +128,6 @@ class Order( models.Model ) :
 
     def comment_count( self ) :
         return self.ordercomment_set.count()
-        #return OrderComment.objects.filter( work_order = self.id ).count()
 
     def all_steps( self ) :
         user = self.creator.first_name
@@ -156,12 +154,12 @@ class Order( models.Model ) :
             )
 
     TASKS = (
-        ( "action"            , "Review, then either approve or reject the order." ),
-        ( "first_appointment" , "Contact a vendor to get a quote and arrange an appointment for {user}." ),
-        ( "second_appointment", "Review the quote, (get owner approval), then arrange a second appointment for the repairs." ),
-        ( "work_done"         , "Confirm the finished repairs and pay the vendor." ),
-        ( "follow_up"         , "Follow up with {user}." ),
-        ( "paid"              , "Confirm payment and close the order." ),
+        ( 'action'            , "Review, then either approve or reject the order." ),
+        ( 'first_appointment' , "Contact a vendor to get a quote and arrange an appointment for {user}." ),
+        ( 'second_appointment', "Review the quote, (get owner approval), then arrange a second appointment for the repairs." ),
+        ( 'work_done'         , "Confirm the finished repairs and pay the vendor." ),
+        ( 'follow_up'         , "Follow up with {user}." ),
+        ( 'paid'              , "Confirm payment and close the order." ),
     )
 
     STATUS_CHOICES = (

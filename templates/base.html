@@ -4,8 +4,8 @@
 </head>
 <body>
     <ul>
-        <li><a href="{% url order_create %}">Create an order</a></li>
-        <li><a href="{% url order_all %}">View your orders</a></li>
+        <li><a href="{% url orders_create %}">Create an order</a></li>
+        <li><a href="{% url orders_list %}">View your orders</a></li>
     {% if user.is_authenticated %}
         <li>Welcome, {{ user.username }}. <a href="{% url auth_password_change %}">Change password</a> / <a href="{% url auth_logout %}">Log out</a></li>
     {% else %}

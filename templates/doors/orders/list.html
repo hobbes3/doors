@@ -6,7 +6,7 @@
 <ul>
     {% if orders %}
         {% for order in orders %}
-            <li><a href="/doors/order/{{ order.id }}/">{{ order.id }}: [ {{ order.created }} ] {{ order.creator.get_full_name }}</a></li>
+            <li><a href="{% url orders_detail order_id=order.id %}">{{ order.id }}: [ {{ order.created }} ] {{ order.creator.get_full_name }}</a></li>
         {% endfor %}
     {% else %}
         <li>There are no orders.</li>
