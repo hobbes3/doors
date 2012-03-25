@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}View all orders{% endblock %}
+{% block title %}List orders{% endblock %}
 
 {% block content %}
 <ul>
-    {% if orders %}
-        {% for order in orders %}
-            <li><a href="{% url orders_detail order_id=order.id %}">{{ order.id }}: [ {{ order.created }} ] {{ order.creator.get_full_name }}</a></li>
+    {% if order_list %}
+        {% for order in order_list %}
+            <li><a href="{% url orders_detail pk=order.pk %}">{{ order.pk }}: [ {{ order.created }} ] {{ order.creator.get_full_name }}</a></li>
         {% endfor %}
     {% else %}
         <li>There are no orders.</li>

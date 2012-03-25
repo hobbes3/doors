@@ -1,5 +1,5 @@
 from django.contrib import admin
-from mysite.doors.models import *
+from doors.models import *
 
 class DoorsGroupAdmin( admin.ModelAdmin ) :
     list_display = (

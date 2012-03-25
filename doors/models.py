@@ -86,7 +86,7 @@ class UserProfile( models.Model ) :
             full_name = self.user.get_full_name()
         )
 
-    user        = models.ForeignKey( User, unique = True )
+    user        = models.OneToOneField( User )
     doors_group = models.ForeignKey( DoorsGroup )
     user_type   = models.ManyToManyField( UserType, null = True, blank = True )
     comment     = models.TextField( blank = True )
@@ -98,6 +98,8 @@ class UserProfile( models.Model ) :
     created     = models.DateTimeField( auto_now_add = True )
     modified    = models.DateTimeField( auto_now = True )
 
+# Access UserProfile with User.profile, instead of User.get_profile().
+# Also creates a UserProfile per User if it doens't exist already.
 User.profile = property( lambda u : UserProfile.objects.get_or_create( user = u )[ 0 ] )
 
 # Also don't forget to add

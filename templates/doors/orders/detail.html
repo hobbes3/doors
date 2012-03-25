@@ -3,7 +3,7 @@
 {% block title %}View order #{{ order.id }}{% endblock %}
 
 {% block content %}
-Order #{{ order.id }}<br />
+Order #{{ order.pk }}<br />
 Work type: {{ order.get_work_type_display }}<br />
 Created by {{ order.creator.get_full_name }}<br />
 Created on {{ order.created }}<br />
@@ -60,4 +60,3 @@ Comments:
     <input type = "submit" />
 </form>
 {% endblock %}
-
