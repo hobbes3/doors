@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}List users{% endblock %}
+
+{% block content %}
+<ul>
+    {% if user_list %}
+        {% for user in user_list %}
+            <li><a href="{% url users_detail pk=user.pk %}">{{ user.pk }}: {{ user.username }} - {{ user.get_full_name }}</a></li>
+        {% endfor %}
+    {% else %}
+        <li>There are no users.</li>
+    {% endif %}
+</ul>
+{% endblock %}

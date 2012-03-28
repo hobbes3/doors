@@ -88,19 +88,6 @@ class OrderAdmin( admin.ModelAdmin ) :
     date_hierarchy = 'created'
     search_fields = ( 'creator', 'manager', 'comment', )
 
-class OrderCommentAdmin( admin.ModelAdmin ) :
-    list_display = (
-        'order',
-        'author',
-        'comment',
-        'status',
-        'created',
-        'modified',
-    )
-    list_filter = ( 'order', 'status', )
-    date_hierarchy = 'created'
-    search_fields = ( 'order', 'author', 'comment', )
-
 class LogAdmin( admin.ModelAdmin ) :
     list_display = (
         'id',
@@ -116,7 +103,6 @@ class LogAdmin( admin.ModelAdmin ) :
 admin.site.register( UserProfile , UserProfileAdmin  )
 admin.site.register( UserType    , UserTypeAdmin     )
 admin.site.register( Order       , OrderAdmin        )
-admin.site.register( OrderComment, OrderCommentAdmin )
 admin.site.register( DoorsGroup  , DoorsGroupAdmin   )
 admin.site.register( Place       , PlaceAdmin        )
 admin.site.register( Vendor      , VendorAdmin       )

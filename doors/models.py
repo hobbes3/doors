@@ -1,5 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+
+from django.contrib import messages
+from django.contrib.comments.signals import comment_was_posted
+
+def comment_posted( sender, comment = None, request = None, **kwargs ) :
+    messages.add_message( request, messages.SUCCESS, 'You comment has been posted!' )
+
+comment_was_posted.connect( comment_posted )
 
 class DoorsGroup( models.Model ) :
     def __unicode__( self ) :
@@ -126,7 +135,11 @@ class Vendor( models.Model ) :
 
 class Order( models.Model ) :
     def __unicode__( self ) :
-        return unicode( self.id )
+        return unicode( self.pk )
+
+    def get_absolute_url( self ) :
+        return reverse( 'orders_detail', args = [ self.pk ] )
+        #return "/doors/orders/{pk}/".format( pk = self.pk )
 
     def comment_count( self ) :
         return self.ordercomment_set.count()
@@ -202,25 +215,9 @@ class Order( models.Model ) :
     paid               = models.DateTimeField( null = True, blank = True )
     modified           = models.DateTimeField( auto_now = True )
 
-class OrderComment( models.Model ) :
-    def __unicode__( self ) :
-        return unicode( self.id )
-
-    STATUS_CHOICES = (
-        ( 'v', 'visible' ),
-        ( 'd', 'deleted' ),
-    )
-
-    order    = models.ForeignKey( Order )
-    author   = models.ForeignKey( User )
-    comment  = models.TextField()
-    status   = models.CharField( max_length = 1, choices = STATUS_CHOICES, default = 'v' )
-    created  = models.DateTimeField( auto_now_add = True )
-    modified = models.DateTimeField( auto_now = True )
-
 class Log( models.Model ) :
     def __unicode__( self ) :
-        return unicode( self.id )
+        return unicode( self.pk )
 
     class Meta :
         ordering = [ 'created', ]

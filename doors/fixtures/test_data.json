@@ -3,7 +3,7 @@
         "pk": 2,
         "model": "auth.user",
         "fields": {
-            "username": "amy-tenant",
+            "username": "example-amy-tenant",
             "first_name": "Amy",
             "last_name": "Elliot",
             "is_active": true,
@@ -21,7 +21,7 @@
         "pk": 3,
         "model": "auth.user",
         "fields": {
-            "username": "bob-pm",
+            "username": "example-bob-pm",
             "first_name": "Bob",
             "last_name": "Marley",
             "is_active": true,
@@ -39,7 +39,7 @@
         "pk": 5,
         "model": "auth.user",
         "fields": {
-            "username": "jane-po",
+            "username": "exmaple-jane-po",
             "first_name": "Jane",
             "last_name": "Kim",
             "is_active": true,
@@ -57,7 +57,7 @@
         "pk": 4,
         "model": "auth.user",
         "fields": {
-            "username": "tareq-vendor",
+            "username": "example-tareq-vendor",
             "first_name": "Tareq",
             "last_name": "Hajj",
             "is_active": true,

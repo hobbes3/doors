@@ -1,0 +1,18 @@
+{% load comments %}
+<dl id="comments">
+    {% if comment_list %}
+        {% for comment in comment_list %}
+        <dt id="comment_{{ comment.id }}">
+            <a name="comment_{{ comment.id }}"></a>
+            {{ comment.submit_date }} - {{ comment.name }}
+            <a href="{% get_comment_permalink comment "#comment_%(id)s" %}">¶</a>
+        </dt>
+        <dd>
+            <p>{{ comment.comment }}</p>
+        </dd>
+        {% endfor %}
+    {% else %}
+        <dd>No comments.</dd>
+    {% endif %}
+</dl>
+

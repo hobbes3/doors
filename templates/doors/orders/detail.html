@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}View order #{{ order.id }}{% endblock %}
+{% block title %}View order #{{ order.pk }}{% endblock %}
 
 {% block content %}
+
 Order #{{ order.pk }}<br />
 Work type: {{ order.get_work_type_display }}<br />
 Created by {{ order.creator.get_full_name }}<br />
@@ -20,7 +21,6 @@ Quote:
     {% else %}
         No quote yet.
     {% endif %}<br />
-
 Payment:
     {% if order.payment %}
         ${{ order.payment }}
@@ -39,24 +39,10 @@ Steps:
     {% endif %}
 </ul>
 
-Comments:
-<div id = 'comments'>
-    {% if order_comments %}
-        {% for order_comment in order_comments %}
-            <div>{{ order_comment.created }} - {{ order_comment.author.get_full_name }}: {{ order_comment.comment }} </div>
-        {% endfor %}
-    {% else %}
-        <div>There are no comments.</div>
-    {% endif %}
-</div>
+Comments:<br />
+{% load comments %}
 
-    {% if comment_form.errors %}
-        Please correct the error{{ comment_form.error|pluralize }} below.
-    {% endif %}
+{% render_comment_list for order %}
+{% render_comment_form for order %}
 
-<form action = "" method = "post">
-    {% csrf_token %}
-    {{ comment_form.comment }}
-    <input type = "submit" />
-</form>
 {% endblock %}

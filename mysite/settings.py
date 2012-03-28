@@ -4,7 +4,7 @@ import os.path
 from django.core.urlresolvers import reverse_lazy
 
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
+TEMPLATE_DEBUG = True
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -99,6 +99,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -125,6 +126,8 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.humanize',
     'django.contrib.comments',
+    'django_extensions',
+    'debug_toolbar',
     'south',
     'registration',
     'doors',
@@ -167,7 +170,7 @@ AUTH_PROFILE_MODULE = "doors.UserProfile"
 
 LOGIN_REDIRECT_URL = reverse_lazy( 'users_self_detail' )
 
-# For Django Registration
+# For Django Registration.
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value.
 
 EMAIL_USE_TLS       = True
@@ -175,3 +178,18 @@ EMAIL_HOST          = 'smtp.gmail.com'
 EMAIL_PORT          = 587
 EMAIL_HOST_USER     = 'do.not.reply.doors@gmail.com'
 EMAIL_HOST_PASSWORD = 'doors_demo'
+
+INTERNAL_IPS = ( '127.0.0.1', )
+
+# Added django.core.context_processors.request on top of the defaults.
+# Allows me to use request.get_full_path inside comments's form.html.
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.core.context_processors.tz",
+    "django.contrib.messages.context_processors.messages",
+    "django.core.context_processors.request",
+)
