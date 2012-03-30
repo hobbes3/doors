@@ -1,7 +1,5 @@
-/settings.py
+settings.py
 /monitor.py
 /apache/
 /site-packages
 migrations/
-sql/
-
