@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}View vendor {{ vendor.name }}{% endblock %}
+
+{% block content %}
+Name: {{ vendor.name }}<br />
+Phone: {{ vendor.phone|default:"None" }}<br />
+Email: {{ vendor.email|default:"None" }}<br />
+Website: {{ vendor.website|default:"None" }}<br />
+<br />
+Address:<br />
+<br />
+{{ vendor.address_line_one }}<br />
+{% if vendor.address_line_two %}
+    {{ vendor.address_line_two }}<br />
+{% endif %}
+{{ vendor.city }}, {{ vendor.state }} {{vendor.zip_code }}<br />
+<br />
+Representatives:
+<ul>
+    {% if vendor.representatives.all %}
+        {% for representative in vendor.representatives.all %}
+            <li><a href="{% url users_detail pk=representative.pk %}">{{ representative.get_full_name }}</a></li>
+        {% endfor %}
+    {% else %}
+        <li>No representatives.</li>
+    {% endif %}
+</ul>
+Comment:<br />
+<br />
+{{ vendor.comment|default:"None." }}<br />
+{% endblock %}

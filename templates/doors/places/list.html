@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}List places{% endblock %}
+
+{% block content %}
+<ul>
+    {% if place_list %}
+        {% for place in place_list %}
+            <li><a href="{% url places_detail pk=place.pk %}">{{ place.name }} - {{ place.get_place_type_display }}</a></li>
+        {% endfor %}
+    {% else %}
+        <li>There are no places.</li>
+    {% endif %}
+</ul>
+{% endblock %}

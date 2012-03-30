@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import patterns, url, include
 from django.views.generic import ListView, CreateView, DetailView
-from doors.models import Order
+from doors.models import Order, OrderCreateForm, Vendor, Place
 from django.contrib.auth.models import User
 from doors.views import SelfUserDetailView
 from django.contrib.auth.decorators import login_required
@@ -14,14 +14,7 @@ urlpatterns = patterns( 'doors.views',
         ),
         name = 'orders_list'
     ),
-    url(
-        r'^orders/create/$',
-        CreateView.as_view(
-            model = Order,
-            template_name = 'doors/orders/create.html'
-        ),
-        name = 'orders_create'
-    ),
+    url( r'^orders/create/$', 'orders_create', name = 'orders_create' ),
     url(
         r'^orders/(?P<pk>\d+)/$',
         DetailView.as_view(
@@ -48,4 +41,36 @@ urlpatterns = patterns( 'doors.views',
         name = 'users_detail'
     ),
     url( r'^users/self/$', login_required( SelfUserDetailView.as_view() ), name = 'users_self_detail' ),
+    url(
+        r'^vendors/$',
+        ListView.as_view(
+            model = Vendor,
+            template_name = 'doors/vendors/list.html',
+        ),
+        name = 'vendors_list'
+    ),
+    url(
+        r'^vendors/(?P<pk>\d+)/$',
+        DetailView.as_view(
+            model = Vendor,
+            template_name = 'doors/vendors/detail.html',
+        ),
+        name = 'vendors_detail'
+    ),
+    url(
+        r'^places/$',
+        ListView.as_view(
+            model = Place,
+            template_name = 'doors/places/list.html',
+        ),
+        name = 'places_list'
+    ),
+    url(
+        r'^places/(?P<pk>\d+)/$',
+        DetailView.as_view(
+            model = Place,
+            template_name = 'doors/places/detail.html',
+        ),
+        name = 'places_detail'
+    ),
 )

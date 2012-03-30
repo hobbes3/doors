@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}List vendors{% endblock %}
+
+{% block content %}
+<ul>
+    {% if vendor_list %}
+        {% for vendor in vendor_list %}
+            <li><a href="{% url vendors_detail pk=vendor.pk %}">{{ vendor.name }}</a></li>
+        {% endfor %}
+    {% else %}
+        <li>There are no vendors.</li>
+    {% endif %}
+</ul>
+{% endblock %}

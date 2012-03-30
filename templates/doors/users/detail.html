@@ -4,5 +4,30 @@
 
 {% block content %}
 Username: {{ user_object.username }}<br />
-Name: {{ user_object.get_full_name }}<br />
+First name: {{ user_object.first_name }}<br />
+Last name: {{ user_object.last_name }}<br />
+User type:
+<ul>
+    {% if user_object.profile.user_types.all %}
+        {% for user_type in user_object.profile.user_types.all %}
+            <li>{{ user_type|capfirst }}</li>
+        {% endfor %}
+    {% else %}
+        <li>No user type</li>
+    {% endif %}
+</ul>
+Phone: {{ user_object.profile.phone|default:"None" }}<br />
+Room: {{ user_object.profile.room|default:"None" }}<br />
+Floor: {{ user_object.profile.floor|default:"None" }}<br />
+Building: {{ user_object.profile.building|default:"None" }}<br />
+Place:
+    {% if user_object.profile.place %}
+        <a href="{% url places_detail pk=user_object.profile.place.pk %}">{{ user_object.profile.place.name }}</a>
+    {% else %}
+        None
+    {% endif %}<br />
+<br />
+Comment:<br />
+<br />
+{{ user_object.profile.comment|default:"None." }}
 {% endblock %}

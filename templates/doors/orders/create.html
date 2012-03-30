@@ -3,5 +3,46 @@
 {% block title %}Create order{% endblock %}
 
 {% block content %}
-    {{ form }}
+    Create an order
+    <br />
+
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div>
+            Creator:
+            {% if manager == 1 %}
+                {{ form.creator }}
+            {% else %}
+                <a href="{% url users_detail pk=request.user.pk %}">{{ request.user.get_full_name }}</a>
+            {% endif %}
+        </div>
+        <div>
+            Place:
+            {% if request.user.profile.place %}
+                <a href="{% url places_detail pk=request.user.profile.place.pk %}">{{ request.user.profile.place.name }}</a>
+            {% else %}
+                None
+            {% endif %}
+        </div>
+        <div>
+            Approver:
+            {% if approver %}
+                <a href="{% url users_detail pk=approver.pk %}">{{ approver.get_full_name }}</a>
+            {% else %}
+                {{ form.approver }}
+            {% endif %}
+        </div>
+        <div>
+            {{ form.work_type.errors }}
+            <label for="id_work_type">Category:</label><br />
+            {{ form.work_type }}
+        </div>
+        <div>
+            {{ form.comment.errors }}
+            <label for="id_comment">A brief comment:</label><br />
+            {{ form.comment }}
+        </div>
+        <input type="submit" value="Create order" />
+    </form>
 {% endblock %}

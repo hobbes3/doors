@@ -42,7 +42,7 @@ class UserProfileAdmin( admin.ModelAdmin ) :
         'modified',
     )
     list_filter = ( 'doors_group', 'place', )
-    filter_horizontal = ( 'user_type', )
+    filter_horizontal = ( 'user_types', )
     search_fields = ( 'email', 'first_name', 'last_name', )
 
 class VendorAdmin( admin.ModelAdmin ) :

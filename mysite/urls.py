@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse_lazy
 admin.autodiscover()
 
 urlpatterns = patterns( '',
-    url( r'^$'        , RedirectView.as_view( url = reverse_lazy( 'orders_list' ) ) ),
+    url( r'^$'        , RedirectView.as_view( url = reverse_lazy( 'orders_list' ) ), name = 'index' ),
     url( r'^doors/'   , include( 'doors.urls'                   ) ),
     url( r'comments/' , include( 'django.contrib.comments.urls' ) ),
     url( r'^accounts/', include( 'registration.urls'            ) ),

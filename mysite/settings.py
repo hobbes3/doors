@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse_lazy
 
 DEBUG = True
 TEMPLATE_DEBUG = True
+TEMPLATE_STRING_IF_INVALID = 'INVALID_VARIABLE'
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -168,7 +169,7 @@ LOGGING = {
 
 AUTH_PROFILE_MODULE = "doors.UserProfile"
 
-LOGIN_REDIRECT_URL = reverse_lazy( 'users_self_detail' )
+#LOGIN_REDIRECT_URL = reverse_lazy( 'users_self_detail' )
 
 # For Django Registration.
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value.
@@ -193,3 +194,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.messages.context_processors.messages",
     "django.core.context_processors.request",
 )
+
+# Django Debug Toolbar
+DEBUG_TOOLBAR_CONFIG = {
+    'INTERCEPT_REDIRECTS' : False,
+}

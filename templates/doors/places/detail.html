@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}View place {{ place.name }}{% endblock %}
+
+{% block content %}
+Name: {{ place.name }}<br />
+Phone: {{ place.phone|default:"None" }}<br />
+Website: {{ place.website|default:"None" }}<br />
+Category: {{ place.get_place_type_display }}<br />
+Manager: <a href="{% url users_detail pk=place.manager.pk %}">{{ place.manager.get_full_name }}</a><br />
+Owner: <a href="{% url users_detail pk=place.owner.pk %}">{{ place.owner.get_full_name }}</a><br />
+<br />
+Residents: <br />
+    <ul>
+    {% if place.userprofile_set.all %}
+        {% for resident in place.userprofile_set.all %}
+            <li><a href="{% url users_detail pk=resident.user.pk %}">{{ resident.user.get_full_name }}</a></li>
+        {% endfor %}
+    {% else %}
+        <li>None</li>
+    {% endif %}
+    </ul>
+Address:<br />
+<br />
+{{ place.address_line_one }}<br />
+{% if place.address_line_two %}
+    {{ place.address_line_two }}<br />
+{% endif %}
+{{ place.city }}, {{ place.state }} {{place.zip_code }}<br />
+<br />
+Comment:<br />
+<br />
+{{ place.comment|default:"None." }}<br />
+{% endblock %}

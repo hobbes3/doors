@@ -7,10 +7,12 @@
         <li><a href="{% url orders_create %}">Create an order</a></li>
         <li><a href="{% url orders_list %}">Orders list</a></li>
         <li><a href="{% url users_list %}">Users list</a></li>
+        <li><a href="{% url vendors_list %}">Vendors list</a></li>
+        <li><a href="{% url places_list %}">Places list</a></li>
     {% if user.is_authenticated %}
-        <li>Welcome, {{ user.username }}. <a href="{% url auth_password_change %}">Change password</a> / <a href="{% url auth_logout %}">Log out</a></li>
+        <li>Welcome, {{ user.first_name }}. <a href="{% url auth_password_change %}">Change password</a> / <a href="{% url auth_logout %}?next=/">Log out</a></li>
     {% else %}
-        <li><a href="{% url auth_login %}">Log in</a></li>
+        <li><a href="{% url auth_login %}?next={% firstof request.path '/' %}">Log in</a></li>
     {% endif %}
         <li><a href="{% url admin:index %}">Admin</a></li>
     </ul>
