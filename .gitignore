@@ -1,7 +1,5 @@
-/settings.py
-/monitor.py
-/apache/
+settings.py
+/apache_django_wsgi.conf
 /site-packages
 migrations/
-sql/
-
+/sql/
