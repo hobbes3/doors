@@ -3,35 +3,45 @@
         "model" : "doors.usertype",
         "pk" : 1,
         "fields" : {
-          "name" : "tenant"
+          "name"     : "tenant",
+          "modified" : "2012-03-31T09:50:14.075Z",
+          "created"  : "2012-03-31T09:50:14.075Z"
         }
     },
     {
         "model" : "doors.usertype",
         "pk" : 2,
         "fields" : {
-          "name" : "property manager"
+          "name"     : "property manager",
+          "modified" : "2012-03-31T09:50:14.075Z",
+          "created"  : "2012-03-31T09:50:14.075Z"
         }
     },
     {
         "model" : "doors.usertype",
         "pk" : 3,
         "fields" : {
-          "name" : "property owner"
+          "name"     : "property owner",
+          "modified" : "2012-03-31T09:50:14.075Z",
+          "created"  : "2012-03-31T09:50:14.075Z"
         }
     },
         {
         "model" : "doors.usertype",
         "pk" : 4,
         "fields" : {
-          "name" : "vendor"
+          "name"     : "vendor",
+          "modified" : "2012-03-31T09:50:14.075Z",
+          "created"  : "2012-03-31T09:50:14.075Z"
         }
     },
     {
         "model" : "doors.usertype",
         "pk" : 5,
         "fields" : {
-          "name" : "web user"
+          "name"     : "web user",
+          "modified" : "2012-03-31T09:50:14.075Z",
+          "created"  : "2012-03-31T09:50:14.075Z"
         }
     },
     {
@@ -53,7 +63,9 @@
             "view_vendors"        : true,
             "modify_vendors"      : true,
             "view_places"         : true,
-            "modify_places"       : true
+            "modify_places"       : true,
+            "modified"            : "2012-03-31T09:50:14.075Z",
+            "created"             : "2012-03-31T09:50:14.075Z"
         }
     },
     {
@@ -70,7 +82,9 @@
             "delete_orders"   : true,
             "create_comments" : true,
             "view_vendors"    : true,
-            "view_places"     : true
+            "view_places"     : true,
+            "modified"        : "2012-03-31T09:50:14.075Z",
+            "created"         : "2012-03-31T09:50:14.075Z"
         }
     },
     {
@@ -82,7 +96,9 @@
             "create_orders"   : true,
             "create_comments" : true,
             "view_vendors"    : true,
-            "view_places"     : true
+            "view_places"     : true,
+            "modified"        : "2012-03-31T09:50:14.075Z",
+            "created"         : "2012-03-31T09:50:14.075Z"
         }
     },
     {
@@ -93,7 +109,9 @@
             "comment"         : "Owners can create and view orders for their property. They can also comment on those orders. They can view vendors.",
             "create_orders"   : true,
             "create_comments" : true,
-            "view_vendors"    : true
+            "view_vendors"    : true,
+            "modified"        : "2012-03-31T09:50:14.075Z",
+            "created"         : "2012-03-31T09:50:14.075Z"
         }
     },
     {
@@ -102,7 +120,9 @@
         "fields" : {
             "name"            : "Vendor",
             "comment"         : "Vendors can only comment on the orders that are assigned to them.",
-            "create_comments" : true
+            "create_comments" : true,
+            "modified"        : "2012-03-31T09:50:14.075Z",
+            "created"         : "2012-03-31T09:50:14.075Z"
         }
     },
     {
@@ -114,7 +134,9 @@
             "view_all_users"  : true,
             "view_all_orders" : true,
             "view_vendors"    : true,
-            "view_places"     : true
+            "view_places"     : true,
+            "modified"        : "2012-03-31T09:50:14.075Z",
+            "created"         : "2012-03-31T09:50:14.075Z"
         }
     }
 ]
