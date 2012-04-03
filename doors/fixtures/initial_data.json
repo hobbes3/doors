@@ -138,5 +138,46 @@
             "modified"        : "2012-03-31T09:50:14.075Z",
             "created"         : "2012-03-31T09:50:14.075Z"
         }
+    },
+    {
+        "pk": 1,
+        "model": "auth.user",
+        "fields": {
+            "username": "hobbes3",
+            "first_name": "Satoshi",
+            "last_name": "Kawasaki",
+            "is_active": true,
+            "is_superuser": true,
+            "is_staff": true,
+            "last_login": "2012-03-30T22:35:10.514Z",
+            "groups": [],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$10000$M5khDD4qeAS3$v+O8UdahfeRbYgmBdqb1z/9XqurT58yHjgeyH4H63kM=",
+            "email": "hobbes3@gmail.com",
+            "date_joined": "2012-03-12T01:34:27Z"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "doors.userprofile",
+        "fields": {
+            "comment": "",
+            "building": "",
+            "room": "",
+            "floor": "",
+            "created": "2012-03-29T07:29:16.137Z",
+            "modified": "2012-03-29T08:15:15.877Z",
+            "phone": "",
+            "place": null,
+            "user": 1,
+            "doors_group": 1,
+            "user_types": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ]
+        }
     }
 ]

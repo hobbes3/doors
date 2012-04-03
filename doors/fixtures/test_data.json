@@ -54,24 +54,6 @@
         }
     },
     {
-        "pk": 1,
-        "model": "auth.user",
-        "fields": {
-            "username": "hobbes3",
-            "first_name": "Satoshi",
-            "last_name": "Kawasaki",
-            "is_active": true,
-            "is_superuser": true,
-            "is_staff": true,
-            "last_login": "2012-03-30T22:35:10.514Z",
-            "groups": [],
-            "user_permissions": [],
-            "password": "pbkdf2_sha256$10000$M5khDD4qeAS3$v+O8UdahfeRbYgmBdqb1z/9XqurT58yHjgeyH4H63kM=",
-            "email": "hobbes3@gmail.com",
-            "date_joined": "2012-03-12T01:34:27Z"
-        }
-    },
-    {
         "pk": 3,
         "model": "auth.user",
         "fields": {
@@ -101,7 +83,7 @@
             "site": 1,
             "is_removed": false,
             "user": 2,
-            "content_type": 18,
+            "content_type": 17,
             "is_public": true,
             "user_name": "",
             "user_email": ""
@@ -119,7 +101,7 @@
             "site": 1,
             "is_removed": false,
             "user": 3,
-            "content_type": 18,
+            "content_type": 17,
             "is_public": true,
             "user_name": "Satoshi Kawasaki",
             "user_email": "hobbes3@gmail.com"
@@ -137,7 +119,7 @@
             "site": 1,
             "is_removed": false,
             "user": 4,
-            "content_type": 18,
+            "content_type": 17,
             "is_public": true,
             "user_name": "Sam the Vendor",
             "user_email": "doors.example@gmail.com"
@@ -155,7 +137,7 @@
             "site": 1,
             "is_removed": false,
             "user": 2,
-            "content_type": 18,
+            "content_type": 17,
             "is_public": true,
             "user_name": "Amy the Tenant",
             "user_email": "doors.example@gmail.com"
@@ -173,7 +155,7 @@
             "site": 1,
             "is_removed": false,
             "user": 4,
-            "content_type": 18,
+            "content_type": 17,
             "is_public": true,
             "user_name": "Sam the Vendor",
             "user_email": "doors.example@gmail.com"
@@ -191,7 +173,7 @@
             "site": 1,
             "is_removed": false,
             "user": 4,
-            "content_type": 18,
+            "content_type": 17,
             "is_public": true,
             "user_name": "Sam the Vendor",
             "user_email": "doors.example@gmail.com"
@@ -209,7 +191,7 @@
             "site": 1,
             "is_removed": false,
             "user": 3,
-            "content_type": 18,
+            "content_type": 17,
             "is_public": true,
             "user_name": "Bob the Property Manager",
             "user_email": "doors.example@gmail.com"
@@ -227,7 +209,7 @@
             "site": 1,
             "is_removed": false,
             "user": 2,
-            "content_type": 18,
+            "content_type": 17,
             "is_public": true,
             "user_name": "Amy the Tenant",
             "user_email": "doors.example@gmail.com"
@@ -245,7 +227,7 @@
             "site": 1,
             "is_removed": false,
             "user": 4,
-            "content_type": 18,
+            "content_type": 17,
             "is_public": true,
             "user_name": "Sam the Vendor",
             "user_email": "doors.example@gmail.com"
@@ -263,7 +245,7 @@
             "site": 1,
             "is_removed": false,
             "user": 3,
-            "content_type": 18,
+            "content_type": 17,
             "is_public": true,
             "user_name": "Bob the Property Manager",
             "user_email": "doors.example@gmail.com"
@@ -281,7 +263,7 @@
             "site": 1,
             "is_removed": false,
             "user": 2,
-            "content_type": 18,
+            "content_type": 17,
             "is_public": true,
             "user_name": "Amy the Tenant",
             "user_email": "doors.example@gmail.com"
@@ -299,7 +281,7 @@
             "site": 1,
             "is_removed": false,
             "user": 2,
-            "content_type": 18,
+            "content_type": 17,
             "is_public": true,
             "user_name": "Amy the Tenant",
             "user_email": "doors.example@gmail.com"
@@ -333,14 +315,14 @@
             "building": "",
             "room": "",
             "floor": "",
-            "created": "2012-03-16T19:04:03.418Z",
-            "modified": "2012-03-16T19:04:03.418Z",
-            "phone": "",
-            "place": null,
-            "user": 3,
-            "doors_group": 2,
+            "created": "2012-03-16T19:03:50.212Z",
+            "modified": "2012-03-30T22:35:36.681Z",
+            "phone": "555-123-4567",
+            "place": 1,
+            "user": 2,
+            "doors_group": 3,
             "user_types": [
-                2
+                1
             ]
         }
     },
@@ -352,14 +334,14 @@
             "building": "",
             "room": "",
             "floor": "",
-            "created": "2012-03-16T19:04:15.134Z",
-            "modified": "2012-03-16T19:04:15.135Z",
+            "created": "2012-03-16T19:04:03.418Z",
+            "modified": "2012-03-16T19:04:03.418Z",
             "phone": "",
             "place": null,
-            "user": 5,
-            "doors_group": 4,
+            "user": 3,
+            "doors_group": 2,
             "user_types": [
-                3
+                2
             ]
         }
     },
@@ -383,44 +365,21 @@
         }
     },
     {
-        "pk": 10,
+        "pk": 5,
         "model": "doors.userprofile",
         "fields": {
             "comment": "",
             "building": "",
             "room": "",
             "floor": "",
-            "created": "2012-03-29T07:29:16.137Z",
-            "modified": "2012-03-29T08:15:15.877Z",
+            "created": "2012-03-16T19:04:15.134Z",
+            "modified": "2012-03-16T19:04:15.135Z",
             "phone": "",
             "place": null,
-            "user": 1,
-            "doors_group": 1,
+            "user": 5,
+            "doors_group": 4,
             "user_types": [
-                1,
-                2,
-                3,
-                4,
-                5
-            ]
-        }
-    },
-    {
-        "pk": 1,
-        "model": "doors.userprofile",
-        "fields": {
-            "comment": "",
-            "building": "",
-            "room": "",
-            "floor": "",
-            "created": "2012-03-16T19:03:50.212Z",
-            "modified": "2012-03-30T22:35:36.681Z",
-            "phone": "555-123-4567",
-            "place": 1,
-            "user": 2,
-            "doors_group": 3,
-            "user_types": [
-                1
+                3
             ]
         }
     },

@@ -1,16 +1,16 @@
 from django.db import models
 from django.forms import ModelForm
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
-
-from django.contrib import messages
 from django.contrib.comments.models import Comment
+
+# Signals
 from django.contrib.comments.signals import comment_was_posted
+from django.db.models.signals import post_syncdb
+from doors.signals import add_can_view, comment_posted
 
-def comment_posted( sender, comment = None, request = None, **kwargs ) :
-    messages.add_message( request, messages.SUCCESS, "You comment has been posted!" )
-
+post_syncdb.connect( add_can_view, dispatch_uid = 'doors.models' )
 comment_was_posted.connect( comment_posted )
 
 class DoorsGroup( models.Model ) :
@@ -94,7 +94,7 @@ class UserType( models.Model ) :
 class UserProfile( models.Model ) :
     def __unicode__( self ) :
         return "{username} - {full_name}".format(
-            username   = self.user.username,
+            username  = self.user.username,
             full_name = self.user.get_full_name()
         )
 
@@ -137,6 +137,11 @@ class Vendor( models.Model ) :
     modified         = models.DateTimeField( auto_now = True )
 
 class Order( models.Model ) :
+    class Meta :
+        permissions = (
+            ( 'manage_order', "Can change the status of orders" ),
+        )
+
     def __unicode__( self ) :
         return unicode( self.pk )
 
