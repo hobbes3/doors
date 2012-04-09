@@ -1,20 +1,20 @@
 [
     {
-        "pk": 5,
+        "pk": 3,
         "model": "auth.user",
         "fields": {
-            "username": "jane",
-            "first_name": "Jane",
-            "last_name": "the Property Owner",
+            "username": "bob",
+            "first_name": "Bob",
+            "last_name": "the Property Manager",
             "is_active": true,
             "is_superuser": false,
             "is_staff": false,
-            "last_login": "2012-03-15T21:33:57Z",
+            "last_login": "2012-03-30T05:56:19Z",
             "groups": [],
             "user_permissions": [],
-            "password": "pbkdf2_sha256$10000$gMiYLWyakQte$aBHAeIMH/w5+tfwv3PMPrZky1seZcQMCoOqk9wka+Dw=",
+            "password": "pbkdf2_sha256$10000$X9eHdFaE7M31$zLROWLOayw2+CypDXTS6kFgFT7non9nQfhhNEeGlN/c=",
             "email": "doors.example@gmail.com",
-            "date_joined": "2012-03-15T21:33:57Z"
+            "date_joined": "2012-03-15T21:32:51Z"
         }
     },
     {
@@ -36,7 +36,79 @@
         }
     },
     {
-        "pk": 2,
+        "pk": 5,
+        "model": "auth.user",
+        "fields": {
+            "username": "jane",
+            "first_name": "Jane",
+            "last_name": "the Property Owner",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2012-03-15T21:33:57Z",
+            "groups": [],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$10000$gMiYLWyakQte$aBHAeIMH/w5+tfwv3PMPrZky1seZcQMCoOqk9wka+Dw=",
+            "email": "doors.example@gmail.com",
+            "date_joined": "2012-03-15T21:33:57Z"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "auth.user",
+        "fields": {
+            "username": "alex",
+            "first_name": "Alex",
+            "last_name": "the Tenant",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2012-04-09T06:23:34Z",
+            "groups": [],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$10000$t75KB2NQCJWF$3seiuYFtgYDGqwFjRsIpzxh6QlSZkB5UeBXyyhpOJrQ=",
+            "email": "doors.example@gmail.com",
+            "date_joined": "2012-04-09T06:23:34Z"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "auth.user",
+        "fields": {
+            "username": "rob",
+            "first_name": "Rob",
+            "last_name": "the Vendor Manager",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2012-04-09T07:13:32.404Z",
+            "groups": [],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$10000$X2hXcYIIfzVZ$GXI86IBSnO4UoMiDqAsepLlXBqvHd12TJ9VcQrCD50A=",
+            "email": "doors.example@gmail.com",
+            "date_joined": "2012-04-09T07:13:32.404Z"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "auth.user",
+        "fields": {
+            "username": "max",
+            "first_name": "Max",
+            "last_name": "the Property Owner",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2012-04-09T07:13:32.404Z",
+            "groups": [],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$10000$BEVQyKRIumO2$HvlEz0FqzoofnHJ7wKLQP0hra2zqrgOH7KTaocseKT4=",
+            "email": "doors.example@gmail.com",
+            "date_joined": "2012-04-09T07:13:32.404Z"
+        }
+    },
+    {
+        "pk": 9,
         "model": "auth.user",
         "fields": {
             "username": "amy",
@@ -54,279 +126,7 @@
         }
     },
     {
-        "pk": 1,
-        "model": "auth.user",
-        "fields": {
-            "username": "hobbes3",
-            "first_name": "Satoshi",
-            "last_name": "Kawasaki",
-            "is_active": true,
-            "is_superuser": true,
-            "is_staff": true,
-            "last_login": "2012-03-30T22:35:10.514Z",
-            "groups": [],
-            "user_permissions": [],
-            "password": "pbkdf2_sha256$10000$M5khDD4qeAS3$v+O8UdahfeRbYgmBdqb1z/9XqurT58yHjgeyH4H63kM=",
-            "email": "hobbes3@gmail.com",
-            "date_joined": "2012-03-12T01:34:27Z"
-        }
-    },
-    {
         "pk": 3,
-        "model": "auth.user",
-        "fields": {
-            "username": "bob",
-            "first_name": "Bob",
-            "last_name": "the Property Manager",
-            "is_active": true,
-            "is_superuser": false,
-            "is_staff": false,
-            "last_login": "2012-03-30T05:56:19Z",
-            "groups": [],
-            "user_permissions": [],
-            "password": "pbkdf2_sha256$10000$X9eHdFaE7M31$zLROWLOayw2+CypDXTS6kFgFT7non9nQfhhNEeGlN/c=",
-            "email": "doors.example@gmail.com",
-            "date_joined": "2012-03-15T21:32:51Z"
-        }
-    },
-    {
-        "pk": 14,
-        "model": "comments.comment",
-        "fields": {
-            "comment": "It's leaking a lot! I have to dump out the bucket that catches the leak like every 12 hours!",
-            "user_url": "",
-            "submit_date": "2012-03-27T22:13:28Z",
-            "ip_address": "127.0.0.1",
-            "object_pk": "1",
-            "site": 1,
-            "is_removed": false,
-            "user": 2,
-            "content_type": 18,
-            "is_public": true,
-            "user_name": "",
-            "user_email": ""
-        }
-    },
-    {
-        "pk": 15,
-        "model": "comments.comment",
-        "fields": {
-            "comment": "Thank you for letting me know. I'll get a vendor to fix it asap.",
-            "user_url": "",
-            "submit_date": "2012-03-28T04:13:47Z",
-            "ip_address": "127.0.0.1",
-            "object_pk": "1",
-            "site": 1,
-            "is_removed": false,
-            "user": 3,
-            "content_type": 18,
-            "is_public": true,
-            "user_name": "Satoshi Kawasaki",
-            "user_email": "hobbes3@gmail.com"
-        }
-    },
-    {
-        "pk": 18,
-        "model": "comments.comment",
-        "fields": {
-            "comment": "Hey thanks for contacting me, Bob. When are you available, Amy?",
-            "user_url": "",
-            "submit_date": "2012-03-30T22:26:37.868Z",
-            "ip_address": "127.0.0.1",
-            "object_pk": "1",
-            "site": 1,
-            "is_removed": false,
-            "user": 4,
-            "content_type": 18,
-            "is_public": true,
-            "user_name": "Sam the Vendor",
-            "user_email": "doors.example@gmail.com"
-        }
-    },
-    {
-        "pk": 19,
-        "model": "comments.comment",
-        "fields": {
-            "comment": "I can see you from 3 to 6 pm tomorrow. Is that ok?",
-            "user_url": "",
-            "submit_date": "2012-03-30T22:26:53Z",
-            "ip_address": "127.0.0.1",
-            "object_pk": "1",
-            "site": 1,
-            "is_removed": false,
-            "user": 2,
-            "content_type": 18,
-            "is_public": true,
-            "user_name": "Amy the Tenant",
-            "user_email": "doors.example@gmail.com"
-        }
-    },
-    {
-        "pk": 20,
-        "model": "comments.comment",
-        "fields": {
-            "comment": "Ok I'll be there at 4 pm tomorrow. See you then. The estimated price for fixing a leak is $200.",
-            "user_url": "",
-            "submit_date": "2012-03-30T22:27:02.691Z",
-            "ip_address": "127.0.0.1",
-            "object_pk": "1",
-            "site": 1,
-            "is_removed": false,
-            "user": 4,
-            "content_type": 18,
-            "is_public": true,
-            "user_name": "Sam the Vendor",
-            "user_email": "doors.example@gmail.com"
-        }
-    },
-    {
-        "pk": 21,
-        "model": "comments.comment",
-        "fields": {
-            "comment": "Bob, I looked at the situation and I can fix the leak for around $150. Is that ok?",
-            "user_url": "",
-            "submit_date": "2012-03-30T22:27:11.880Z",
-            "ip_address": "127.0.0.1",
-            "object_pk": "1",
-            "site": 1,
-            "is_removed": false,
-            "user": 4,
-            "content_type": 18,
-            "is_public": true,
-            "user_name": "Sam the Vendor",
-            "user_email": "doors.example@gmail.com"
-        }
-    },
-    {
-        "pk": 22,
-        "model": "comments.comment",
-        "fields": {
-            "comment": "Ya, sure that's fine. Please go ahead and make another appointment with Amy then.",
-            "user_url": "",
-            "submit_date": "2012-03-30T22:27:21Z",
-            "ip_address": "127.0.0.1",
-            "object_pk": "1",
-            "site": 1,
-            "is_removed": false,
-            "user": 3,
-            "content_type": 18,
-            "is_public": true,
-            "user_name": "Bob the Property Manager",
-            "user_email": "doors.example@gmail.com"
-        }
-    },
-    {
-        "pk": 23,
-        "model": "comments.comment",
-        "fields": {
-            "comment": "Okay come again the same time tomorrow then.",
-            "user_url": "",
-            "submit_date": "2012-03-30T22:27:30Z",
-            "ip_address": "127.0.0.1",
-            "object_pk": "1",
-            "site": 1,
-            "is_removed": false,
-            "user": 2,
-            "content_type": 18,
-            "is_public": true,
-            "user_name": "Amy the Tenant",
-            "user_email": "doors.example@gmail.com"
-        }
-    },
-    {
-        "pk": 24,
-        "model": "comments.comment",
-        "fields": {
-            "comment": "The leak is fixed. The total bill is $154.65. Thanks for the business!",
-            "user_url": "",
-            "submit_date": "2012-03-30T22:27:38.427Z",
-            "ip_address": "127.0.0.1",
-            "object_pk": "1",
-            "site": 1,
-            "is_removed": false,
-            "user": 4,
-            "content_type": 18,
-            "is_public": true,
-            "user_name": "Sam the Vendor",
-            "user_email": "doors.example@gmail.com"
-        }
-    },
-    {
-        "pk": 25,
-        "model": "comments.comment",
-        "fields": {
-            "comment": "Amy, is everything fixed now?",
-            "user_url": "",
-            "submit_date": "2012-03-30T22:27:46Z",
-            "ip_address": "127.0.0.1",
-            "object_pk": "1",
-            "site": 1,
-            "is_removed": false,
-            "user": 3,
-            "content_type": 18,
-            "is_public": true,
-            "user_name": "Bob the Property Manager",
-            "user_email": "doors.example@gmail.com"
-        }
-    },
-    {
-        "pk": 26,
-        "model": "comments.comment",
-        "fields": {
-            "comment": "Yes, thank you!",
-            "user_url": "",
-            "submit_date": "2012-03-30T22:27:53Z",
-            "ip_address": "127.0.0.1",
-            "object_pk": "1",
-            "site": 1,
-            "is_removed": false,
-            "user": 2,
-            "content_type": 18,
-            "is_public": true,
-            "user_name": "Amy the Tenant",
-            "user_email": "doors.example@gmail.com"
-        }
-    },
-    {
-        "pk": 27,
-        "model": "comments.comment",
-        "fields": {
-            "comment": "I think the A/C is broken. It doesn't seem to blow cold air anymore.",
-            "user_url": "",
-            "submit_date": "2012-03-30T22:33:02.556Z",
-            "ip_address": "127.0.0.1",
-            "object_pk": "2",
-            "site": 1,
-            "is_removed": false,
-            "user": 2,
-            "content_type": 18,
-            "is_public": true,
-            "user_name": "Amy the Tenant",
-            "user_email": "doors.example@gmail.com"
-        }
-    },
-    {
-        "pk": 1,
-        "model": "doors.place",
-        "fields": {
-            "comment": "",
-            "city": "Atlanta",
-            "name": "The Red House",
-            "created": "2012-03-16T19:05:19.719Z",
-            "state": "GA",
-            "place_type": "s",
-            "modified": "2012-03-16T19:05:19.719Z",
-            "website": "",
-            "phone": "",
-            "manager": 3,
-            "owner": 5,
-            "address_line_one": "123 Easy St.",
-            "address_line_two": "",
-            "zip_code": "30021"
-        }
-    },
-    {
-        "pk": 2,
         "model": "doors.userprofile",
         "fields": {
             "comment": "",
@@ -338,28 +138,8 @@
             "phone": "",
             "place": null,
             "user": 3,
-            "doors_group": 2,
             "user_types": [
-                2
-            ]
-        }
-    },
-    {
-        "pk": 3,
-        "model": "doors.userprofile",
-        "fields": {
-            "comment": "",
-            "building": "",
-            "room": "",
-            "floor": "",
-            "created": "2012-03-16T19:04:15.134Z",
-            "modified": "2012-03-16T19:04:15.135Z",
-            "phone": "",
-            "place": null,
-            "user": 5,
-            "doors_group": 4,
-            "user_types": [
-                3
+                4
             ]
         }
     },
@@ -376,37 +156,88 @@
             "phone": "",
             "place": null,
             "user": 4,
-            "doors_group": 5,
             "user_types": [
-                4
+                7
             ]
         }
     },
     {
-        "pk": 10,
+        "pk": 5,
         "model": "doors.userprofile",
         "fields": {
             "comment": "",
             "building": "",
             "room": "",
             "floor": "",
-            "created": "2012-03-29T07:29:16.137Z",
-            "modified": "2012-03-29T08:15:15.877Z",
+            "created": "2012-03-16T19:04:15.134Z",
+            "modified": "2012-03-16T19:04:15.135Z",
             "phone": "",
             "place": null,
-            "user": 1,
-            "doors_group": 1,
+            "user": 5,
             "user_types": [
-                1,
-                2,
-                3,
-                4,
                 5
             ]
         }
     },
     {
-        "pk": 1,
+        "pk": 6,
+        "model": "doors.userprofile",
+        "fields": {
+            "comment": "",
+            "building": "",
+            "room": "",
+            "place_status": "a",
+            "floor": "",
+            "created": "2012-04-09T06:24:46.748Z",
+            "modified": "2012-04-09T06:24:46.748Z",
+            "phone": "",
+            "place": 2,
+            "user": 6,
+            "user_types": [
+                8
+            ]
+        }
+    },
+    {
+        "pk": 7,
+        "model": "doors.userprofile",
+        "fields": {
+            "comment": "",
+            "building": "",
+            "room": "",
+            "place_status": "n",
+            "floor": "",
+            "created": "2012-04-09T06:24:46.748Z",
+            "modified": "2012-04-09T06:24:46.748Z",
+            "phone": "",
+            "place": null,
+            "user": 7,
+            "user_types": [
+                6
+            ]
+        }
+    },
+    {
+        "pk": 8,
+        "model": "doors.userprofile",
+        "fields": {
+            "comment": "",
+            "building": "",
+            "room": "",
+            "place_status": "n",
+            "floor": "",
+            "created": "2012-04-09T06:24:46.748Z",
+            "modified": "2012-04-09T06:24:46.748Z",
+            "phone": "",
+            "place": null,
+            "user": 8,
+            "user_types": [
+                5
+            ]
+        }
+    },
+    {
+        "pk": 9,
         "model": "doors.userprofile",
         "fields": {
             "comment": "",
@@ -417,11 +248,58 @@
             "modified": "2012-03-30T22:35:36.681Z",
             "phone": "555-123-4567",
             "place": 1,
-            "user": 2,
-            "doors_group": 3,
+            "user": 9,
             "user_types": [
-                1
+                8
             ]
+        }
+    },
+    {
+        "pk": 1,
+        "model": "doors.place",
+        "fields": {
+            "comment": "",
+            "city": "Atlanta",
+            "name": "The Red House",
+            "created": "2012-03-16T19:05:19.719Z",
+            "state": "GA",
+            "place_type": "s",
+            "modified": "2012-03-16T19:05:19.719Z",
+            "website": "",
+            "phone": "",
+            "managers": [
+                3
+            ],
+            "owners": [
+                5
+            ],
+            "address_line_one": "123 Easy St.",
+            "address_line_two": "",
+            "zip_code": "30021"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "doors.place",
+        "fields": {
+            "comment": "",
+            "city": "Atlanta",
+            "name": "The Blue House",
+            "created": "2012-03-16T19:05:19.719Z",
+            "state": "GA",
+            "place_type": "s",
+            "modified": "2012-03-16T19:05:19.719Z",
+            "website": "",
+            "phone": "",
+            "managers": [
+                3
+            ],
+            "owners": [
+                8
+            ],
+            "address_line_one": "6789 Hard St.",
+            "address_line_two": "",
+            "zip_code": "30021"
         }
     },
     {
@@ -434,6 +312,9 @@
             "city": "Clarkston",
             "created": "2012-03-16T19:06:16.991Z",
             "modified": "2012-03-30T16:08:08.649Z",
+            "managers": [
+                7
+            ],
             "representatives": [
                 4
             ],
@@ -453,7 +334,7 @@
             "status": "c",
             "work_type": "pl",
             "vendor": 1,
-            "creator": 2,
+            "creator": 9,
             "second_appointment": "2012-03-19T17:45:33Z",
             "quote": "200.00",
             "approver": 3,
@@ -464,7 +345,8 @@
             "work_done": "2012-03-22T20:45:35Z",
             "first_appointment": "2012-03-18T20:45:32Z",
             "action": "2012-03-16T19:09:49Z",
-            "payment": "154.65"
+            "payment": "154.65",
+            "place": 1
         }
     },
     {
@@ -475,7 +357,7 @@
             "status": "a",
             "work_type": "hc",
             "vendor": null,
-            "creator": 2,
+            "creator": 9,
             "second_appointment": null,
             "quote": null,
             "approver": 3,
@@ -486,7 +368,247 @@
             "work_done": null,
             "first_appointment": null,
             "action": "2012-03-30T16:32:06Z",
-            "payment": null
+            "payment": null,
+            "place": 1
+        }
+    },
+    {
+        "pk": 3,
+        "model": "doors.order",
+        "fields": {
+            "comment": "The back door is broken.",
+            "status": "a",
+            "work_type": "ex",
+            "vendor": null,
+            "creator": 6,
+            "second_appointment": null,
+            "quote": null,
+            "approver": 3,
+            "modified": "2012-03-30T16:32:12.897Z",
+            "paid": null,
+            "created": "2012-03-16T21:01:08.057Z",
+            "follow_up": null,
+            "work_done": null,
+            "first_appointment": null,
+            "action": "2012-03-30T16:32:06Z",
+            "payment": null,
+            "place": 2
+        }
+    },
+    {
+        "pk": 1,
+        "model": "comments.comment",
+        "fields": {
+            "comment": "It's leaking a lot! I have to dump out the bucket that catches the leak like every 12 hours!",
+            "user_url": "",
+            "submit_date": "2012-03-27T22:13:28Z",
+            "ip_address": "127.0.0.1",
+            "object_pk": "1",
+            "site": 1,
+            "is_removed": false,
+            "user": 9,
+            "content_type": 16,
+            "is_public": true,
+            "user_name": "",
+            "user_email": ""
+        }
+    },
+    {
+        "pk": 2,
+        "model": "comments.comment",
+        "fields": {
+            "comment": "Thank you for letting me know. I'll get a vendor to fix it asap.",
+            "user_url": "",
+            "submit_date": "2012-03-28T04:13:47Z",
+            "ip_address": "127.0.0.1",
+            "object_pk": "1",
+            "site": 1,
+            "is_removed": false,
+            "user": 3,
+            "content_type": 16,
+            "is_public": true,
+            "user_name": "Satoshi Kawasaki",
+            "user_email": "hobbes3@gmail.com"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "comments.comment",
+        "fields": {
+            "comment": "Hey thanks for contacting me, Bob. When are you available, Amy?",
+            "user_url": "",
+            "submit_date": "2012-03-30T22:26:37.868Z",
+            "ip_address": "127.0.0.1",
+            "object_pk": "1",
+            "site": 1,
+            "is_removed": false,
+            "user": 4,
+            "content_type": 16,
+            "is_public": true,
+            "user_name": "Sam the Vendor",
+            "user_email": "doors.example@gmail.com"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "comments.comment",
+        "fields": {
+            "comment": "I can see you from 3 to 6 pm tomorrow. Is that ok?",
+            "user_url": "",
+            "submit_date": "2012-03-30T22:26:53Z",
+            "ip_address": "127.0.0.1",
+            "object_pk": "1",
+            "site": 1,
+            "is_removed": false,
+            "user": 9,
+            "content_type": 16,
+            "is_public": true,
+            "user_name": "Amy the Tenant",
+            "user_email": "doors.example@gmail.com"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "comments.comment",
+        "fields": {
+            "comment": "Ok I'll be there at 4 pm tomorrow. See you then. The estimated price for fixing a leak is $200.",
+            "user_url": "",
+            "submit_date": "2012-03-30T22:27:02.691Z",
+            "ip_address": "127.0.0.1",
+            "object_pk": "1",
+            "site": 1,
+            "is_removed": false,
+            "user": 4,
+            "content_type": 16,
+            "is_public": true,
+            "user_name": "Sam the Vendor",
+            "user_email": "doors.example@gmail.com"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "comments.comment",
+        "fields": {
+            "comment": "Bob, I looked at the situation and I can fix the leak for around $150. Is that ok?",
+            "user_url": "",
+            "submit_date": "2012-03-30T22:27:11.880Z",
+            "ip_address": "127.0.0.1",
+            "object_pk": "1",
+            "site": 1,
+            "is_removed": false,
+            "user": 4,
+            "content_type": 16,
+            "is_public": true,
+            "user_name": "Sam the Vendor",
+            "user_email": "doors.example@gmail.com"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "comments.comment",
+        "fields": {
+            "comment": "Ya, sure that's fine. Please go ahead and make another appointment with Amy then.",
+            "user_url": "",
+            "submit_date": "2012-03-30T22:27:21Z",
+            "ip_address": "127.0.0.1",
+            "object_pk": "1",
+            "site": 1,
+            "is_removed": false,
+            "user": 3,
+            "content_type": 16,
+            "is_public": true,
+            "user_name": "Bob the Property Manager",
+            "user_email": "doors.example@gmail.com"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "comments.comment",
+        "fields": {
+            "comment": "Okay come again the same time tomorrow then.",
+            "user_url": "",
+            "submit_date": "2012-03-30T22:27:30Z",
+            "ip_address": "127.0.0.1",
+            "object_pk": "1",
+            "site": 1,
+            "is_removed": false,
+            "user": 9,
+            "content_type": 16,
+            "is_public": true,
+            "user_name": "Amy the Tenant",
+            "user_email": "doors.example@gmail.com"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "comments.comment",
+        "fields": {
+            "comment": "The leak is fixed. The total bill is $154.65. Thanks for the business!",
+            "user_url": "",
+            "submit_date": "2012-03-30T22:27:38.427Z",
+            "ip_address": "127.0.0.1",
+            "object_pk": "1",
+            "site": 1,
+            "is_removed": false,
+            "user": 4,
+            "content_type": 16,
+            "is_public": true,
+            "user_name": "Sam the Vendor",
+            "user_email": "doors.example@gmail.com"
+        }
+    },
+    {
+        "pk": 10,
+        "model": "comments.comment",
+        "fields": {
+            "comment": "Amy, is everything fixed now?",
+            "user_url": "",
+            "submit_date": "2012-03-30T22:27:46Z",
+            "ip_address": "127.0.0.1",
+            "object_pk": "1",
+            "site": 1,
+            "is_removed": false,
+            "user": 3,
+            "content_type": 16,
+            "is_public": true,
+            "user_name": "Bob the Property Manager",
+            "user_email": "doors.example@gmail.com"
+        }
+    },
+    {
+        "pk": 11,
+        "model": "comments.comment",
+        "fields": {
+            "comment": "Yes, thank you!",
+            "user_url": "",
+            "submit_date": "2012-03-30T22:27:53Z",
+            "ip_address": "127.0.0.1",
+            "object_pk": "1",
+            "site": 1,
+            "is_removed": false,
+            "user": 9,
+            "content_type": 16,
+            "is_public": true,
+            "user_name": "Amy the Tenant",
+            "user_email": "doors.example@gmail.com"
+        }
+    },
+    {
+        "pk": 12,
+        "model": "comments.comment",
+        "fields": {
+            "comment": "I think the A/C is broken. It doesn't seem to blow cold air anymore.",
+            "user_url": "",
+            "submit_date": "2012-03-30T22:33:02.556Z",
+            "ip_address": "127.0.0.1",
+            "object_pk": "2",
+            "site": 1,
+            "is_removed": false,
+            "user": 9,
+            "content_type": 16,
+            "is_public": true,
+            "user_name": "Amy the Tenant",
+            "user_email": "doors.example@gmail.com"
         }
     }
 ]

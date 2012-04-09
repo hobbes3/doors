@@ -7,9 +7,26 @@ Name: {{ place.name }}<br />
 Phone: {{ place.phone|default:"None" }}<br />
 Website: {{ place.website|default:"None" }}<br />
 Category: {{ place.get_place_type_display }}<br />
-Manager: <a href="{% url users_detail pk=place.manager.pk %}">{{ place.manager.get_full_name }}</a><br />
-Owner: <a href="{% url users_detail pk=place.owner.pk %}">{{ place.owner.get_full_name }}</a><br />
-<br />
+Owners:
+<ul>
+    {% if place.owners.all %}
+        {% for owner in place.owners.all %}
+            <li><a href="{% url users_detail pk=owner.pk %}">{{ owner.get_full_name }}</a></li>
+        {% endfor %}
+    {% else %}
+        <li>No owners.</li>
+    {% endif %}
+</ul>
+Managers:
+<ul>
+    {% if place.managers.all %}
+        {% for manager in place.managers.all %}
+            <li><a href="{% url users_detail pk=manager.pk %}">{{ manager.get_full_name }}</a></li>
+        {% endfor %}
+    {% else %}
+        <li>No managers.</li>
+    {% endif %}
+</ul>
 Residents: <br />
     <ul>
     {% if place.userprofile_set.all %}

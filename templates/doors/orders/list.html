@@ -3,13 +3,30 @@
 {% block title %}List orders{% endblock %}
 
 {% block content %}
-<ul>
-    {% if order_list %}
+{% if is_paginated %}
+    <div class="pagination">
+        <span class="page-links">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            {% endif %}
+                <span class="page-current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">Next</a>
+            {% endif %}
+        </span>
+    </div>
+{% endif %}
+
+{{ all_orders_count }} total orders on Doors.<br />
+Your permission level results in {{ order_list.count|default:0 }} viewable order{{ order_list.count|pluralize }}.
+
+{% if order_list %}
+    <ul>
         {% for order in order_list %}
             <li><a href="{% url orders_detail pk=order.pk %}">{{ order.pk }}: [ {{ order.created }} ] {{ order.creator.get_full_name }}</a></li>
         {% endfor %}
-    {% else %}
-        <li>There are no orders.</li>
-    {% endif %}
-</ul>
+    </ul>
+{% endif %}
 {% endblock %}
