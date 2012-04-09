@@ -3,3 +3,4 @@ settings.py
 /site-packages
 migrations/
 /sql/
+/static/
