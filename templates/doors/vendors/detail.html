@@ -16,6 +16,16 @@ Address:<br />
 {% endif %}
 {{ vendor.city }}, {{ vendor.state }} {{vendor.zip_code }}<br />
 <br />
+Managers:
+<ul>
+    {% if vendor.managers.all %}
+        {% for manager in vendor.managers.all %}
+            <li><a href="{% url users_detail pk=manager.pk %}">{{ manager.get_full_name }}</a></li>
+        {% endfor %}
+    {% else %}
+        <li>No managers.</li>
+    {% endif %}
+</ul>
 Representatives:
 <ul>
     {% if vendor.representatives.all %}

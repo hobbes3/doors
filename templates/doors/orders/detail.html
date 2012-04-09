@@ -5,12 +5,7 @@
 {% block content %}
 
 Order #{{ order.pk }}<br />
-Place:
-    {% if order.creator.profile.place %}
-        <a href="{% url places_detail pk=order.creator.profile.place.pk %}">{{ order.creator.profile.place.name }}</a>
-    {% else %}
-        None.
-    {% endif %}<br />
+Property: <a href="{% url places_detail pk=order.place.pk %}">{{ order.place.name }}</a><br />
 Work type: {{ order.get_work_type_display }}<br />
 Created by <a href="{% url users_detail pk=order.creator.pk %}">{{ order.creator.get_full_name }}</a><br />
 Created on {{ order.created }}<br />

@@ -1,21 +1,10 @@
 from django.contrib import admin
 from doors.models import *
 
-class DoorsGroupAdmin( admin.ModelAdmin ) :
-    list_display = (
-        'name',
-        'comment',
-        'created',
-        'modified',
-    )
-    search_fields = ( 'name', )
-
 class PlaceAdmin( admin.ModelAdmin ) :
     list_display = (
         'name',
         'place_type',
-        'owner',
-        'manager',
         'tenant_count',
         'address_line_one',
         'address_line_two',
@@ -27,21 +16,22 @@ class PlaceAdmin( admin.ModelAdmin ) :
         'created',
         'modified',
     )
-    list_filter = ( 'owner', 'manager', 'city', 'zip_code', 'state', )
-    search_fields = ( 'name', 'owner', 'manager', 'address_line_one', )
+    list_filter = ( 'owners', 'managers', 'city', 'zip_code', 'state', )
+    search_fields = ( 'name', 'owners', 'managers', 'address_line_one', )
+    filter_horizontal = ( 'owners', 'managers', )
 
 class UserTypeAdmin( admin.ModelAdmin ) :
-    list_display = ( 'name', )
+    list_display = ( 'name', 'user_count', )
 
 class UserProfileAdmin( admin.ModelAdmin ) :
     list_display = (
         'user',
-        'doors_group',
         'place',
+        'comment_count',
         'created',
         'modified',
     )
-    list_filter = ( 'doors_group', 'place', )
+    list_filter = ( 'place', )
     filter_horizontal = ( 'user_types', )
     search_fields = ( 'email', 'first_name', 'last_name', )
 
@@ -59,7 +49,7 @@ class VendorAdmin( admin.ModelAdmin ) :
         'modified',
     )
     list_filter = ( 'city', 'state', 'zip_code', )
-    filter_horizontal = ( 'representatives', )
+    filter_horizontal = ( 'managers', 'representatives', )
     search_fields = ( 'name', 'email', 'phone', 'address_line_one', )
 
 class OrderAdmin( admin.ModelAdmin ) :
@@ -67,6 +57,7 @@ class OrderAdmin( admin.ModelAdmin ) :
         'id',
         'creator',
         'approver',
+        'place',
         'action',
         'next_step',
         'comment_count',
@@ -86,24 +77,10 @@ class OrderAdmin( admin.ModelAdmin ) :
         'modified',
     )
     date_hierarchy = 'created'
-    search_fields = ( 'creator', 'manager', 'comment', )
+    search_fields = ( 'place', 'creator', 'manager', 'comment', )
 
-class LogAdmin( admin.ModelAdmin ) :
-    list_display = (
-        'id',
-        'log_type',
-        'created',
-        'user',
-        'message',
-    )
-    list_filter    = ( 'log_type', 'user', 'created', )
-    date_hierarchy = 'created'
-    search_fields  = ( 'message', )
-
-admin.site.register( UserProfile , UserProfileAdmin  )
-admin.site.register( UserType    , UserTypeAdmin     )
-admin.site.register( Order       , OrderAdmin        )
-admin.site.register( DoorsGroup  , DoorsGroupAdmin   )
-admin.site.register( Place       , PlaceAdmin        )
-admin.site.register( Vendor      , VendorAdmin       )
-admin.site.register( Log         , LogAdmin          )
+admin.site.register( UserProfile , UserProfileAdmin )
+admin.site.register( UserType    , UserTypeAdmin    )
+admin.site.register( Order       , OrderAdmin       )
+admin.site.register( Place       , PlaceAdmin       )
+admin.site.register( Vendor      , VendorAdmin      )
