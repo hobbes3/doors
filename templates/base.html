@@ -1,6 +1,18 @@
 <html>
 <head>
     <title>Doors - the property maintenance app - {% block title %}{% endblock %}</title>
+
+    <script src="{{ STATIC_URL }}js/jquery-1.7.2.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        if(typeof console === 'undefined') {
+            console = {
+                log:  function() {},
+                warn: function() {},
+                info: function() {}
+            }
+        }
+    </script>
+    {% block head %}{% endblock %}
 </head>
 <body>
     <ul>

@@ -1,7 +1,7 @@
 from django.contrib import admin
-from doors.models import *
+from doors.models import Place, UserType, UserProfile, Vendor, Order
 
-class PlaceAdmin( admin.ModelAdmin ) :
+class PlaceAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'place_type',
@@ -16,14 +16,14 @@ class PlaceAdmin( admin.ModelAdmin ) :
         'created',
         'modified',
     )
-    list_filter = ( 'owners', 'managers', 'city', 'zip_code', 'state', )
-    search_fields = ( 'name', 'owners', 'managers', 'address_line_one', )
-    filter_horizontal = ( 'owners', 'managers', )
+    list_filter = ('owners', 'managers', 'city', 'zip_code', 'state',)
+    search_fields = ('name', 'owners', 'managers', 'address_line_one',)
+    filter_horizontal = ('owners', 'managers',)
 
-class UserTypeAdmin( admin.ModelAdmin ) :
-    list_display = ( 'name', 'user_count', )
+class UserTypeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'user_count',)
 
-class UserProfileAdmin( admin.ModelAdmin ) :
+class UserProfileAdmin(admin.ModelAdmin):
     list_display = (
         'user',
         'place',
@@ -31,11 +31,11 @@ class UserProfileAdmin( admin.ModelAdmin ) :
         'created',
         'modified',
     )
-    list_filter = ( 'place', )
-    filter_horizontal = ( 'user_types', )
-    search_fields = ( 'email', 'first_name', 'last_name', )
+    list_filter = ('place',)
+    filter_horizontal = ('user_types',)
+    search_fields = ('email', 'first_name', 'last_name',)
 
-class VendorAdmin( admin.ModelAdmin ) :
+class VendorAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'email',
@@ -48,11 +48,11 @@ class VendorAdmin( admin.ModelAdmin ) :
         'created',
         'modified',
     )
-    list_filter = ( 'city', 'state', 'zip_code', )
-    filter_horizontal = ( 'managers', 'representatives', )
-    search_fields = ( 'name', 'email', 'phone', 'address_line_one', )
+    list_filter = ('city', 'state', 'zip_code',)
+    filter_horizontal = ('managers', 'representatives',)
+    search_fields = ('name', 'email', 'phone', 'address_line_one',)
 
-class OrderAdmin( admin.ModelAdmin ) :
+class OrderAdmin(admin.ModelAdmin):
     list_display  = (
         'id',
         'creator',
@@ -77,10 +77,10 @@ class OrderAdmin( admin.ModelAdmin ) :
         'modified',
     )
     date_hierarchy = 'created'
-    search_fields = ( 'place', 'creator', 'manager', 'comment', )
+    search_fields = ('place', 'creator', 'manager', 'comment',)
 
-admin.site.register( UserProfile , UserProfileAdmin )
-admin.site.register( UserType    , UserTypeAdmin    )
-admin.site.register( Order       , OrderAdmin       )
-admin.site.register( Place       , PlaceAdmin       )
-admin.site.register( Vendor      , VendorAdmin      )
+admin.site.register(UserProfile, UserProfileAdmin)
+admin.site.register(UserType   , UserTypeAdmin   )
+admin.site.register(Order      , OrderAdmin      )
+admin.site.register(Place      , PlaceAdmin      )
+admin.site.register(Vendor     , VendorAdmin     )

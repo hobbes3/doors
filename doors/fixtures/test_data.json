@@ -130,6 +130,7 @@
         "model": "doors.userprofile",
         "fields": {
             "comment": "",
+            "local_timezone": "east",
             "building": "",
             "room": "",
             "floor": "",
@@ -148,6 +149,7 @@
         "model": "doors.userprofile",
         "fields": {
             "comment": "",
+            "local_timezone": "east",
             "building": "",
             "room": "",
             "floor": "",
@@ -166,6 +168,7 @@
         "model": "doors.userprofile",
         "fields": {
             "comment": "",
+            "local_timezone": "east",
             "building": "",
             "room": "",
             "floor": "",
@@ -184,6 +187,7 @@
         "model": "doors.userprofile",
         "fields": {
             "comment": "",
+            "local_timezone": "east",
             "building": "",
             "room": "",
             "place_status": "a",
@@ -203,6 +207,7 @@
         "model": "doors.userprofile",
         "fields": {
             "comment": "",
+            "local_timezone": "east",
             "building": "",
             "room": "",
             "place_status": "n",
@@ -222,6 +227,7 @@
         "model": "doors.userprofile",
         "fields": {
             "comment": "",
+            "local_timezone": "east",
             "building": "",
             "room": "",
             "place_status": "n",
@@ -241,6 +247,7 @@
         "model": "doors.userprofile",
         "fields": {
             "comment": "",
+            "local_timezone": "east",
             "building": "",
             "room": "",
             "floor": "",
@@ -275,7 +282,8 @@
             ],
             "address_line_one": "123 Easy St.",
             "address_line_two": "",
-            "zip_code": "30021"
+            "zip_code": "30021",
+            "status": "a"
         }
     },
     {
@@ -299,7 +307,8 @@
             ],
             "address_line_one": "6789 Hard St.",
             "address_line_two": "",
-            "zip_code": "30021"
+            "zip_code": "30021",
+            "status": "a"
         }
     },
     {
@@ -379,20 +388,43 @@
             "comment": "The back door is broken.",
             "status": "a",
             "work_type": "ex",
-            "vendor": null,
+            "vendor": 1,
             "creator": 6,
-            "second_appointment": null,
-            "quote": null,
+            "second_appointment": "2012-03-30T16:32:12.897Z",
+            "quote": "70",
             "approver": 3,
             "modified": "2012-03-30T16:32:12.897Z",
             "paid": null,
             "created": "2012-03-16T21:01:08.057Z",
             "follow_up": null,
             "work_done": null,
-            "first_appointment": null,
+            "first_appointment": "2012-03-30T16:32:12.897Z",
             "action": "2012-03-30T16:32:06Z",
-            "payment": null,
+            "payment": "73.45",
             "place": 2
+        }
+    },
+    {
+        "pk": 4,
+        "model": "doors.order",
+        "fields": {
+            "comment": "My cat is on fire!",
+            "status": "p",
+            "work_type": "ot",
+            "vendor": null,
+            "creator": 9,
+            "second_appointment": null,
+            "quote": null,
+            "approver": null,
+            "modified": "2012-03-30T16:32:12.897Z",
+            "paid": null,
+            "created": "2012-03-16T21:01:08.057Z",
+            "follow_up": null,
+            "work_done": null,
+            "first_appointment": null,
+            "action": null,
+            "payment": null,
+            "place": 1
         }
     },
     {

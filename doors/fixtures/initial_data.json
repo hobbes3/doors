@@ -94,6 +94,7 @@
         "model": "doors.userprofile",
         "fields": {
             "comment": "",
+            "local_timezone": "east",
             "building": "",
             "room": "",
             "floor": "",
@@ -137,6 +138,7 @@
         "model": "doors.userprofile",
         "fields": {
             "comment": "",
+            "local_timezone": "east",
             "building": "",
             "room": "",
             "floor": "",

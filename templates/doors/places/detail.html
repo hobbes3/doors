@@ -30,7 +30,7 @@ Managers:
 Residents: <br />
     <ul>
     {% if place.userprofile_set.all %}
-        {% for resident in place.userprofile_set.all %}
+        {% for resident in place.tenant_list %}
             <li><a href="{% url users_detail pk=resident.user.pk %}">{{ resident.user.get_full_name }}</a></li>
         {% endfor %}
     {% else %}

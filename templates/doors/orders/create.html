@@ -2,6 +2,17 @@
 
 {% block title %}Create order{% endblock %}
 
+{% block head %}
+    {% load dajaxice_templatetags %}
+    {% dajaxice_js_import %}
+
+    <script type="text/javascript" charset="utf-8">
+        function something( data ){
+            alert( data );
+        }
+    </script>
+{% endblock %}
+
 {% block content %}
     Create an order
     <br />
@@ -11,26 +22,39 @@
         {{ form.non_field_errors }}
         <div>
             Creator:
-            {% if manager == 1 %}
-                {{ form.creator }}
+            {% if can_assign_creator %}
+                <select id="id_creator" onchange="something(this.options[this.selectedIndex].value)">
+                    <option select="selected" value="">Choose a creator</option>
+                    {% if creator_list %}
+                        {% for creator in creator_list %}
+                            <option value="{{ creator.pk }}">{{ creator.get_full_name }}</option>
+                        {% endfor %}
+                    {% else %}
+                        <option value="">No users available</option>
+                    {% endif %}
+                </select>
             {% else %}
                 <a href="{% url users_detail pk=request.user.pk %}">{{ request.user.get_full_name }}</a>
             {% endif %}
         </div>
         <div>
-            Place:
-            {% if request.user.profile.place %}
-                <a href="{% url places_detail pk=request.user.profile.place.pk %}">{{ request.user.profile.place.name }}</a>
+            Property:
+            {% if can_assign_creator %}
+                <select id="id_approver">
+                    <option select="selected" value="">Choose a creator first</option>
+                </select>
             {% else %}
-                None
+                <a href="{% url places_detail pk=request.user.profile.place.pk %}">{{ request.user.profile.place.name }}</a>
             {% endif %}
         </div>
         <div>
             Approver:
-            {% if approver %}
-                <a href="{% url users_detail pk=approver.pk %}">{{ approver.get_full_name }}</a>
+            {% if can_assign_creator %}
+                <select id="id_approver">
+                    <option select="selected" value="">Choose a creator first</option>
+                </select>
             {% else %}
-                {{ form.approver }}
+                <a href="{% url users_detail pk=approver.pk %}">{{ approver.get_full_name }}</a>
             {% endif %}
         </div>
         <div>
@@ -40,7 +64,7 @@
         </div>
         <div>
             {{ form.comment.errors }}
-            <label for="id_comment">A brief comment:</label><br />
+            <label for="id_comment">A brief comment about the problem:</label><br />
             {{ form.comment }}
         </div>
         <input type="submit" value="Create order" />
