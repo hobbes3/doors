@@ -89,69 +89,78 @@ class SelfUserDetailView(DetailView):
 
 @login_required
 def orders_create(request):
+    def get_order_create_dictionary(user):
+        # Only tenants (with a place), property managers, moderators, and administrators can create orders.
+        # All moderators and administrators can create orders and assign any creators who are either tenants or project managers.
+        if user.profile.has_user_types(['mo', 'ad']):
+            creator_list = User.objects.filter(
+                Q(userprofile__user_types__name='te') |
+                Q(userprofile__user_types__name='pm')
+            ).distinct()
+
+            return {
+                'creator_list': creator_list,
+                'can_assign_creator': 1,
+            }
+        # All property managers can create orders but only assign creators whose property the property manager manages.
+        elif user.profile.has_user_types(['pm']):
+            creator_list = User.objects.filter(
+                Q(userprofile__place__managers=user) |
+                Q(pk=user.pk)
+            )
+
+            return {
+                'creator_list': creator_list,
+                'can_assign_creator': 1,
+            }
+        # Next allow tenants to create orders (and not assign creators).
+        elif user.profile.has_user_types(['te']):
+            # Tenants without a place can't create orders
+            if not user.profile.place:
+                messages.error(request, "As a tenant, you don't have a property assigned to create an order!")
+                return False
+
+            return {
+                'creator_list': None,
+                'can_assign_creator': 0,
+            }
+        # Everyone else left can't create orders.
+        else:
+            messages.error(request, "Only tenants, property managers, moderators, and administrators can create orders!")
+            return False
+
+    user = request.user
+    dictionary = get_order_create_dictionary(user)
+
     if request.method == 'POST':
-        form = OrderCreateForm(request.POST)
+        #import ipdb; ipdb.set_trace()
+
+        form = OrderCreateForm(dictionary['creator_list'], request.POST)
+
         if form.is_valid():
-            creator  = form.cleaned_data['creator' ]
-            approver = form.cleaned_data['approver']
-            comment  = form.cleaned_data['comment' ]
+            creator   = form.cleaned_data['creator']
+            place     = form.cleaned_data['place']
+            work_type = form.cleaned_data['work_type']
+            comment   = form.cleaned_data['comment']
 
             new_order = Order.objects.create(
-                creator =creator,
-                approver=approver,
-                comment =comment
+                creator  =creator,
+                place    =place,
+                work_type=work_type,
+                comment  =comment
             )
 
             messages.success(request, "Your order #{} had been created!".format(new_order.pk))
-            logger.info("{user} created order #{pk}".format(user=request.user, pk=new_order.pk))
+            logger.info("{user} created order #{pk}".format(user=user, pk=new_order.pk))
 
             return HttpResponseRedirect(reverse('orders_detail', kwargs={'pk': new_order.pk}))
         else:
-            dictionary = {'form', form}
-            return render(request, 'doors/orders/create.html', dictionary)
-
-    user = request.user
-
-    # Only tenants (with a place), property managers, moderators, and administrators can create orders.
-    # All moderators and administrators can create orders and assign any creators.
-    if user.profile.has_user_types(['mo', 'ad']):
-        dictionary={
-            'creator_list': User.objects.all(),
-            'form': OrderCreateForm(),
-            'can_assign_creator': 1,
-        }
-
-        return render(request, 'doors/orders/create.html', dictionary)
-    # All property managers can create orders but only assign creators whose property the property manager manages.
-    elif user.profile.has_user_types(['pm']):
-        creator_list = User.objects.filter(
-            Q(userprofile__place__managers=user) |
-            Q(pk=user.pk)
-        )
-
-        dictionary={
-            'creator_list': creator_list,
-            'form': OrderCreateForm(),
-            'can_assign_creator': 1,
-        }
-
-        return render(request, 'doors/orders/create.html', dictionary)
-    # Next allow tenants to create orders (and not assign creators).
-    elif user.profile.has_user_types(['te']):
-        # Tenants without a place can't create orders
-        if not user.profile.place:
-            messages.error(request, "As a tenant, you don't have a property assigned to create an order!")
-
-            return HttpResponseRedirect(reverse('orders_list'))
-
-        dictionary={
-            'form': OrderCreateForm(),
-            'can_assign_creator': 0,
-        }
-
-        return render(request, 'doors/orders/create.html', dictionary)
-    # Everyone else left can't create orders.
+            return render(request, 'doors/orders/create.html', {'form': form, 'can_assign_creator': dictionary['can_assign_creator']})
     else:
-        messages.error(request, "Only tenants, property managers, moderators, and administrators can create orders!")
-
-        return HttpResponseRedirect(reverse('orders_list'))
+        if dictionary:
+            return render(request, 'doors/orders/create.html', {
+                'form': OrderCreateForm(creator_list=dictionary['creator_list']),
+                'can_assign_creator': dictionary['can_assign_creator']
+            })
+        else:
+            return HttpResponseRedirect(reverse('orders_list'))

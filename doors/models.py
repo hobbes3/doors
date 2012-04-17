@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.contrib.comments.models import Comment
@@ -31,8 +31,8 @@ class Place(models.Model):
     name             = models.CharField(max_length=135)
     place_type       = models.CharField(max_length=1, choices=PLACE_TYPE_CHOICES, default='s')
     status           = models.CharField(max_length=1, choices=STATUS_CHOICES    , default='a')
-    managers         = models.ManyToManyField(User, related_name='manager', limit_choices_to={'userprofile__user_types': 'pm'})
-    owners           = models.ManyToManyField(User, related_name='owner'  , limit_choices_to={'userprofile__user_types': 'po'}, null=True, blank=True)
+    managers         = models.ManyToManyField(User, related_name='place_managers', limit_choices_to={'userprofile__user_types': 'pm'})
+    owners           = models.ManyToManyField(User, related_name='place_owners'  , limit_choices_to={'userprofile__user_types': 'po'}, null=True, blank=True)
     comment          = models.TextField(blank=True)
     address_line_one = models.CharField(max_length=135)
     address_line_two = models.CharField(max_length=135, blank=True)
@@ -49,10 +49,10 @@ class Place(models.Model):
         return self.name
 
     def tenant_count(self):
-        return self.place.count()
+        return self.userprofile_place.count()
 
     def tenant_list(self):
-        return self.place.all()
+        return self.userprofile_place.all()
 
 class UserType(models.Model):
     TYPE_CHOICES = (
@@ -75,10 +75,10 @@ class UserType(models.Model):
         return {key: value for key, value in self.TYPE_CHOICES}[self.name]
 
     def user_count(self):
-        return self.user_types.count()
+        return self.userprofile_user_types.count()
 
     def user_list(self):
-        return self.user_types.all()
+        return self.userprofile_user_types.all()
 
 class UserProfile(models.Model):
     TIMEZONE_CHOICES = (
@@ -100,20 +100,20 @@ class UserProfile(models.Model):
     )
 
     user           = models.OneToOneField(User)
-    user_types     = models.ManyToManyField(UserType, related_name='user_types', null=True, blank=True)
+    user_types     = models.ManyToManyField(UserType, related_name='userprofile_user_types', null=True, blank=True)
     comment        = models.TextField(blank=True)
     local_timezone = models.CharField(max_length=4, choices=TIMEZONE_CHOICES, default='east')
     phone          = models.CharField(max_length=135, blank=True)
     room           = models.CharField(max_length=135, blank=True)
     floor          = models.CharField(max_length=135, blank=True)
     building       = models.CharField(max_length=135, blank=True)
-    place          = models.ForeignKey(Place, related_name='place', null=True, blank=True)
+    place          = models.ForeignKey(Place, related_name='userprofile_place', null=True, blank=True)
     place_status   = models.CharField(max_length=1, choices=PLACE_STATUS_CHOICES, default='n')
     created        = models.DateTimeField(auto_now_add=True)
     modified       = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return self.user.get_full_name
+        return self.user.get_full_name()
 
     def has_user_types(self, user_types):
         return self.user_types.filter(name__in=user_types).count()
@@ -143,8 +143,8 @@ class Vendor(models.Model):
     city             = models.CharField(max_length=135)
     state            = models.CharField(max_length=135)
     zip_code         = models.CharField(max_length=135)
-    managers         = models.ManyToManyField(User, related_name='managers'       , limit_choices_to={'userprofile__user_types': 'vm'})
-    representatives  = models.ManyToManyField(User, related_name='representatives', limit_choices_to={'userprofile__user_types': 've'}, null=True, blank=True)
+    managers         = models.ManyToManyField(User, related_name='vendor_managers'       , limit_choices_to={'userprofile__user_types': 'vm'})
+    representatives  = models.ManyToManyField(User, related_name='vendor_representatives', limit_choices_to={'userprofile__user_types': 've'}, null=True, blank=True)
     created          = models.DateTimeField(auto_now_add=True)
     modified         = models.DateTimeField(auto_now=True)
 
@@ -153,11 +153,12 @@ class Vendor(models.Model):
 
 class Order(models.Model):
     STEPS = (
+        ('assign'            , "Assign an approver."),
         ('action'            , "Review, then either approve or reject the order."),
-        ('first_appointment' , "Contact a vendor to get a quote and arrange an appointment for {user}."),
+        ('first_appointment' , "Contact a vendor to get a quote and arrange an appointment for {creator}."),
         ('second_appointment', "Review the quote, (get owner approval), then arrange a second appointment for the repairs."),
         ('work_done'         , "Confirm the finished repairs and pay the vendor."),
-        ('follow_up'         , "Follow up with {user}."),
+        ('follow_up'         , "Follow up with {creator}."),
         ('paid'              , "Confirm payment and close the order."),
     )
 
@@ -181,17 +182,18 @@ class Order(models.Model):
         ('ot', 'Others'             ),
     )
 
-    creator   = models.ForeignKey(User, related_name='creator')
-    approver  = models.ForeignKey(User, related_name='approver', null=True, blank=True)
+    creator   = models.ForeignKey(User, related_name='order_creator')
+    approver  = models.ForeignKey(User, related_name='order_approver', null=True, blank=True)
     comment   = models.TextField(blank=True)
     status    = models.CharField(max_length=1, choices=STATUS_CHOICES, default='p')
     quote     = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     payment   = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     work_type = models.CharField(max_length=2, choices=WORK_TYPE_CHOICES)
-    vendor    = models.ForeignKey(Vendor, null=True, blank=True)
-    place     = models.ForeignKey(Place)
+    vendor    = models.ForeignKey(Vendor, related_name='order_vendor', null=True, blank=True)
+    place     = models.ForeignKey(Place, related_name='order_place')
 
     created            = models.DateTimeField(auto_now_add=True)
+    assign             = models.DateTimeField(null=True, blank=True)
     action             = models.DateTimeField(null=True, blank=True)
     first_appointment  = models.DateTimeField(null=True, blank=True)
     second_appointment = models.DateTimeField(null=True, blank=True)
@@ -216,10 +218,10 @@ class Order(models.Model):
         return Comment.objects.filter(content_type=content_type, object_pk=object_pk).count()
 
     def all_steps(self):
-        user = self.creator.first_name
+        creator = self.creator.first_name
 
         return [
-            (getattr(self, attr), task.format(user=user))
+            (getattr(self, attr), task.format(creator=creator))
             for attr, task in self.STEPS
         ]
 
@@ -248,15 +250,15 @@ class Order(models.Model):
             return a[:max(c - 2, 0)] + a[c:]
 
     def next_step(self):
-        user = self.creator.first_name
+        creator = self.creator.first_name
         c = self.current_step()
 
         if c == 0:
             return "Done!"
         else:
-            return "{number}: {task}".format(
+            return "{number}: {step}".format(
                 number=str(c),
-                task  =self.STEPS[c - 1][1].format(user=user)
+                step  =self.STEPS[c - 1][1].format(creator=creator)
            )
 
     def total_steps(self):

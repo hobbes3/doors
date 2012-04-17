@@ -11,6 +11,10 @@
                 info: function() {}
             }
         }
+
+        function function_name(args) {
+            return args.callee.toString().match(/function\s+.+\(.+\)/)[0]
+        }
     </script>
     {% block head %}{% endblock %}
 </head>

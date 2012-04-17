@@ -56,7 +56,7 @@ Steps:
                 <td>
                     <input type="checkbox"
                         id="step_{{ forloop.counter }}"
-                        onclick="Dajaxice.doors.step_changed(update_steps, {
+                        onclick="Dajaxice.doors.orders_detail_step_changed(update_steps, {
                             'order_pk': {{ order.pk }},
                             'local_timezone': '{{ request.user.profile.get_local_timezone_display }}',
                             'step_pk': {{ forloop.counter }},
