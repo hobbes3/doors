@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import ListView, DetailView
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from doors.models import Order, User
+from doors.models import Order, User, Place
 from doors.forms import OrderCreateForm
 from django.core.urlresolvers import reverse
 import logging
@@ -135,7 +135,20 @@ def orders_create(request):
     if request.method == 'POST':
         #import ipdb; ipdb.set_trace()
 
-        form = OrderCreateForm(dictionary['creator_list'], request.POST)
+        form = OrderCreateForm(data=request.POST, creator_list=dictionary['creator_list'])
+
+        creator_pk = form.data['creator']
+
+        if creator_pk:
+            creator = User.objects.get(pk=int(creator_pk))
+
+            if creator.profile.has_user_types(['pm']):
+                place_list = creator.place_managers.all()
+            else:
+                place_list = Place.objects.filter(userprofile_place=creator)
+                #place_list = creator.profile.place # This won't work since it returns a single object, not a QuerySet.
+
+            form = OrderCreateForm(data=request.POST, creator_list=dictionary['creator_list'], place_list=place_list)
 
         if form.is_valid():
             creator   = form.cleaned_data['creator']
@@ -156,6 +169,7 @@ def orders_create(request):
             return HttpResponseRedirect(reverse('orders_detail', kwargs={'pk': new_order.pk}))
         else:
             return render(request, 'doors/orders/create.html', {'form': form, 'can_assign_creator': dictionary['can_assign_creator']})
+    # Not POST.
     else:
         if dictionary:
             return render(request, 'doors/orders/create.html', {
@@ -163,4 +177,5 @@ def orders_create(request):
                 'can_assign_creator': dictionary['can_assign_creator']
             })
         else:
+            # Messages called in get_order_create_dictionary().
             return HttpResponseRedirect(reverse('orders_list'))

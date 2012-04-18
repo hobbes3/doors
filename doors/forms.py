@@ -1,6 +1,6 @@
 from django.forms import ModelForm, ModelChoiceField, Select
-from doors.models import Order
-from django.contrib.auth.models import User
+from django.db.models.query import EmptyQuerySet
+from doors.models import Order, Place
 
 class UserModelChoiceField(ModelChoiceField):
     def label_from_instance(self, obj):
@@ -11,7 +11,7 @@ class OrderCreateForm(ModelForm):
         model=Order
         fields=('work_type', 'comment',)
 
-    def __init__(self, creator_list=None, *args, **kwargs):
+    def __init__(self, creator_list=None, place_list=None, *args, **kwargs):
         super(OrderCreateForm, self).__init__(*args, **kwargs)
 
         if creator_list:
@@ -23,7 +23,13 @@ class OrderCreateForm(ModelForm):
                 })
             )
 
-        self.fields['place'] = UserModelChoiceField(
-            queryset=User.objects.none(),
-            empty_label="Select a creator first"
-        )
+        if place_list:
+            self.fields['place'] = ModelChoiceField(
+                queryset=place_list,
+                empty_label=None
+            )
+        else:
+            self.fields['place'] = ModelChoiceField(
+                queryset=EmptyQuerySet(),
+                empty_label="Select a creator first"
+            )
