@@ -1,9 +1,10 @@
+<!DOCTYPE HTML>
 <html>
 <head>
     <title>Doors - the property maintenance app - {% block title %}{% endblock %}</title>
 
     <script src="{{ STATIC_URL }}js/jquery-1.7.2.js" type="text/javascript" charset="utf-8"></script>
-    <script type="text/javascript" charset="utf-8">
+    <script type="text/javascript">
         if(typeof console === 'undefined') {
             console = {
                 log:  function() {},
@@ -15,34 +16,104 @@
         function function_name(args) {
             return args.callee.toString().match(/function\s+.+\(.+\)/)[0]
         }
+
+        var tab_list = {
+            'orders-tab' : '{% url orders_list %}',
+            'users-tab'  : '{% url users_list %}',
+            'vendors-tab': '{% url vendors_list %}',
+            'places-tab' : '{% url places_list %}'
+        }
+
+        $(document).ready(function() {
+            // Figuring out which tab should be active.
+            for(var property in tab_list) {
+                if('{{ request.path }}' == tab_list[property]) {
+                    $('#' + property).addClass('active-tab')
+                    break
+                }
+            }
+
+            // Content boxes expand/collapse.
+            $(".initial-expand").hide()
+            $("div.content-module-heading").click(function() {
+                $(this).next("div.content-module-main").slideToggle()
+                $(this).children(".expand-collapse-text").toggle()
+            })
+        })
     </script>
+
+    <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" />
+    <link href="{{ STATIC_URL }}css/main.css" type="text/css" rel="stylesheet" />
     {% block head %}{% endblock %}
 </head>
 <body>
-    <ul>
-        <li><a href="{% url orders_create %}">Create an order</a></li>
-        <li><a href="{% url orders_list %}">Orders list</a></li>
-        <li><a href="{% url users_list %}">Users list</a></li>
-        <li><a href="{% url vendors_list %}">Vendors list</a></li>
-        <li><a href="{% url places_list %}">Places list</a></li>
-    {% if user.is_authenticated %}
-        <li>Welcome, <a href="{% url users_self_detail %}">{{ user.first_name }}</a>. <a href="{% url auth_password_change %}">Change password</a> / <a href="{% url auth_logout %}?next=/">Log out</a></li>
-    {% else %}
-        <li><a href="{% url auth_login %}?next={% firstof request.path '/' %}">Log in</a></li>
-    {% endif %}
-        <li><a href="{% url admin:index %}">Admin</a></li>
-    </ul>
+    <div id="top-bar">
+        <div class="page-full-width cf">
+            <ul id="nav" class="fl">
+                <li class="v-sep">
+                    {% if user.is_authenticated %}
+                        <a href="#" class="round button dark menu-user image-left">Logged in as <strong>{{ user.first_name }}</strong></a>
+                            <ul>
+                                <li><a href="{% url users_self_detail %}">Profile</a></li>
+                                <li><a href="{% url auth_password_change %}">Change Password</a></li>
+                                <li><a href="{% url auth_logout %}?next=/">Logout</a></li>
+                            </ul>
+                    {% else %}
+                        <a href="{% url auth_login %}?next={% firstof request.path '/' %}" class="round button dark menu-user image-left">Log in</a>
+                    {% endif %}
+                </li>
+                <li>
+                    <a href="{% url admin:index %}" class="round button dark ic-settings image-left">Admin</a>
+                </li>
+            </ul>
+        </div>
+    </div>
 
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
+    <div id="header-with-tabs">
+        <div class="page-full-width cf">
+            <ul id="tabs" class="fl">
+                <li><a href="#" id="dashboard-tab" class="dashboard-tab">Dashboard</a></li>
+                <li><a href="{% url orders_list %}" id="orders-tab">Orders List</a></li>
+                <li><a href="{% url users_list %}" id="users-tab">Users List</a></li>
+                <li><a href="{% url vendors_list %}" id="vendors-tab">Vendors List</a></li>
+                <li><a href="{% url places_list %}" id="places-tab">Properties List</a></li>
+            </ul>
+        </div>
+    </div>
 
-    {% block content %}
-    {% endblock %}
+    <div id="content">
+        <div class="page-full-width cf">
+            <div class="side-menu fl">
+                <h3>Actions</h3>
+                <ul>
+                    <li><a href="{% url orders_create %}">Create an order</a></li>
+                    <li><a href="#">Manage orders</a></li>
+                    <li><a href="#">Create a property</a></li>
+                    <li><a href="#">Manage properties</a></li>
+                </ul>
+            </div>
 
+            <div class="side-content fr">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="round {{ message.tags }}-box">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <div id="footer">
+        <p>
+            &copy; Copyright 2012
+            Satoshi Kawasaki and Tareq Dowla. All rights reserved.
+        </p>
+        <p>
+            <strong>SimpleAdmin</strong> theme by <a href="http://www.adipurdila.com">Adi Purdila</a>
+        </p>
+    </div>
 </body>
 </html>

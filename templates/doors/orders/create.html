@@ -9,40 +9,75 @@
 {% endblock %}
 
 {% block content %}
-    Create an order
-    <br />
+    {% load widget_tweaks %}
+
+    <h1>Create an order</h1>
 
     <form action="" method="post">
         {% csrf_token %}
         {{ form.non_field_errors }}
-        <div>
-            {% if can_assign_creator %}
-                {{ form.creator.errors }}
-                <label for="id_creator">Creator:</label>
-                {{ form.creator }}
+
+        {% if can_assign_creator %}
+            {% if form.creator.errors %}
+                <p class="form-error">
+                {% for error in form.creator.errors %}
+                    <em>{{ error|escape }}</em>
+                {% endfor %}
             {% else %}
+                <p>
+            {% endif %}
+            {{ form.creator.label_tag }}
+            {{ form.creator|attr:"onchange:Dajaxice.doors.orders_create_creator_changed(fill_other_fields, {'creator_pk': this.options[this.selectedIndex].value})" }}
+        {% else %}
+            <p>
+                Creator:
                 <a href="{% url users_detail pk=request.user.pk %}">{{ request.user.get_full_name }}</a>
-            {% endif %}
-        </div>
-        <div>
-            {% if can_assign_creator %}
-                {{ form.place.errors }}
-                <label for="id_place">Property:</label>
-                {{ form.place }}
+        {% endif %}
+        </p>
+
+        {% if can_assign_creator %}
+            {% if form.place.errors %}
+                <p class="form-error">
+                {% for error in form.place.errors %}
+                    <em>{{ error|escape }}</em>
+                {% endfor %}
             {% else %}
-                <a href="{% url places_detail pk=request.user.profile.place.pk %}">{{ request.user.profile.place.name }}</a>
+                <p>
             {% endif %}
-        </div>
-        <div>
-            {{ form.work_type.errors }}
-            <label for="id_work_type">Category:</label>
+            <label for="id_place">Property</label>
+            {{ form.place }}
+        {% else %}
+            <p>
+                Property
+                <a href="{% url places_detail pk=request.user.profile.place.pk %}">{{ request.user.profile.place.name }}</a>
+        {% endif %}
+        </p>
+
+        {% if form.work_type.errors %}
+            <p class="form-error">
+            {% for error in form.work_type.errors %}
+                <em>{{ error|escape }}</em>
+            {% endfor %}
+        {% else %}
+            <p>
+        {% endif %}
+            <label for="id_work_type">Category</label>
             {{ form.work_type }}
-        </div>
-        <div>
-            {{ form.comment.errors }}
-            <label for="id_comment">A brief comment about the problem:</label><br />
-            {{ form.comment }}
-        </div>
-        <input type="submit" value="Create order" />
+        </p>
+
+        <div class="stripe-separator"></div>
+
+        {% if form.comment.errors %}
+            <p class="form-error">
+            {% for error in form.comment.errors %}
+                <em>{{ error|escape }}</em>
+            {% endfor %}
+        {% else %}
+            <p>
+        {% endif %}
+            <label for="id_comment">A brief comment</label>
+            {{ form.comment|add_class:"round"|add_error_class:"error-input" }}
+        </p>
+        <input type="submit" value="Create order" class="round blue ic-right-arrow" />
     </form>
 {% endblock %}

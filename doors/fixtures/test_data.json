@@ -443,7 +443,7 @@
             "site": 1,
             "is_removed": false,
             "user": 9,
-            "content_type": 16,
+            "content_type": 14,
             "is_public": true,
             "user_name": "",
             "user_email": ""
@@ -461,7 +461,7 @@
             "site": 1,
             "is_removed": false,
             "user": 3,
-            "content_type": 16,
+            "content_type": 14,
             "is_public": true,
             "user_name": "Satoshi Kawasaki",
             "user_email": "hobbes3@gmail.com"
@@ -479,7 +479,7 @@
             "site": 1,
             "is_removed": false,
             "user": 4,
-            "content_type": 16,
+            "content_type": 14,
             "is_public": true,
             "user_name": "Sam the Vendor",
             "user_email": "doors.example@gmail.com"
@@ -497,7 +497,7 @@
             "site": 1,
             "is_removed": false,
             "user": 9,
-            "content_type": 16,
+            "content_type": 14,
             "is_public": true,
             "user_name": "Amy the Tenant",
             "user_email": "doors.example@gmail.com"
@@ -515,7 +515,7 @@
             "site": 1,
             "is_removed": false,
             "user": 4,
-            "content_type": 16,
+            "content_type": 14,
             "is_public": true,
             "user_name": "Sam the Vendor",
             "user_email": "doors.example@gmail.com"
@@ -533,7 +533,7 @@
             "site": 1,
             "is_removed": false,
             "user": 4,
-            "content_type": 16,
+            "content_type": 14,
             "is_public": true,
             "user_name": "Sam the Vendor",
             "user_email": "doors.example@gmail.com"
@@ -551,7 +551,7 @@
             "site": 1,
             "is_removed": false,
             "user": 3,
-            "content_type": 16,
+            "content_type": 14,
             "is_public": true,
             "user_name": "Bob the Property Manager",
             "user_email": "doors.example@gmail.com"
@@ -569,7 +569,7 @@
             "site": 1,
             "is_removed": false,
             "user": 9,
-            "content_type": 16,
+            "content_type": 14,
             "is_public": true,
             "user_name": "Amy the Tenant",
             "user_email": "doors.example@gmail.com"
@@ -587,7 +587,7 @@
             "site": 1,
             "is_removed": false,
             "user": 4,
-            "content_type": 16,
+            "content_type": 14,
             "is_public": true,
             "user_name": "Sam the Vendor",
             "user_email": "doors.example@gmail.com"
@@ -605,7 +605,7 @@
             "site": 1,
             "is_removed": false,
             "user": 3,
-            "content_type": 16,
+            "content_type": 14,
             "is_public": true,
             "user_name": "Bob the Property Manager",
             "user_email": "doors.example@gmail.com"
@@ -623,7 +623,7 @@
             "site": 1,
             "is_removed": false,
             "user": 9,
-            "content_type": 16,
+            "content_type": 14,
             "is_public": true,
             "user_name": "Amy the Tenant",
             "user_email": "doors.example@gmail.com"
@@ -641,7 +641,7 @@
             "site": 1,
             "is_removed": false,
             "user": 9,
-            "content_type": 16,
+            "content_type": 14,
             "is_public": true,
             "user_name": "Amy the Tenant",
             "user_email": "doors.example@gmail.com"
