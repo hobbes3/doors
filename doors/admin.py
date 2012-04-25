@@ -1,5 +1,5 @@
 from django.contrib import admin
-from doors.models import Place, UserType, UserProfile, Vendor, Order
+from doors.models import *
 
 class PlaceAdmin(admin.ModelAdmin):
     list_display = (
@@ -79,8 +79,21 @@ class OrderAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     search_fields = ('place', 'creator', 'manager', 'comment',)
 
+class CommentAdmin(admin.ModelAdmin):
+    list_display = (
+        'order',
+        'user',
+        'action_type',
+        'comment',
+        'created',
+        'modified',
+    )
+    list_filter = ('order', 'user', 'action_type',)
+    search_fields = ('order', 'user', 'comment',)
+
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(UserType   , UserTypeAdmin   )
 admin.site.register(Order      , OrderAdmin      )
+admin.site.register(Comment    , CommentAdmin    )
 admin.site.register(Place      , PlaceAdmin      )
 admin.site.register(Vendor     , VendorAdmin     )

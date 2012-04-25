@@ -7,9 +7,7 @@ class UserModelChoiceField(forms.ModelChoiceField):
         return obj.get_full_name()
 
 class OrderCreateForm(forms.Form):
-    work_type = forms.ChoiceField(
-        choices=Order.WORK_TYPE_CHOICES
-    )
+    work_type = forms.ChoiceField(choices=Order.WORK_TYPE_CHOICES)
     comment = forms.CharField(widget=forms.Textarea)
 
     def __init__(self, creator_list=None, place_list=None, *args, **kwargs):
@@ -37,6 +35,20 @@ class OrderCreateForm(forms.Form):
 
         if 'comment' in self.cleaned_data:
             if len(self.cleaned_data['comment']) < 50:
+                self._errors['comment'] = self.error_class([u"Please enter a longer comment."])
+
+                del self.cleaned_data['comment']
+
+        return self.cleaned_data
+
+class CommentCreateForm(forms.Form):
+    comment = forms.CharField(widget=forms.Textarea)
+
+    def clean(self):
+        super(CommentCreateForm, self).clean()
+
+        if 'comment' in self.cleaned_data:
+            if len(self.cleaned_data['comment']) < 10:
                 self._errors['comment'] = self.error_class([u"Please enter a longer comment."])
 
                 del self.cleaned_data['comment']

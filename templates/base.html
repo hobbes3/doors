@@ -3,7 +3,8 @@
 <head>
     <title>Doors - the property maintenance app - {% block title %}{% endblock %}</title>
 
-    <script src="{{ STATIC_URL }}js/jquery-1.7.2.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ STATIC_URL }}js/jquery-1.7.2.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ STATIC_URL }}js/jquery-ui-1.8.19.custom.min.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript">
         if(typeof console === 'undefined') {
             console = {
@@ -39,6 +40,12 @@
                 $(this).next("div.content-module-main").slideToggle()
                 $(this).children(".expand-collapse-text").toggle()
             })
+
+            {% if focus %}
+                // Focus
+                $('html, body').animate({scrollTop: $('#{{ focus }}').offset().top }, 1500)
+                $('#{{ focus }}').effect("highlight", {}, 3000)
+            {% endif %}
         })
     </script>
 
@@ -56,7 +63,7 @@
                             <ul>
                                 <li><a href="{% url users_self_detail %}">Profile</a></li>
                                 <li><a href="{% url auth_password_change %}">Change Password</a></li>
-                                <li><a href="{% url auth_logout %}?next=/">Logout</a></li>
+                                <li><a href="{% url auth_logout %}?next={% url auth_login %}">Logout</a></li>
                             </ul>
                     {% else %}
                         <a href="{% url auth_login %}?next={% firstof request.path '/' %}" class="round button dark menu-user image-left">Log in</a>

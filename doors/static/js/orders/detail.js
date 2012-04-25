@@ -5,10 +5,16 @@ function update_steps(data) {
         location.reload(true)
     }
     else {
+        var checked        = data['checked']
         var total_steps    = data['total_steps']
         var disabled_steps = data['disabled_steps']
         var step_pk        = data['step_pk']
         var datetime       = data['datetime']
+        var user           = data['user']
+        var comment_pk     = data['comment_pk']
+        var comment        = data['comment']
+
+        console.log('checked', checked)
 
         var i
         for(i = 1; i <= total_steps; i++) {
@@ -27,8 +33,13 @@ function update_steps(data) {
             }
 
             if(i == step_pk) {
-                $('#step_' + i + '_datetime').text(datetime)
+                $('#step_' + i + '_datetime').text(checked ? datetime : 'None')
             }
         }
+
+        $('#no_comments').remove()
+
+        var full_comment = datetime + ' - ' + comment
+        $('#comment_list').append('<div id="comment_' + comment_pk + '" class = "round info-box">' + full_comment + '</div>')
     }
 }

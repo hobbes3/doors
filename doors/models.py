@@ -1,14 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
-from django.contrib.comments.models import Comment
-
-# Signals
-from django.contrib.comments.signals import comment_was_posted
-from doors.signals import comment_posted
-
-comment_was_posted.connect(comment_posted)
 
 # "property" is a Python function so I use the word "place" instead in codes.
 # On the front-end, however, a location is always referred as a "property".
@@ -33,7 +25,7 @@ class Place(models.Model):
     status           = models.CharField(max_length=1, choices=STATUS_CHOICES    , default='a')
     managers         = models.ManyToManyField(User, related_name='place_managers', limit_choices_to={'userprofile__user_types': 'pm'})
     owners           = models.ManyToManyField(User, related_name='place_owners'  , limit_choices_to={'userprofile__user_types': 'po'}, null=True, blank=True)
-    comment          = models.TextField(blank=True)
+    comment          = models.TextField(max_length=1000, blank=True)
     address_line_one = models.CharField(max_length=135)
     address_line_two = models.CharField(max_length=135, blank=True)
     city             = models.CharField(max_length=135)
@@ -101,7 +93,7 @@ class UserProfile(models.Model):
 
     user           = models.OneToOneField(User)
     user_types     = models.ManyToManyField(UserType, related_name='userprofile_user_types', null=True, blank=True)
-    comment        = models.TextField(blank=True)
+    comment        = models.TextField(max_length=1000, blank=True)
     local_timezone = models.CharField(max_length=4, choices=TIMEZONE_CHOICES, default='east')
     phone          = models.CharField(max_length=135, blank=True)
     room           = models.CharField(max_length=135, blank=True)
@@ -119,7 +111,7 @@ class UserProfile(models.Model):
         return self.user_types.filter(name__in=user_types).count()
 
     def comment_count(self):
-        return Comment.objects.filter(user=self.user).count()
+        return self.user.comment_user.count()
 
     def comment_list(self):
         return Comment.objects.filter(user=self.user).all()
@@ -134,7 +126,7 @@ User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 
 class Vendor(models.Model):
     name             = models.CharField(max_length=135)
-    comment          = models.TextField(blank=True)
+    comment          = models.TextField(max_length=1000, blank=True)
     phone            = models.CharField(max_length=135, blank=True)
     email            = models.EmailField(blank=True)
     website          = models.URLField(blank=True)
@@ -153,13 +145,14 @@ class Vendor(models.Model):
 
 class Order(models.Model):
     STEPS = (
-        ('assign'            , "Assign an approver."),
-        ('action'            , "Review, then either approve or reject the order."),
-        ('first_appointment' , "Contact a vendor to get a quote and arrange an appointment for {creator}."),
-        ('second_appointment', "Review the quote, (get owner approval), then arrange a second appointment for the repairs."),
-        ('work_done'         , "Confirm the finished repairs and pay the vendor."),
-        ('follow_up'         , "Follow up with {creator}."),
-        ('paid'              , "Confirm payment and close the order."),
+        # (Order's attribute, Comment's action_type code, task description)
+        ('assign'            , 'se-as', "Assign an approver."),
+        ('action'            , 'se-ac', "Review, then either approve or reject the order."),
+        ('first_appointment' , 'se-fa', "Contact a vendor to get a quote and arrange an appointment for {creator}."),
+        ('second_appointment', 'se-sa', "Review the quote, (get owner approval), then arrange a second appointment for the repairs."),
+        ('work_done'         , 'se-wd', "Confirm the finished repairs and pay the vendor."),
+        ('follow_up'         , 'se-fu', "Follow up with {creator}."),
+        ('paid'              , 'se-pa', "Confirm payment and close the order."),
     )
 
     STATUS_CHOICES = (
@@ -184,13 +177,13 @@ class Order(models.Model):
 
     creator   = models.ForeignKey(User, related_name='order_creator')
     approver  = models.ForeignKey(User, related_name='order_approver', null=True, blank=True)
-    comment   = models.TextField(blank=True)
+    vendor    = models.ForeignKey(Vendor, related_name='order_vendor', null=True, blank=True)
+    place     = models.ForeignKey(Place, related_name='order_place')
+    comment   = models.TextField(max_length=1000)
     status    = models.CharField(max_length=1, choices=STATUS_CHOICES, default='p')
     quote     = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     payment   = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     work_type = models.CharField(max_length=2, choices=WORK_TYPE_CHOICES)
-    vendor    = models.ForeignKey(Vendor, related_name='order_vendor', null=True, blank=True)
-    place     = models.ForeignKey(Place, related_name='order_place')
 
     created            = models.DateTimeField(auto_now_add=True)
     assign             = models.DateTimeField(null=True, blank=True)
@@ -208,21 +201,15 @@ class Order(models.Model):
     def __unicode__(self):
         return unicode(self.pk)
 
-    # For permalinking comments.
-    def get_absolute_url(self):
-        return reverse('orders_detail', kwargs={'pk': self.pk})
-
     def comment_count(self):
-        content_type = ContentType.objects.get_for_model(Order)
-        object_pk = self.pk
-        return Comment.objects.filter(content_type=content_type, object_pk=object_pk).count()
+        return self.comment_order.count()
 
     def all_steps(self):
         creator = self.creator.first_name
 
         return [
             (getattr(self, attr), task.format(creator=creator))
-            for attr, task in self.STEPS
+            for attr, code, task in self.STEPS
         ]
 
     # The current step (to do).
@@ -230,7 +217,7 @@ class Order(models.Model):
     # If all the tasks are done, then current_step=0.
     def current_step(self):
         i = next(
-            (i for i, (attr, task) in enumerate(self.STEPS) if getattr(self, attr) is None),
+            (i for i, (attr, code, task) in enumerate(self.STEPS) if getattr(self, attr) is None),
             None
        )
 
@@ -258,8 +245,54 @@ class Order(models.Model):
         else:
             return "{number}: {step}".format(
                 number=str(c),
-                step  =self.STEPS[c - 1][1].format(creator=creator)
+                step=self.STEPS[c - 1][2].format(creator=creator)
            )
 
     def total_steps(self):
         return len(self.STEPS)
+
+class Comment(models.Model):
+    ACTION_TYPES = (
+        ('comme', 'comment'                , ""),
+        ('ad-qu', 'add quote'              , "{user} quoted {value}."),
+        ('ad-pa', 'add payment'            , "{user} paid {vendor} for {value}."),
+        ('ad-ve', 'add vendor'             , "{user} has added {vendor} as the vendor."),
+        ('ed-wt', 'edit work type'         , "{user} changed the work type to {value}."),
+        ('ed-co', 'edit comment'           , "{user} edited the comment."),
+        ('ed-qu', 'edit quote'             , "{user} edited the quote to {value}."),
+        ('ed-pa', 'edit payment'           , "{user} edited the payment to {value}."),
+        ('ed-ve', 'edit vendor'            , "{user} changed the vendor to {vendor}"),
+        ('sa-pe', 'status pending'         , "{user} set the status to pending."),
+        ('sa-ap', 'status approved'        , "{user} approved the order."),
+        ('sa-re', 'status rejected'        , "{user} rejected the order."),
+        ('sa-cl', 'status closed'          , "{user} closed the order."),
+        ('sa-lo', 'status locked'          , "{user} locked the order."),
+        ('se-as', 'step assign'            , "{user} {action} step 1."),
+        ('se-ac', 'step action'            , "{user} {action} step 2."),
+        ('se-fa', 'step first appointment' , "{user} {action} step 3."),
+        ('se-sa', 'step second appointment', "{user} {action} step 4."),
+        ('se-wd', 'step work done'         , "{user} {action} step 5."),
+        ('se-fu', 'step follow-up'         , "{user} {action} step 6."),
+        ('se-pa', 'step paid'              , "{user} {action} step 7."),
+    )
+
+    ACTION_TYPES_CHOICES = tuple(i[:-1] for i in ACTION_TYPES)
+
+    order       = models.ForeignKey(Order, related_name='comment_order')
+    user        = models.ForeignKey(User, related_name='comment_user', null=True, blank=True)
+    action_type = models.CharField(max_length=5, choices=ACTION_TYPES_CHOICES)
+    comment     = models.CharField(max_length=1000)
+    created     = models.DateTimeField(auto_now_add=True)
+    modified    = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['created']
+
+    def __unicode__(self):
+        return unicode(self.pk)
+
+    def get_action_type_description(self, code):
+        # Truncates the 2nd column, convert to a dictionary.
+        dictionary = dict(tuple(x[0::2] for x in self.ACTION_TYPES))
+        # Now get the value based on the code (key).
+        return dictionary[code]

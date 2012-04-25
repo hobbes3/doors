@@ -31,6 +31,7 @@
         {% else %}
             <p>
                 Creator:
+                <input type="hidden" name="creator" value="{{ request.user.pk }}" />
                 <a href="{% url users_detail pk=request.user.pk %}">{{ request.user.get_full_name }}</a>
         {% endif %}
         </p>
@@ -49,6 +50,7 @@
         {% else %}
             <p>
                 Property
+                <input type="hidden" name="place" value="{{ request.user.profile.place.pk }}" />
                 <a href="{% url places_detail pk=request.user.profile.place.pk %}">{{ request.user.profile.place.name }}</a>
         {% endif %}
         </p>
