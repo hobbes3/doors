@@ -1,0 +1,72 @@
+{% extends "base_menu.html" %}
+
+{% load breadcrumbs %}
+{% load pagination_tags %}
+
+{% block title %}List properties{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {% breadcrumb_url "Home" %}
+    {% breadcrumb "Properties" %}
+{% endblock %}
+
+{% block content %}
+    <div class="content-module">
+        <div class="content-module-heading cf">
+            <h3 class="fl">Properties</h3>
+
+            <span class="fr expand-collapse-text">Click to collapse</span>
+            <span class="fr expand-collapse-text initial-expand">Click to expand</span>
+        </div>
+        <div class="content-module-main">
+
+            <p>{{ all_place_count }} total propert{{ place_list.count|pluralize:"y,ies" }} on Doors.</p>
+
+            {% autopaginate place_list 10 %}
+            {% paginate %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>name</th>
+                        <th>type</th>
+                        <th>tenant count</th>
+                        <th>address</th>
+                        <th>city</th>
+                        <th>state</th>
+                        <th>phone</th>
+                        <th>website</th>
+                        <th>added</th>
+                    </tr>
+                <thead>
+                <tbody>
+                {% if place_list %}
+                    {% for place in place_list %}
+                        <tr>
+                            <td><a href="{% url place_detail pk=place.pk %}">{{ place.name }}</a></td>
+                            <td>{{ place.get_place_type_display|capfirst }}</td>
+                            <td>{{ place.tenant_count }}</td>
+                            <td>
+                                {{ place.address_line_one }}
+                                {% if place.address_line_two %}
+                                    <br />{{ place.address_line_two }}
+                                {% endif %}
+                            </td>
+                            <td>{{ place.city }}</td>
+                            <td>{{ place.state }}</td>
+                            <td>{{ place.phone }}</td>
+                            <td>{{ place.website }}</td>
+                            <td>{{ place.created|date:"DATE_FORMAT" }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr><td colspan="9">There are no places.</td></tr>
+                {% endif %}
+                </tbody>
+            </table>
+            {% paginate %}
+        </div>
+    </div>
+{% endblock %}

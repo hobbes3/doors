@@ -40,6 +40,6 @@ function update_steps(data) {
         $('#no_comments').remove()
 
         var full_comment = datetime + ' - ' + comment
-        $('#comment_list').append('<div id="comment_' + comment_pk + '" class = "round info-box">' + full_comment + '</div>')
+        $('#comment_list').append('<div id="comment_' + comment_pk + '" class = "round info-box smaller">' + full_comment + '</div>').scrollTop($('#comment_list').scrollHeight)
     }
 }

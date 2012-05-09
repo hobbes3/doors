@@ -1,12 +1,12 @@
 from django.contrib import messages
+from django.contrib.auth.models import User
 from django.utils import simplejson, timezone, dateformat
 from dajaxice.decorators import dajaxice_register
 from doors.models import Order, Comment
-from django.contrib.auth.models import User
 from pytz import timezone as pytz_timezone
 
 @dajaxice_register
-def orders_detail_step_changed(request, order_pk, local_timezone, step_pk, checked):
+def order_detail_step_changed(request, order_pk, local_timezone, step_pk, checked):
     #import ipdb; ipdb.set_trace()
 
     order = Order.objects.get(pk=order_pk)
@@ -47,7 +47,7 @@ def orders_detail_step_changed(request, order_pk, local_timezone, step_pk, check
     })
 
 @dajaxice_register
-def orders_create_creator_changed(request, creator_pk):
+def order_create_creator_changed(request, creator_pk):
     #import ipdb; ipdb.set_trace()
 
     # Check for empty string (if "Select a user" was selected).
@@ -62,7 +62,7 @@ def orders_create_creator_changed(request, creator_pk):
     creator = User.objects.get(pk=creator_pk)
 
     if creator.profile.has_user_types(['pm']):
-        places = [(place.pk, place.name) for place in creator.place_managers.all()]
+        places = [(place.pk, place.name) for place in creator.places_from_managers.all()]
     elif creator.profile.has_user_types(['te']):
         place = creator.profile.place
         if place:

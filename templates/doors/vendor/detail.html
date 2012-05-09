@@ -1,0 +1,104 @@
+{% extends "base_menu.html" %}
+
+{% load breadcrumbs %}
+
+{% block title %}View vendor {{ vendor.name }}{% endblock %}
+
+{% block breadcrumbs %}
+    {% breadcrumb_url "Home" %}
+    {% breadcrumb_url "Vendors" vendor_list %}
+    {% breadcrumb vendor.name %}
+{% endblock %}
+
+{% block content %}
+    <div class="content-module">
+        <div class="content-module-heading cf">
+            <h3 class="fl">{{ vendor.name }}</h3>
+
+            <span class="fr expand-collapse-text">Click to collapse</span>
+            <span class="fr expand-collapse-text initial-expand">Click to expand</span>
+        </div>
+        <div class="content-module-main cf">
+            <a class="button round blue image-right ic-edit text-upper" href="#">Edit</a>
+            <a class="button round red image-right ic-delete text-upper" href="#">Delete</a><br />
+            <br />
+
+            <form action="">
+                <div class="smaller-detail-div">
+                    <div class="half-size-column fl">
+                        <p>
+                            <label>Name:</label>
+                            {{ vendor.name }}
+                        </p>
+                        <p>
+                            <label>Phone:</label>
+                            {{ vendor.phone|default:"None" }}
+                        </p>
+                        <p>
+                            <label>Email:</label>
+                            {{ vendor.email|default:"None" }}
+                        </p>
+                        <p>
+                            <label>Website:</label>
+                            {% with website=vendor.website %}
+                                {% if website %}
+                                    <a href="{{ website }}" target="_blank">{{ website }}</a>
+                                {% else %}
+                                    None
+                                {% endif %}
+                            {% endwith %}
+                        </p>
+                        <p>
+                            <label>Address:</label>
+                            {{ vendor.address_line_one }}<br />
+                            {% if vendor.address_line_two %}
+                                {{ vendor.address_line_two }}<br />
+                            {% endif %}
+                            {{ vendor.city }}, {{ vendor.state }} {{vendor.zip_code }}
+                        </p>
+                    </div>
+                    <div class="half-size-column fl">
+                        <p>
+                            <label>Orders assigned to {{ vendor.name }} ({{ vendor.order_count }}):</label>
+                            <a href="#">View all orders assigned to {{ vendor.name }}.</a>
+                        </p>
+                        <p>
+                            <label>Managers ({{ vendor.managers.count }}):</label>
+                        </p>
+                        <ul class="custom-ul">
+                            {% with manager_list=vendor.managers.all %}
+                                {% if manager_list %}
+                                    {% for manager in manager_list %}
+                                        <li><a href="{% url user_detail pk=manager.pk %}">{{ manager.get_full_name }}</a></li>
+                                    {% endfor %}
+                                {% else %}
+                                    <li>No managers.</li>
+                                {% endif %}
+                            {% endwith %}
+                        </ul>
+                        <p>
+                            <label>Representatives ({{ vendor.representatives.count }}):</label>
+                        </p>
+                        <ul class="custom-ul">
+                            {% with representative_list=vendor.representatives.all %}
+                                {% if representative_list %}
+                                    {% for representative in representative_list %}
+                                        <li><a href="{% url user_detail pk=representative.pk %}">{{ representative.get_full_name }}</a></li>
+                                    {% endfor %}
+                                {% else %}
+                                    <li>No representatives.</li>
+                                {% endif %}
+                            {% endwith %}
+                        </ul>
+                    </div>
+                    <div class="cb">
+                        <p>
+                            <label>Comment:</label>
+                            {{ vendor.comment|linebreaksbr|default:"No comment." }}
+                        </p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -1,10 +1,14 @@
 {% extends "admin/base.html" %}
+
 {% load i18n %}
 
-{% block title %}{{ title }} | {% trans 'doors site admin' %}{% endblock %}
-
-{% block branding %}
-<h1 id="site-name">{% trans 'Doors administration' %} | <a href="{% url index %}">Back to doors</a></h1>
+{% block title %}
+    {{ title }} | {% trans 'doors site admin' %}
 {% endblock %}
 
-{% block nav-global %}{% endblock %}
+{% block branding %}
+    <h1 id="site-name">{% trans 'Doors administration' %} | <a href="{% url home %}">Back to doors</a></h1>
+{% endblock %}
+
+{% block nav-global %}
+{% endblock %}

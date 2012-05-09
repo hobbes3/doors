@@ -15,62 +15,33 @@ from doors.views import *
 
 urlpatterns = patterns('doors.views',
     # Order
-    url(r'^orders/$', OrderListView.as_view(), name='orders_list'),
-    url(r'^orders/create/$', 'orders_create', name='orders_create'),
-    url(r'^orders/(?P<pk>\d+)/$', 'orders_detail', name='orders_detail'),
+    url(r'^order/$', OrderListView.as_view(), name='order_list'),
+    url(r'^order/create/$', 'order_create', name='order_create'),
+    url(r'^order/(?P<pk>\d+)/$', 'order_detail', name='order_detail'),
     # Comment
-    url(r'^orders/(?P<order_pk>\d+)/comments/create/$', 'comments_create', name='comments_create'),
+    url(r'^order/(?P<order_pk>\d+)/comment/create/$', 'comment_create', name='comment_create'),
     # User
-    url(
-        r'^users/$',
-        ListView.as_view(
-            model=User,
-            template_name='doors/users/list.html',
-        ),
-        name='users_list'
-    ),
-    url(
-        r'^users/(?P<pk>\d+)/$',
-        DetailView.as_view(
-            model=User,
-            template_name='doors/users/detail.html',
-            context_object_name='user_object'
-        ),
-        name='users_detail'
-    ),
-    url(r'^users/self/$', login_required(SelfUserDetailView.as_view()), name='users_self_detail'),
+    url(r'^user/$', UserListView.as_view(), name='user_list'),
+    url(r'^user/(?P<pk>\d+)/$', 'user_detail', name='user_detail'),
+    url(r'^user/self/$', 'user_self_detail', name='user_self_detail'),
     # Vendor
+    url(r'^vendor/$', VendorListView.as_view(), name='vendor_list'),
     url(
-        r'^vendors/$',
-        ListView.as_view(
-            model=Vendor,
-            template_name='doors/vendors/list.html',
-        ),
-        name='vendors_list'
-    ),
-    url(
-        r'^vendors/(?P<pk>\d+)/$',
+        r'^vendor/(?P<pk>\d+)/$',
         DetailView.as_view(
             model=Vendor,
-            template_name='doors/vendors/detail.html',
+            template_name='doors/vendor/detail.html',
         ),
-        name='vendors_detail'
+        name='vendor_detail'
     ),
     # Place
+    url(r'^place/$', PlaceListView.as_view(), name='place_list'),
     url(
-        r'^places/$',
-        ListView.as_view(
-            model=Place,
-            template_name='doors/places/list.html',
-        ),
-        name='places_list'
-    ),
-    url(
-        r'^places/(?P<pk>\d+)/$',
+        r'^place/(?P<pk>\d+)/$',
         DetailView.as_view(
             model=Place,
-            template_name='doors/places/detail.html',
+            template_name='doors/place/detail.html',
         ),
-        name='places_detail'
+        name='place_detail'
     ),
 )

@@ -1,0 +1,67 @@
+{% extends "base_menu.html" %}
+
+{% load breadcrumbs %}
+{% load pagination_tags %}
+
+{% block title %}List vendors{% endblock %}
+
+{% block breadcrumbs %}
+    {% breadcrumb_url "Home" %}
+    {% breadcrumb "Vendors" %}
+{% endblock %}
+
+{% block content %}
+    <div class="content-module">
+        <div class="content-module-heading cf">
+            <h3 class="fl">Vendors</h3>
+
+            <span class="fr expand-collapse-text">Click to collapse</span>
+            <span class="fr expand-collapse-text initial-expand">Click to expand</span>
+        </div>
+        <div class="content-module-main">
+
+            <p>{{ all_vendor_count }} total vendor{{ vendor_list.count|pluralize }} on Doors.</p>
+
+            {% autopaginate vendor_list 10 %}
+            {% paginate %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>name</th>
+                        <th>order count</th>
+                        <th>address</th>
+                        <th>city</th>
+                        <th>state</th>
+                        <th>phone</th>
+                        <th>website</th>
+                        <th>added</th>
+                    </tr>
+                <thead>
+                <tbody>
+                {% if vendor_list %}
+                    {% for vendor in vendor_list %}
+                        <tr>
+                            <td><a href="{% url vendor_detail pk=vendor.pk %}">{{ vendor.name }}</a></td>
+                            <td>{{ vendor.order_count }}</td>
+                            <td>
+                                {{ vendor.address_line_one }}
+                                {% if vendor.address_line_two %}
+                                    <br />{{ vendor.address_line_two }}
+                                {% endif %}
+                            </td>
+                            <td>{{ vendor.city }}</td>
+                            <td>{{ vendor.state }}</td>
+                            <td>{{ vendor.phone }}</td>
+                            <td>{{ vendor.website }}</td>
+                            <td>{{ vendor.created|date:"DATE_FORMAT" }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr><td colspan="8">There are no vendors.</td></tr>
+                {% endif %}
+                </tbody>
+            </table>
+            {% paginate %}
+        </div>
+    </div>
+{% endblock %}

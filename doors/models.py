@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
@@ -21,10 +22,10 @@ class Place(models.Model):
     )
 
     name             = models.CharField(max_length=135)
-    place_type       = models.CharField(max_length=1, choices=PLACE_TYPE_CHOICES, default='s')
-    status           = models.CharField(max_length=1, choices=STATUS_CHOICES    , default='a')
-    managers         = models.ManyToManyField(User, related_name='place_managers', limit_choices_to={'userprofile__user_types': 'pm'})
-    owners           = models.ManyToManyField(User, related_name='place_owners'  , limit_choices_to={'userprofile__user_types': 'po'}, null=True, blank=True)
+    place_type       = models.CharField(max_length=1, choices=PLACE_TYPE_CHOICES)
+    status           = models.CharField(max_length=1, choices=STATUS_CHOICES)
+    managers         = models.ManyToManyField(User, related_name='places_from_managers', limit_choices_to={'userprofile_from_user__user_types': 'pm'})
+    owners           = models.ManyToManyField(User, related_name='places_from_owners'  , limit_choices_to={'userprofile_from_user__user_types': 'po'}, null=True, blank=True)
     comment          = models.TextField(max_length=1000, blank=True)
     address_line_one = models.CharField(max_length=135)
     address_line_two = models.CharField(max_length=135, blank=True)
@@ -33,7 +34,7 @@ class Place(models.Model):
     zip_code         = models.CharField(max_length=135)
     phone            = models.CharField(max_length=135, blank=True)
     website          = models.URLField(blank=True)
-    list_publicly    = models.BooleanField(default=False)
+    list_publicly    = models.BooleanField()
     created          = models.DateTimeField(auto_now_add=True)
     modified         = models.DateTimeField(auto_now=True)
 
@@ -41,10 +42,10 @@ class Place(models.Model):
         return self.name
 
     def tenant_count(self):
-        return self.userprofile_place.count()
+        return self.userprofiles_from_place.count()
 
     def tenant_list(self):
-        return self.userprofile_place.all()
+        return self.userprofiles_from_place.all()
 
 class UserType(models.Model):
     TYPE_CHOICES = (
@@ -56,7 +57,7 @@ class UserType(models.Model):
         ('vm', 'vendor manager'  ), # 6
         ('ve', 'vendor'          ), # 7
         ('te', 'tenant'          ), # 8
-   )
+    )
 
     name     = models.CharField(max_length=2, choices=TYPE_CHOICES)
     created  = models.DateTimeField(auto_now_add=True)
@@ -67,10 +68,10 @@ class UserType(models.Model):
         return {key: value for key, value in self.TYPE_CHOICES}[self.name]
 
     def user_count(self):
-        return self.userprofile_user_types.count()
+        return self.userprofiles_from_user_types.count()
 
     def user_list(self):
-        return self.userprofile_user_types.all()
+        return self.userprofiles_from_user_types.all()
 
 class UserProfile(models.Model):
     TIMEZONE_CHOICES = (
@@ -91,16 +92,16 @@ class UserProfile(models.Model):
         ('r', 'rejected'),
     )
 
-    user           = models.OneToOneField(User)
-    user_types     = models.ManyToManyField(UserType, related_name='userprofile_user_types', null=True, blank=True)
+    user           = models.OneToOneField(User, related_name='userprofile_from_user')
+    user_types     = models.ManyToManyField(UserType, related_name='userprofiles_from_user_types', null=True, blank=True)
     comment        = models.TextField(max_length=1000, blank=True)
     local_timezone = models.CharField(max_length=4, choices=TIMEZONE_CHOICES, default='east')
     phone          = models.CharField(max_length=135, blank=True)
     room           = models.CharField(max_length=135, blank=True)
     floor          = models.CharField(max_length=135, blank=True)
     building       = models.CharField(max_length=135, blank=True)
-    place          = models.ForeignKey(Place, related_name='userprofile_place', null=True, blank=True)
-    place_status   = models.CharField(max_length=1, choices=PLACE_STATUS_CHOICES, default='n')
+    place          = models.ForeignKey(Place, related_name='userprofiles_from_place', null=True, blank=True)
+    place_status   = models.CharField(max_length=1, choices=PLACE_STATUS_CHOICES)
     created        = models.DateTimeField(auto_now_add=True)
     modified       = models.DateTimeField(auto_now=True)
 
@@ -110,11 +111,55 @@ class UserProfile(models.Model):
     def has_user_types(self, user_types):
         return self.user_types.filter(name__in=user_types).count()
 
+    def creator_order_count(self):
+        return self.user.orders_from_creator.count()
+
+    def creator_order_list(self):
+        return self.user.orders_from_creator.all()
+
+    # For property managers
+    def approver_order_count(self):
+        return self.user.orders_from_approver.count()
+
+    def approver_order_list(self):
+        return self.user.orders_from_approver.all()
+
+    def manager_place_count(self):
+        return self.user.places_from_managers.count()
+
+    def manager_place_list(self):
+        return self.user.places_from_managers.all()
+    # End
+
+    # For property owners
+    def owner_place_count(self):
+        return self.user.places_from_owners.count()
+
+    def owner_place_list(self):
+        return self.user.places_from_owners.all()
+    # End
+
+    # For vendor managers
+    def manager_vendor_count(self):
+        return self.user.vendors_from_managers.count()
+
+    def manager_vendor_list(self):
+        return self.user.vendors_from_managers.all()
+    # End
+
+    # For vendors
+    def representative_vendor_count(self):
+        return self.user.vendors_from_representatives.count()
+
+    def representative_vendor_list(self):
+        return self.user.vendors_from_representatives.all()
+    # End
+
     def comment_count(self):
-        return self.user.comment_user.count()
+        return self.user.comments_from_user.count()
 
     def comment_list(self):
-        return Comment.objects.filter(user=self.user).all()
+        return self.user.comments_from_user.all()
 
 # Access UserProfile with User.profile, instead of User.get_profile().
 # Also creates a UserProfile for a User if it doens't exist already.
@@ -135,32 +180,40 @@ class Vendor(models.Model):
     city             = models.CharField(max_length=135)
     state            = models.CharField(max_length=135)
     zip_code         = models.CharField(max_length=135)
-    managers         = models.ManyToManyField(User, related_name='vendor_managers'       , limit_choices_to={'userprofile__user_types': 'vm'})
-    representatives  = models.ManyToManyField(User, related_name='vendor_representatives', limit_choices_to={'userprofile__user_types': 've'}, null=True, blank=True)
+    managers         = models.ManyToManyField(User, related_name='vendors_from_managers'       , limit_choices_to={'userprofile_from_user__user_types__name': 'vm'})
+    representatives  = models.ManyToManyField(User, related_name='vendors_from_representatives', limit_choices_to={'userprofile_from_user__user_types__name': 've'}, null=True, blank=True)
     created          = models.DateTimeField(auto_now_add=True)
     modified         = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         return self.name
 
+    def order_count(self):
+        return self.orders_from_vendor.count()
+
+    def order_list(self):
+        return self.orders_from_vendor.all()
+
 class Order(models.Model):
     STEPS = (
-        # (Order's attribute, Comment's action_type code, task description)
-        ('assign'            , 'se-as', "Assign an approver."),
-        ('action'            , 'se-ac', "Review, then either approve or reject the order."),
-        ('first_appointment' , 'se-fa', "Contact a vendor to get a quote and arrange an appointment for {creator}."),
-        ('second_appointment', 'se-sa', "Review the quote, (get owner approval), then arrange a second appointment for the repairs."),
-        ('work_done'         , 'se-wd', "Confirm the finished repairs and pay the vendor."),
-        ('follow_up'         , 'se-fu', "Follow up with {creator}."),
+        # (Order's attribute, Comment's action_type code, step description)
+        ('assigned_approver' , 'se-aa', "Assign an approver to the order."),
+        ('action'            , 'se-ac', "Review the order, then either approve or reject it."),
+        ('assigned_vendor'   , 'se-av', "Assign a vendor to the order."),
+        ('first_appointment' , 'se-fa', "Arrange an appointment for {creator} to meet {vendor}."),
+        ('quoted'            , 'se-qu', "Get a quote from {vendor}."),
+        ('second_appointment', 'se-sa', "Review the quote, (get owner approval), then arrange a second appointment."),
+        ('work_done'         , 'se-wd', "Confirm the finished repairs and pay {vendor}."),
+        ('followed_up'       , 'se-fu', "Follow up with {creator}."),
         ('paid'              , 'se-pa', "Confirm payment and close the order."),
     )
 
     STATUS_CHOICES = (
-        ('p', 'pending' ),
-        ('a', 'approved'),
-        ('r', 'rejected'),
-        ('c', 'closed'  ),
-        ('l', 'locked'  ),
+        ('p', 'Pending' ),
+        ('a', 'Approved'),
+        ('r', 'Rejected'),
+        ('c', 'Closed'  ),
+        ('l', 'Locked'  ),
     )
 
     WORK_TYPE_CHOICES = (
@@ -175,25 +228,49 @@ class Order(models.Model):
         ('ot', 'Others'             ),
     )
 
-    creator   = models.ForeignKey(User, related_name='order_creator')
-    approver  = models.ForeignKey(User, related_name='order_approver', null=True, blank=True)
-    vendor    = models.ForeignKey(Vendor, related_name='order_vendor', null=True, blank=True)
-    place     = models.ForeignKey(Place, related_name='order_place')
+    APPROVE_CHOICES = (
+        (True , 'Accepted'),
+        (False, 'Rejected'),
+    )
+
+    creator   = models.ForeignKey(User, related_name='orders_from_creator')
+    approver  = models.ForeignKey(User, related_name='orders_from_approver', null=True, blank=True)
+    vendor    = models.ForeignKey(Vendor, related_name='orders_from_vendor', null=True, blank=True)
+    place     = models.ForeignKey(Place, related_name='orders_from_place')
     comment   = models.TextField(max_length=1000)
-    status    = models.CharField(max_length=1, choices=STATUS_CHOICES, default='p')
+    status    = models.CharField(max_length=1, choices=STATUS_CHOICES)
     quote     = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     payment   = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     work_type = models.CharField(max_length=2, choices=WORK_TYPE_CHOICES)
 
     created            = models.DateTimeField(auto_now_add=True)
-    assign             = models.DateTimeField(null=True, blank=True)
+    assigned_approver  = models.DateTimeField(null=True, blank=True)
     action             = models.DateTimeField(null=True, blank=True)
+    assigned_vendor    = models.DateTimeField(null=True, blank=True)
     first_appointment  = models.DateTimeField(null=True, blank=True)
+    quoted             = models.DateTimeField(null=True, blank=True)
     second_appointment = models.DateTimeField(null=True, blank=True)
     work_done          = models.DateTimeField(null=True, blank=True)
-    follow_up          = models.DateTimeField(null=True, blank=True, verbose_name='follow-up')
+    followed_up        = models.DateTimeField(null=True, blank=True, verbose_name='follow-up')
     paid               = models.DateTimeField(null=True, blank=True)
     modified           = models.DateTimeField(auto_now=True)
+
+    fa_date = models.DateTimeField(null=True, blank=True, verbose_name='first appointment time')
+    sa_date = models.DateTimeField(null=True, blank=True, verbose_name='second appointment time')
+
+    fa_duration = models.IntegerField(null=True, blank=True, verbose_name='first appointment duration')
+    sa_duration = models.IntegerField(null=True, blank=True, verbose_name='second appointment duration')
+
+    fa_status_creator = models.NullBooleanField(choices=APPROVE_CHOICES, verbose_name='first appointment creator status')
+    fa_status_vendor  = models.NullBooleanField(choices=APPROVE_CHOICES, verbose_name='first appointment vendor status')
+
+    sa_status_creator = models.NullBooleanField(choices=APPROVE_CHOICES, verbose_name='second appointment creator status')
+    sa_status_vendor  = models.NullBooleanField(choices=APPROVE_CHOICES, verbose_name='second appointment vendor status')
+
+    quote_status_approver = models.NullBooleanField(choices=APPROVE_CHOICES, verbose_name='quote approver status')
+    quote_status_owner    = models.NullBooleanField(choices=APPROVE_CHOICES, verbose_name='quote owner status')
+
+    quote_owner = models.ForeignKey(User, related_name='orders_from_quote_owner', limit_choices_to={'userprofile_from_user__user_types__name': 'po'}, null=True, blank=True)
 
     class Meta:
         ordering = ['-pk']
@@ -202,13 +279,16 @@ class Order(models.Model):
         return unicode(self.pk)
 
     def comment_count(self):
-        return self.comment_order.count()
+        return self.comments_from_order.count()
+
+    def comment_list(self):
+        return self.comments_from_order.all()
 
     def all_steps(self):
         creator = self.creator.first_name
 
         return [
-            (getattr(self, attr), task.format(creator=creator))
+            (getattr(self, attr), task.format(creator=creator, vendor=self.vendor if self.vendor else "the vendor"))
             for attr, code, task in self.STEPS
         ]
 
@@ -245,7 +325,7 @@ class Order(models.Model):
         else:
             return "{number}: {step}".format(
                 number=str(c),
-                step=self.STEPS[c - 1][2].format(creator=creator)
+                step=self.STEPS[c - 1][2].format(creator=creator, vendor=self.vendor if self.vendor else "the vendor")
            )
 
     def total_steps(self):
@@ -253,33 +333,48 @@ class Order(models.Model):
 
 class Comment(models.Model):
     ACTION_TYPES = (
-        ('comme', 'comment'                , ""),
-        ('ad-qu', 'add quote'              , "{user} quoted {value}."),
-        ('ad-pa', 'add payment'            , "{user} paid {vendor} for {value}."),
-        ('ad-ve', 'add vendor'             , "{user} has added {vendor} as the vendor."),
-        ('ed-wt', 'edit work type'         , "{user} changed the work type to {value}."),
-        ('ed-co', 'edit comment'           , "{user} edited the comment."),
-        ('ed-qu', 'edit quote'             , "{user} edited the quote to {value}."),
-        ('ed-pa', 'edit payment'           , "{user} edited the payment to {value}."),
-        ('ed-ve', 'edit vendor'            , "{user} changed the vendor to {vendor}"),
-        ('sa-pe', 'status pending'         , "{user} set the status to pending."),
-        ('sa-ap', 'status approved'        , "{user} approved the order."),
-        ('sa-re', 'status rejected'        , "{user} rejected the order."),
-        ('sa-cl', 'status closed'          , "{user} closed the order."),
-        ('sa-lo', 'status locked'          , "{user} locked the order."),
-        ('se-as', 'step assign'            , "{user} {action} step 1."),
-        ('se-ac', 'step action'            , "{user} {action} step 2."),
-        ('se-fa', 'step first appointment' , "{user} {action} step 3."),
-        ('se-sa', 'step second appointment', "{user} {action} step 4."),
-        ('se-wd', 'step work done'         , "{user} {action} step 5."),
-        ('se-fu', 'step follow-up'         , "{user} {action} step 6."),
-        ('se-pa', 'step paid'              , "{user} {action} step 7."),
+        ('comme', 'comment'                         , ""),
+        ('ad-qu', 'add quote'                       , "{user} quoted {value}."),
+        ('ad-pa', 'add payment'                     , "{user} paid {vendor} for {value}."),
+        ('ad-ve', 'add vendor'                      , "{user} added {vendor} as the vendor."),
+        ('ad-fa', 'add first appointment duration'  , "{user} added an estimate of {value} for the first appointment."),
+        ('ad-fa', 'add second appointment duration' , "{user} added an estimate of {value} for the second appointment."),
+        ('ed-wt', 'edit work type'                  , "{user} changed the work type to {value}."),
+        ('ed-co', 'edit comment'                    , "{user} edited the comment."),
+        ('ed-qu', 'edit quote'                      , "{user} edited the quote to {value}."),
+        ('ed-pa', 'edit payment'                    , "{user} edited the payment to {value}."),
+        ('ed-ve', 'edit vendor'                     , "{user} changed the vendor to {vendor}."),
+        ('ad-fa', 'edit first appointment duration' , "{user} changed first appointment estimated duration to {value}."),
+        ('ad-fa', 'edit second appointment duration', "{user} changed second appointment estimated duration to {value}."),
+        ('pr-fa', 'propose first appointment'       , "{user} proposed {value} for the first appointment."),
+        ('pr-sa', 'propose second appointment'      , "{user} proposed {value} for the second appointment."),
+        ('sa-pe', 'status pending'                  , "{user} set the status to pending."),
+        ('sa-ap', 'status approved'                 , "{user} approved the order."),
+        ('sa-re', 'status rejected'                 , "{user} rejected the order."),
+        ('sa-cl', 'status closed'                   , "{user} closed the order."),
+        ('sa-lo', 'status locked'                   , "{user} locked the order."),
+        ('ac-fa', 'accept first appointment'        , "{user} accepted the first appointment on {value}."),
+        ('ac-sa', 'accept second appointment'       , "{user} accepted the second appointment on {value}."),
+        ('ac-qu', 'accept quote'                    , "{user} accepted the quote of {value}."),
+        ('de-fa', 'decline first appointment'       , "{user} declined the first appointment on {value}."),
+        ('de-sa', 'decline second appointment'      , "{user} declined the second appointment on {value}."),
+        ('de-qu', 'decline quote'                   , "{user} declined the quote of {value}."),
+        ('se-aa', 'step assign approver'            , "{user} {action} step 1."),
+        ('se-ac', 'step action'                     , "{user} {action} step 2."),
+        ('se-av', 'step assign vendor'              , "{user} {action} step 3."),
+        ('se-fa', 'step first appointment'          , "{user} {action} step 4."),
+        ('se-qu', 'step quote'                      , "{user} {action} step 5."),
+        ('se-sa', 'step second appointment'         , "{user} {action} step 6."),
+        ('se-wd', 'step work done'                  , "{user} {action} step 7."),
+        ('se-fu', 'step follow-up'                  , "{user} {action} step 8."),
+        ('se-pa', 'step paid'                       , "{user} {action} step 9."),
     )
 
+    # Get rid of the last column in ACTION_TYPES, because choices can only be a tuple of 2-tuples.
     ACTION_TYPES_CHOICES = tuple(i[:-1] for i in ACTION_TYPES)
 
-    order       = models.ForeignKey(Order, related_name='comment_order')
-    user        = models.ForeignKey(User, related_name='comment_user', null=True, blank=True)
+    order       = models.ForeignKey(Order, related_name='comments_from_order')
+    user        = models.ForeignKey(User, related_name='comments_from_user', null=True, blank=True)
     action_type = models.CharField(max_length=5, choices=ACTION_TYPES_CHOICES)
     comment     = models.CharField(max_length=1000)
     created     = models.DateTimeField(auto_now_add=True)

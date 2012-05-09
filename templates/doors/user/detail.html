@@ -1,0 +1,193 @@
+{% extends "base_menu.html" %}
+
+{% load breadcrumbs %}
+{% load humanize %}
+
+{% block title %}View user profile for {{ user_object.username }}{% endblock %}
+
+{# The detailed user page uses "user_object" because "user" is the current logged-in user, not the user of the detail page. #}
+
+{% block breadcrumbs %}
+    {% breadcrumb_url "Home" %}
+    {% breadcrumb_url "Users" user_list %}
+    {% if user_object == request.user %}
+        {% breadcrumb "Me" %}
+    {% else %}
+        {% breadcrumb user_object.username %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="content-module">
+        <div class="content-module-heading cf">
+            <h3 class="fl">{{ user_object.username }}</h3>
+
+            <span class="fr expand-collapse-text">Click to collapse</span>
+            <span class="fr expand-collapse-text initial-expand">Click to expand</span>
+        </div>
+        <div class="content-module-main cf">
+            <a class="button round blue image-right ic-edit text-upper" href="#">Edit</a>
+            <a class="button round red image-right ic-delete text-upper" href="#">Delete</a><br />
+            <br />
+
+            <form action="">
+                <div class="smaller-detail-div">
+                    <div class="half-size-column fl">
+                        <p>
+                            <label>Username:</label>
+                            {{ user_object.username }}
+                        </p>
+                        <p>
+                            <label>Email:</label>
+                            {{ user_object.email }}
+                        </p>
+                        <p>
+                            <label>First name:</label>
+                            {{ user_object.first_name }}
+                        </p>
+                        <p>
+                            <label>Last name:</label>
+                            {{ user_object.last_name }}
+                        </p>
+                        <p>
+                            <label>User types:</label>
+                        </p>
+                        <ul class="custom-ul">
+                            {% if user_object.profile.user_types.all %}
+                                {% for user_type in user_object.profile.user_types.all %}
+                                    <li>{{ user_type.get_name_display|capfirst }}</li>
+                                {% endfor %}
+                            {% else %}
+                                <li>No user types</li>
+                            {% endif %}
+                        </ul>
+                        <p>
+                            <label>Phone:</label>
+                            {{ user_object.profile.phone|default:"None" }}
+                        </p>
+                        <p>
+                            <label>Last login:</label>
+                            {{ user_object.last_login|naturaltime }}
+                        </p>
+                        <p>
+                            <label>Joined:</label>
+                            {{ user_object.date_joined|date:"DATE_FORMAT" }}
+                        </p>
+                        <p>
+                            <label>Local time zone:</label>
+                            {{ user_object.profile.get_local_timezone_display }}
+                        </p>
+                    </div>
+                    <div class="half-size-column fr">
+                        <p>
+                            <label>Orders created by {{ user_object.first_name }} ({{ user_object.profile.creator_order_count }})</label>
+                            <a href="#">See all orders created by {{ user_object.first_name }}.</a>
+                        </p>
+                        {% if is_property_manager %}
+                            <p>
+                                <label>Orders assigned to {{ user_object.first_name }} ({{ user_object.profile.approver_order_count }})</label>
+                                <a href="#">See all orders assigned to {{ user_object.first_name }}.</a>
+                            </p>
+                        {% endif %}
+                        <p>
+                            <label>Comments created by {{ user_object.first_name }} ({{ user_object.profile.comment_count }})</label>
+                            <a href="#">See all comments created by {{ user_object.first_name }}.</a>
+                        </p>
+                        {% if is_tenant %}
+                            <p>
+                                <label>Property:</label>
+                                {% if user_object.profile.place %}
+                                    <a href="{% url place_detail pk=user_object.profile.place.pk %}">{{ user_object.profile.place.name }}</a>
+                                {% else %}
+                                    None
+                                {% endif %}
+                            </p>
+                            <p>
+                                <label>Building:</label>
+                                {{ user_object.profile.building|default:"None" }}
+                            </p>
+                            <p>
+                                <label>Floor:</label>
+                                {{ user_object.profile.floor|default:"None" }}
+                            </p>
+                            <p>
+                                <label>Room:</label>
+                                {{ user_object.profile.room|default:"None" }}
+                            </p>
+                        {% endif %}
+                        {% if is_property_manager %}
+                            {% with place_count=user_object.profile.manager_place_count place_list=user_object.profile.manager_place_list %}
+                                <p>
+                                    <label>Managed properties ({{ place_count }}):</label>
+                                </p>
+                                <ul class="custom-ul">
+                                {% if place_list %}
+                                    {% for place in place_list %}
+                                        <li><a href="{% url place_detail place.pk %}">{{ place.name }}</a></li>
+                                    {% endfor %}
+                                {% else %}
+                                    <li>No properties</li>
+                                {% endif %}
+                                </ul>
+                            {% endwith %}
+                        {% endif %}
+                        {% if is_property_owner %}
+                            {% with place_count=user_object.profile.owner_place_count place_list=user_object.profile.owner_place_list %}
+                                <p>
+                                    <label>Owned properties ({{ place_count }}):</label>
+                                </p>
+                                <ul class="custom-ul">
+                                    {% if place_list %}
+                                        {% for place in place_list %}
+                                            <li><a href="{% url place_detail place.pk %}">{{ place.name }}</a></li>
+                                        {% endfor %}
+                                    {% else %}
+                                        <li>No properties</li>
+                                    {% endif %}
+                                </ul>
+                            {% endwith %}
+                        {% endif %}
+                        {% if is_vendor %}
+                            {% with vendor_count=user_object.profile.representative_vendor_count vendor_list=user_object.profile.representative_vendor_list %}
+                                <p>
+                                    <label>Represented vendors ({{ vendor_count }}):</label>
+                                </p>
+                                <ul class="custom-ul">
+                                    {% if vendor_list %}
+                                        {% for vendor in vendor_list %}
+                                            <li><a href="{% url vendor_detail vendor.pk %}">{{ vendor.name }}</a></li>
+                                        {% endfor %}
+                                    {% else %}
+                                        <li>No vendors</li>
+                                    {% endif %}
+                                </ul>
+                            {% endwith %}
+                        {% endif %}
+                        {% if is_vendor_manager %}
+                            {% with vendor_count=user_object.profile.manager_vendor_count vendor_list=user_object.profile.manager_vendor_list %}
+                                <p>
+                                    <label>Managed vendors ({{ vendor_count }}):</label>
+                                </p>
+                                <ul class="custom-ul">
+                                    {% if vendor_list %}
+                                        {% for vendor in vendor_list %}
+                                            <li><a href="{% url vendor_detail vendor.pk %}">{{ vendor.name }}</a></li>
+                                        {% endfor %}
+                                    {% else %}
+                                        <li>No vendors</li>
+                                    {% endif %}
+                                </ul>
+                            {% endwith %}
+                        {% endif %}
+                    </div>
+                    <div class="cb">
+                        <p>
+                            <label>Comment:</label>
+                            {{ user_object.profile.comment|linebreaksbr|default:"No comment." }}
+                        </p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -1,10 +1,71 @@
 {% extends "base.html" %}
-{% block title %}Register for an account{% endblock %}
+
+{% load widget_tweaks %}
+{% load breadcrumbs %}
+
+{% block title %}Register{% endblock %}
+
+{% block main_content_class %}center-small-content fc{% endblock %}
+
+{% block breadcrumbs %}
+    {% breadcrumb_url "Home" %}
+    {% breadcrumb "Register" %}
+{% endblock %}
+
 {% block content %}
-<table>
-    <form method='post' action=''>{% csrf_token %}
-        {{ form }}
-        <tr><td></td><td><input type="submit" value="Send activation email" /></td>
-    </form>
+    <div class="content-module">
+        <div class="content-module-main cf">
+            <form method="post" action="">
+                {% csrf_token %}
+                    <div class="account-center">
+                        {% if form.username.errors %}
+                            <p class="form-error">
+                            {% for error in form.username.errors %}
+                                <em>{{ error|escape }}</em>
+                            {% endfor %}
+                        {% else %}
+                            <p>
+                        {% endif %}
+                            {{ form.username.label_tag }}
+                            {{ form.username|add_class:"round"|add_error_class:"error-input" }}
+                            </p>
+                        {% if form.email.errors %}
+                            <p class="form-error">
+                            {% for error in form.email.errors %}
+                                <em>{{ error|escape }}</em>
+                            {% endfor %}
+                        {% else %}
+                            <p>
+                        {% endif %}
+                            {{ form.email.label_tag }}
+                            {{ form.email|add_class:"round"|add_error_class:"error-input" }}
+                            </p>
+                        {% if form.password1.errors %}
+                            <p class="form-error">
+                            {% for error in form.password1.errors %}
+                                <em>{{ error|escape }}</em>
+                            {% endfor %}
+                        {% else %}
+                            <p>
+                        {% endif %}
+                            {{ form.password1.label_tag }}
+                            {{ form.password1|add_class:"round"|add_error_class:"error-input" }}
+                            </p>
+                        {% if form.password2.errors %}
+                            <p class="form-error">
+                            {% for error in form.password2.errors %}
+                                <em>{{ error|escape }}</em>
+                            {% endfor %}
+                        {% else %}
+                            <p>
+                        {% endif %}
+                            {{ form.password2.label_tag }}
+                            {{ form.password2|add_class:"round"|add_error_class:"error-input" }}
+                            </p>
+                    <input type="submit" value="Send activation email" class="round blue ic-right-arrow" />
+                </div>
+            </form>
+        </div>
+    </div>
 </table>
 {% endblock %}

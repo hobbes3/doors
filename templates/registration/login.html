@@ -1,28 +1,47 @@
 {% extends "base.html" %}
 
+{% load widget_tweaks %}
+{% load breadcrumbs %}
+
 {% block title %}Login{% endblock %}
 
+{% block main_content_class %}center-small-content fc{% endblock %}
+
+{% block breadcrumbs %}
+    {% breadcrumb_url "Home" %}
+    {% breadcrumb "Log in" %}
+{% endblock %}
+
 {% block content %}
+    <div class="content-module">
+        <div class="content-module-main cf">
+            <form method="post" action="{% url django.contrib.auth.views.login %}">
+                {% csrf_token %}
 
-{% if form.errors %}
-<p>Your username and password didn't match. Please try again.</p>
-{% endif %}
+                <input type="hidden" name="next" value="{{ next }}" />
 
-<form method="post" action="{% url django.contrib.auth.views.login %}">{% csrf_token %}
-<table>
-<tr>
-    <td>{{ form.username.label_tag }}</td>
-    <td>{{ form.username }}</td>
-</tr>
-<tr>
-    <td>{{ form.password.label_tag }}</td>
-    <td>{{ form.password }}</td>
-</tr>
-</table>
-<p><a href="{% url auth_password_reset %}">Forgot</a> your password? <a href="{% url registration_register %}">Register.</a></p>
+                <div class="account-center">
+                    {% if form.errors %}
+                        <p class="form-error">
+                            <em>Your username and password didn't match. Please try again.</em>
+                        </p>
+                    {% endif %}
 
-<input type="submit" value="login" />
-<input type="hidden" name="next" value="{{ next }}" />
-</form>
+                    <p>
+                        {{ form.username.label_tag }}
+                        {{ form.username|add_class:"round" }}
+                    </p>
+                    <p>
+                        {{ form.password.label_tag }}
+                        {{ form.password|add_class:"round" }}
+                    </p>
+                    <p>
+                        <a href="{% url auth_password_reset %}">Forgot</a> your password? <a href="{% url registration_register %}">Register.</a>
+                    </p>
 
+                    <input type="submit" value="Login" class="round blue ic-right-arrow" />
+                </div>
+            </form>
+        </div>
+    </div>
 {% endblock %}

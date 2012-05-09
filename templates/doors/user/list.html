@@ -1,0 +1,63 @@
+{% extends "base_menu.html" %}
+
+{% load breadcrumbs %}
+{% load humanize %}
+{% load pagination_tags %}
+
+{% block title %}List users{% endblock %}
+
+{% block head %}
+    <link href="{{ STATIC_URL }}css/pagination.css" type="text/css" rel="stylesheet" />
+{% endblock %}
+
+{% block breadcrumbs %}
+    {% breadcrumb_url "Home" %}
+    {% breadcrumb "Users" %}
+{% endblock %}
+
+{% block content %}
+    <div class="content-module">
+        <div class="content-module-heading cf">
+            <h3 class="fl">Users</h3>
+
+            <span class="fr expand-collapse-text">Click to collapse</span>
+            <span class="fr expand-collapse-text initial-expand">Click to expand</span>
+        </div>
+        <div class="content-module-main">
+
+            <p>{{ all_user_count }} total user{{ user_list.count|pluralize }} on Doors.</p>
+
+            {% autopaginate user_list 5 %}
+            {% paginate %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>username</th>
+                        <th>first name</th>
+                        <th>last name</th>
+                        <th>roles</th>
+                        <th>last login</th>
+                        <th>date joined</th>
+                    </tr>
+                <thead>
+                <tbody>
+                {% if user_list %}
+                    {% for user in user_list %}
+                        <tr>
+                            <td><a href="{% url user_detail pk=user.pk %}">{{ user.username }}</a></td>
+                            <td>{{ user.first_name }}</td>
+                            <td>{{ user.last_name }}</td>
+                            <td>{{ user.userprofile_from_user.user_types.all|join:", "|capfirst|default:"None" }}</td>
+                            <td>{{ user.last_login|naturaltime }}</td>
+                            <td>{{ user.date_joined|date:"DATE_FORMAT" }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr><td colspan="5">There are no users.</td></tr>
+                {% endif %}
+                </tbody>
+            </table>
+            {% paginate %}
+        </div>
+    </div>
+{% endblock %}

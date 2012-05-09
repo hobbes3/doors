@@ -3,11 +3,12 @@ from django.db.models import Q
 from django.contrib.auth.models import User
 from doors.models import Order, Place
 from doors.forms import OrderCreateForm, CommentCreateForm
+from itertools import chain
 
 # Returns a list of orders that the user is allowed to view.
 def get_viewable_order_list(user):
     if not user.is_authenticated():
-        return None
+        return Order.objects.none()
 
     # Administrators, moderators, and viewers can see all orders.
     if user.profile.has_user_types(['ad', 'mo', 'vi']):
@@ -30,19 +31,19 @@ def get_viewable_order_list(user):
     else:
         return None
 
-def get_orders_create_dictionary(user, POST_data=None):
+def get_order_create_dictionary(user, POST_data=None):
     # Only tenants (with a place), property managers, moderators, and administrators can create orders.
     # All moderators and administrators can create orders and assign any creators who are either tenants or project managers.
     if user.profile.has_user_types(['mo', 'ad']):
         creator_list = User.objects.filter(
-            Q(userprofile__user_types__name='te') |
-            Q(userprofile__user_types__name='pm')
+            Q(userprofile_from_user__user_types__name='te') |
+            Q(userprofile_from_user__user_types__name='pm')
         ).distinct()
         can_assign_creator = 1
     # All property managers can create orders but only assign creators whose property the property manager manages.
     elif user.profile.has_user_types(['pm']):
         creator_list = User.objects.filter(
-            Q(userprofile__place__managers=user) |
+            Q(userprofile_from_user__place__managers=user) |
             Q(pk=user.pk)
         )
         can_assign_creator = 1
@@ -62,13 +63,14 @@ def get_orders_create_dictionary(user, POST_data=None):
 
     form = OrderCreateForm(data=POST_data, creator_list=creator_list)
 
-    if 'creator' in form.data:
+    if 'creator' in form.data and form.data['creator']:
         creator = User.objects.get(pk=int(form.data['creator']))
 
         if creator.profile.has_user_types(['pm']):
-            place_list = creator.place_managers.all()
+            place_list = creator.places_from_managers.all()
         else:
-            place_list = Place.objects.filter(userprofile_place=creator)
+            # place_list needs to be a QuerySet. Therefore you can't just do "creator.profile.place".
+            place_list = Place.objects.filter(userprofiles_from_place__user=creator)
 
         form = OrderCreateForm(data=POST_data, creator_list=creator_list, place_list=place_list)
 
@@ -77,8 +79,7 @@ def get_orders_create_dictionary(user, POST_data=None):
         'can_assign_creator': can_assign_creator
     }
 
-def get_orders_detail_dictionary(order, user, POST_data=None):
-    comment_list = order.comment_order.all()
+def get_order_detail_dictionary(order, user, POST_data=None):
     comment_form = CommentCreateForm(data=POST_data)
 
     # All property managers, moderators, and administrators can edit orders.
@@ -88,9 +89,17 @@ def get_orders_detail_dictionary(order, user, POST_data=None):
     else:
         can_edit = 0
 
+    # Vendors and vendor managers who are part of the vendor that is assigned to the order can add a quote.
+    # list(chain(...)) combines multiple QuerySet into a list.
+    # http://stackoverflow.com/questions/431628/how-to-combine-2-or-more-querysets-in-a-django-view
+    if user.profile.has_user_types(['ve', 'vm']) and user in list(chain(order.vendor.mangers.all(), order.vendor.representatives.all())):
+        can_add_quote = 1
+    else:
+        can_add_quote = 0
+
     return {
         'order': order,
-        'comment_list': comment_list,
         'comment_form': comment_form,
         'can_edit': can_edit,
+        'can_add_quote': can_add_quote,
     }

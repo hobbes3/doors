@@ -9,8 +9,10 @@ admin.autodiscover()
 dajaxice_autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^$', RedirectView.as_view(url=reverse_lazy('orders_list')), name='index'),
+    url(r'^$', RedirectView.as_view(url=reverse_lazy('order_list')), name='home'),
     url(r'^doors/', include('doors.urls')),
+    url(r'^accounts/$', RedirectView.as_view(url=reverse_lazy('order_list')), name='account_list'),
+    url(r'^accounts/self/$', RedirectView.as_view(url=reverse_lazy('order_list')), name='account_self_detail'),
     url(r'^accounts/', include('registration.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^{}/'.format(settings.DAJAXICE_MEDIA_PREFIX), include('dajaxice.urls')),

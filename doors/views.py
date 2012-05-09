@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.views.generic import ListView, DetailView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from doors.models import Order, Comment
+from doors.models import Order, Place, Vendor, Comment
 from doors.permissions import *
 from django.core.urlresolvers import reverse
 import logging
@@ -24,8 +24,7 @@ logger = logging.getLogger(__name__)
 #)
 
 class OrderListView(ListView):
-    template_name = 'doors/orders/list.html'
-    #paginate_by = 10
+    template_name = 'doors/order/list.html'
 
     def get_queryset(self):
         return get_viewable_order_list(self.request.user)
@@ -33,33 +32,25 @@ class OrderListView(ListView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context.
         context = super(OrderListView, self).get_context_data(**kwargs)
-        context['all_orders_count'] = Order.objects.count()
+        context['all_order_count'] = Order.objects.count()
         return context
 
 @login_required
-def orders_detail(request, pk):
+def order_detail(request, pk):
     order = get_object_or_404(Order, pk=pk)
 
     if order not in get_viewable_order_list(request.user):
         messages.error(request, "You don't have permission to view order #{}!".format(pk))
 
-        return HttpResponseRedirect(reverse('orders_list'))
+        return HttpResponseRedirect(reverse('order_list'))
 
-    return render(request, 'doors/orders/detail.html', get_orders_detail_dictionary(order=order, user=request.user))
-
-class SelfUserDetailView(DetailView):
-    model = User
-    template_name = 'doors/users/detail.html'
-    context_object_name = 'user_object'
-
-    def get_object(self):
-        return self.request.user
+    return render(request, 'doors/order/detail.html', get_order_detail_dictionary(order=order, user=request.user))
 
 @login_required
-def orders_create(request):
+def order_create(request):
     if request.method == 'POST':
         #import ipdb; ipdb.set_trace()
-        dictionary = get_orders_create_dictionary(user=request.user, POST_data=request.POST)
+        dictionary = get_order_create_dictionary(user=request.user, POST_data=request.POST)
 
         form = dictionary['form']
 
@@ -79,24 +70,24 @@ def orders_create(request):
             messages.success(request, "Your order #{} had been created!".format(new_order.pk))
             logger.info("{user} created order #{pk}".format(user=request.user, pk=new_order.pk))
 
-            return HttpResponseRedirect(reverse('orders_detail', kwargs={'pk': new_order.pk}))
+            return HttpResponseRedirect(reverse('order_detail', kwargs={'pk': new_order.pk}))
     # Not POST.
     else:
-        dictionary = get_orders_create_dictionary(user=request.user)
+        dictionary = get_order_create_dictionary(user=request.user)
         if dictionary is None:
-            # Messages called in get_orders_create_dictionary().
-            return HttpResponseRedirect(reverse('orders_list'))
+            # Messages called in get_order_create_dictionary().
+            return HttpResponseRedirect(reverse('order_list'))
 
-    return render(request, 'doors/orders/create.html', dictionary)
+    return render(request, 'doors/order/create.html', dictionary)
 
-def comments_create(request, order_pk):
+def comment_create(request, order_pk):
     #import ipdb; ipdb.set_trace()
 
     if request.method == 'POST':
         order = Order.objects.get(pk=order_pk)
         user = request.user
 
-        dictionary = get_orders_detail_dictionary(order=order, user=request.user, POST_data=request.POST)
+        dictionary = get_order_detail_dictionary(order=order, user=request.user, POST_data=request.POST)
         form = dictionary['comment_form']
 
         if form.is_valid():
@@ -113,6 +104,60 @@ def comments_create(request, order_pk):
             logger.info("{user} created comment #{pk} for order #{order_pk}".format(user=user, pk=new_comment.pk, order_pk=order_pk))
         else:
             dictionary['focus'] = 'comment_form'
-            return render(request, 'doors/orders/detail.html', dictionary)
+            return render(request, 'doors/order/detail.html', dictionary)
 
-    return HttpResponseRedirect(reverse('orders_detail', kwargs={'pk': order_pk}))
+    return HttpResponseRedirect(reverse('order_detail', kwargs={'pk': order_pk}))
+
+class UserListView(ListView):
+    model = User
+    template_name = 'doors/user/list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(UserListView, self).get_context_data(**kwargs)
+        context['all_user_count'] = User.objects.count()
+        return context
+
+@login_required
+def user_detail(request, pk):
+    user = get_object_or_404(User, pk=pk)
+
+    is_tenant           = user.profile.has_user_types(["te"])
+    is_property_manager = user.profile.has_user_types(["pm"])
+    is_property_owner   = user.profile.has_user_types(["po"])
+    is_vendor           = user.profile.has_user_types(["ve"])
+    is_vendor_manager   = user.profile.has_user_types(["vm"])
+
+    dictionary = {
+        # Have to use "user_object" because "user" is the logged-in user.
+        'user_object': user,
+        'is_tenant': is_tenant,
+        'is_property_manager': is_property_manager,
+        'is_property_owner': is_property_owner,
+        'is_vendor': is_vendor,
+        'is_vendor_manager': is_vendor_manager,
+        'more_info': is_tenant + is_property_manager + is_property_owner + is_vendor + is_vendor_manager,
+    }
+
+    return render(request, 'doors/user/detail.html', dictionary)
+
+@login_required
+def user_self_detail(request):
+    return user_detail(request, request.user.pk)
+
+class VendorListView(ListView):
+    model = Vendor
+    template_name = 'doors/vendor/list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(VendorListView, self).get_context_data(**kwargs)
+        context['all_vendor_count'] = Vendor.objects.count()
+        return context
+
+class PlaceListView(ListView):
+    model = Place
+    template_name = 'doors/place/list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(PlaceListView, self).get_context_data(**kwargs)
+        context['all_place_count'] = Place.objects.count()
+        return context

@@ -1,0 +1,111 @@
+{% extends "base_menu.html" %}
+
+{% load breadcrumbs %}
+
+{% block title %}View place {{ place.name }}{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    {% breadcrumb_url "Home" %}
+    {% breadcrumb_url "Properties" place_list %}
+    {% breadcrumb place.name %}
+{% endblock %}
+
+{% block content %}
+    <div class="content-module">
+        <div class="content-module-heading cf">
+            <h3 class="fl">{{ place.name }}</h3>
+
+            <span class="fr expand-collapse-text">Click to collapse</span>
+            <span class="fr expand-collapse-text initial-expand">Click to expand</span>
+        </div>
+        <div class="content-module-main cf">
+            <a class="button round blue image-right ic-edit text-upper" href="#">Edit</a>
+            <a class="button round red image-right ic-delete text-upper" href="#">Delete</a><br />
+            <br />
+
+            <form action="">
+                <div class="smaller-detail-div">
+                    <div class="half-size-column fl">
+                        <p>
+                            <label>Name:</label>
+                            {{ place.name }}
+                        </p>
+                        <p>
+                            <label>Phone:</label>
+                            {{ place.phone|default:"None" }}
+                        </p>
+                        <p>
+                            <label>Website:</label>
+                            {{ place.website|default:"None" }}
+                        </p>
+                        <p>
+                            <label>Category:</label>
+                            {{ place.get_place_type_display|capfirst }}
+                        </p>
+                        <p>
+                            <label>Address:</label>
+                            {{ place.address_line_one }}<br />
+                            {% if place.address_line_two %}
+                                {{ place.address_line_two }}<br />
+                            {% endif %}
+                            {{ place.city }}, {{ place.state }} {{place.zip_code }}
+                        </p>
+                    </div>
+                    <div class="half-size-column fr">
+                        <p>
+                            <label>Owners ({{ place.owners.count }}):</label>
+                        </p>
+                        <ul class="custom-ul">
+                            {% with owner_list=place.owners.all %}
+                                {% if owner_list %}
+                                    {% for owner in owner_list %}
+                                        <li><a href="{% url user_detail pk=owner.pk %}">{{ owner.get_full_name }}</a></li>
+                                    {% endfor %}
+                                {% else %}
+                                    <li>No owners</li>
+                                {% endif %}
+                            {% endwith %}
+                        </ul>
+                        <p>
+                            <label>Managers ({{ place.managers.count }}):</label>
+                        </p>
+                        <ul class="custom-ul">
+                            {% with manager_list=place.managers.all %}
+                                {% if manager_list %}
+                                    {% for manager in manager_list %}
+                                        <li><a href="{% url user_detail pk=manager.pk %}">{{ manager.get_full_name }}</a></li>
+                                    {% endfor %}
+                                {% else %}
+                                    <li>No managers.</li>
+                                {% endif %}
+                            {% endwith %}
+                        </ul>
+                        <p>
+                            <label>Tenants ({{ place.tenant_count }}):</label>
+                        </p>
+                        <ul class="custom-ul">
+                        {% with tenant_list=place.tenant_list %}
+                            {% if tenant_list %}
+                                {% for resident in tenant_list %}
+                                    <li><a href="{% url user_detail pk=resident.user.pk %}">{{ resident.user.get_full_name }}</a></li>
+                                {% endfor %}
+                            {% else %}
+                                <li>None</li>
+                            {% endif %}
+                        {% endwith %}
+                        </ul>
+                    </div>
+                    <div class="cb">
+                        <p>
+                            <label>Comment:</label>
+                            {{ place.comment|linebreaksbr|default:"No comment." }}
+                        </p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

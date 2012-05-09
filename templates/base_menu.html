@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block tabs %}
+    <div id="header-with-tabs">
+        <div class="page-full-width cf">
+            <ul id="tabs" class="fl">
+                <li><a href="#" id="dashboard-tab" class="dashboard-tab">Dashboard</a></li>
+                <li><a href="{% url order_list %}" id="order-tab">Orders</a></li>
+                <li><a href="{% url user_list %}" id="user-tab">Users</a></li>
+                <li><a href="{% url place_list %}" id="place-tab">Properties</a></li>
+                <li><a href="{% url vendor_list %}" id="vendor-tab">Vendors</a></li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block side_menu %}
+    <div class="side-menu fl">
+        <h3>Actions</h3>
+        <ul>
+            <li><a href="{% url order_create %}">Create an order</a></li>
+            <li><a href="#">Manage orders</a></li>
+            <li><a href="#">Create a property</a></li>
+            <li><a href="#">Manage properties</a></li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block main_content_class %}side-content fr{% endblock %}

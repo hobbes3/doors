@@ -1,10 +1,47 @@
 {% extends "base.html" %}
+
+{% load breadcrumbs %}
+
 {% block title %}{% if account %}Activation complete{% else %}Activation problem{% endif %}{% endblock %}
+
+{% block head %}
+    <style type="text/css">
+        .status_icon {
+            display: block;
+            margin-bottom: 2em;
+        }
+    </style>
+{% endblock %}
+
+{% block main_content_class %}center-small-content fc{% endblock %}
+
+{% block breadcrumbs %}
+    {% breadcrumb_url "Home" %}
+    {% breadcrumb "Activation" %}
+{% endblock %}
+
 {% block content %}
-{% if account %}
-Thanks {{ account }}, activation complete!  You may now <a href='{% url auth_login %}'>login</a> using the username and password you set at registration.
-{% else %}
-Oops &ndash; it seems that your activation key is invalid.  Please check the url again.
-{% endif %}
+    <div class="content-module">
+        <div class="content-module-main cf">
+            {% if account %}
+                <img class="fc status_icon" src="{{ STATIC_URL }}img/icons/green_checkmark.png" />
+            {% else %}
+                <img class="fc status_icon" src="{{ STATIC_URL }}img/icons/red_error.png" />
+            {% endif %}
+            <p class="align-center">
+                {% if account %}
+                    Thanks {{ account }}! Activation is complete! You may now <a href="{% url auth_login %}">login</a> using the username and password you set at registration.
+                {% else %}
+                    Oops! It seems that your activation key is invalid. Please check the url again.
+                {% endif %}
+            </p>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+{% extends "base.html" %}
+{% block content %}
 {% endblock %}
 
