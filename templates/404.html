@@ -1,11 +1,24 @@
 {% extends "base.html" %}
 
+{% load breadcrumbs %}
+
 {% block title %}404 Page Not Found{% endblock %}
+
+{% block main_content_class %}center-small-content fc{% endblock %}
+
+{% block breadcrumbs %}
+    {% breadcrumb_url "Home" %}
+    {% breadcrumb "Gom is lost..." %}
+{% endblock %}
 
 {% block content %}
     <div class="content-module">
         <div class="content-module-main">
-            <h1>404 Page Not Found</h1>
+            <h1 class="align-center">404 - Gom Not Found</h1>
+            <img src="{{ STATIC_URL }}img/lost-gom.png" class="center" />
+            <p class="align-center">
+                The Lost Bear image by Bradley Trevor Greive
+            </p>
         </div>
     </div>
 {% endblock %}
