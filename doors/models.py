@@ -26,7 +26,7 @@ class Place(models.Model):
     status           = models.CharField(max_length=1, choices=STATUS_CHOICES)
     managers         = models.ManyToManyField(User, related_name='places_from_managers', limit_choices_to={'userprofile_from_user__user_types': 'pm'})
     owners           = models.ManyToManyField(User, related_name='places_from_owners'  , limit_choices_to={'userprofile_from_user__user_types': 'po'}, null=True, blank=True)
-    comment          = models.TextField(max_length=1000, blank=True)
+    note             = models.TextField(max_length=1000, blank=True)
     address_line_one = models.CharField(max_length=135)
     address_line_two = models.CharField(max_length=135, blank=True)
     city             = models.CharField(max_length=135)
@@ -94,7 +94,7 @@ class UserProfile(models.Model):
 
     user           = models.OneToOneField(User, related_name='userprofile_from_user')
     user_types     = models.ManyToManyField(UserType, related_name='userprofiles_from_user_types', null=True, blank=True)
-    comment        = models.TextField(max_length=1000, blank=True)
+    note           = models.TextField(max_length=1000, blank=True)
     local_timezone = models.CharField(max_length=4, choices=TIMEZONE_CHOICES, default='east')
     phone          = models.CharField(max_length=135, blank=True)
     room           = models.CharField(max_length=135, blank=True)
@@ -171,7 +171,7 @@ User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 
 class Vendor(models.Model):
     name             = models.CharField(max_length=135)
-    comment          = models.TextField(max_length=1000, blank=True)
+    note             = models.TextField(max_length=1000, blank=True)
     phone            = models.CharField(max_length=135, blank=True)
     email            = models.EmailField(blank=True)
     website          = models.URLField(blank=True)
@@ -237,7 +237,7 @@ class Order(models.Model):
     approver  = models.ForeignKey(User, related_name='orders_from_approver', null=True, blank=True)
     vendor    = models.ForeignKey(Vendor, related_name='orders_from_vendor', null=True, blank=True)
     place     = models.ForeignKey(Place, related_name='orders_from_place')
-    comment   = models.TextField(max_length=1000)
+    note      = models.TextField(max_length=1000)
     status    = models.CharField(max_length=1, choices=STATUS_CHOICES)
     quote     = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     payment   = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
@@ -340,7 +340,7 @@ class Comment(models.Model):
         ('ad-fa', 'add first appointment duration'  , "{user} added an estimate of {value} for the first appointment."),
         ('ad-fa', 'add second appointment duration' , "{user} added an estimate of {value} for the second appointment."),
         ('ed-wt', 'edit work type'                  , "{user} changed the work type to {value}."),
-        ('ed-co', 'edit comment'                    , "{user} edited the comment."),
+        ('ed-co', 'edit note'                       , "{user} edited the note."),
         ('ed-qu', 'edit quote'                      , "{user} edited the quote to {value}."),
         ('ed-pa', 'edit payment'                    , "{user} edited the payment to {value}."),
         ('ed-ve', 'edit vendor'                     , "{user} changed the vendor to {vendor}."),

@@ -33,11 +33,7 @@
             width: 85%;
         }
 
-        #comment-edit {
-            padding-top: 50%;
-        }
-
-        #comment_list {
+        #comment-list {
             height: 20em;
             border: 1px solid #eeeeee;
             overflow: auto;
@@ -98,8 +94,8 @@
                             {{ order.get_status_display|capfirst }}
                         </p>
                         <p>
-                            <label>Comment:</label>
-                            {{ order.comment|linebreaksbr|default:"No comment." }}
+                            <label>Note:</label>
+                            {{ order.note|linebreaksbr|default:"No note." }}
                         </p>
                     </div>
                     <div class="half-size-column fr">
@@ -228,7 +224,7 @@
             <span class="fr expand-collapse-text initial-expand">Click to expand</span>
         </div>
         <div class="content-module-main">
-            <div id="comment_list">
+            <div id="comment-list">
                 {% if order.comment_list %}
                     {% for comment in order.comment_list %}
                         {% if comment.user %}
@@ -245,7 +241,7 @@
                         {% endif %}
                     {% endfor %}
                 {% else %}
-                    <div id="no_comments">No comments.</div>
+                    <div id="no-comments">No comments.</div>
                 {% endif %}
             </div>
 

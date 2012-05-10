@@ -58,13 +58,13 @@ def order_create(request):
             creator   = form.cleaned_data['creator']
             place     = form.cleaned_data['place']
             work_type = form.cleaned_data['work_type']
-            comment   = form.cleaned_data['comment']
+            note      = form.cleaned_data['note']
 
             new_order = Order.objects.create(
                 creator=creator,
                 place=place,
                 work_type=work_type,
-                comment=comment
+                note=note
             )
 
             messages.success(request, "Your order #{} had been created!".format(new_order.pk))

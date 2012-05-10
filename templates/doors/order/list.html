@@ -33,15 +33,16 @@
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Date created</th>
-                        <th>Property</th>
-                        <th>Creator</th>
-                        <th>Approver</th>
-                        <th>Vendor</th>
-                        <th>Status</th>
-                        <th>Comments</th>
-                        <th>Next step</th>
+                        <th>id</th>
+                        <th>date created</th>
+                        <th>property</th>
+                        <th>creator</th>
+                        <th>note</th>
+                        <th>approver</th>
+                        <th>vendor</th>
+                        <th>status</th>
+                        <th>comment count</th>
+                        <th>next step</th>
                     </tr>
                 <thead>
                 <tbody>
@@ -52,6 +53,7 @@
                             <td>{{ order.created }}</td>
                             <td><a href="{% url place_detail pk=order.place.pk %}">{{ order.place }}</a></td>
                             <td><a href="{% url user_detail pk=order.creator.pk %}">{{ order.creator.get_full_name }}</a></td>
+                            <td>{{ order.note|truncatechars:30 }}
                             <td>
                                 {% if order.approver %}
                                     <a href="{% url user_detail pk=order.approver.pk %}">{{ order.approver.get_full_name }}</a>
@@ -68,7 +70,7 @@
                             </td>
                             <td>{{ order.get_status_display|capfirst }}</td>
                             <td>{{ order.comment_count }}</td>
-                            <td>{{ order.next_step }}</td>
+                            <td>{{ order.next_step|truncatechars:30 }}</td>
                         </tr>
                     {% endfor %}
                 {% else %}
