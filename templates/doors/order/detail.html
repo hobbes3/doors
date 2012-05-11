@@ -187,7 +187,7 @@
                                 <tr>
                                     <td>
                                         <input type="checkbox"
-                                            id="step_{{ forloop.counter }}"
+                                            id="step-{{ forloop.counter }}"
                                             onclick="Dajaxice.doors.order_detail_step_changed(update_steps, {
                                                 'order_pk': {{ order.pk }},
                                                 'local_timezone': '{{ request.user.profile.get_local_timezone_display }}',
@@ -202,7 +202,7 @@
                                         {% endif %}
                                         />
                                     </td>
-                                    <td><div id="step_{{ forloop.counter }}_datetime">{{ step.0 }}</div></td>
+                                    <td><div id="step-{{ forloop.counter }}-datetime">{{ step.0 }}</div></td>
                                     <td>{{ forloop.counter }}: {{ step.1 }}</td>
                                 </tr>
                             {% endfor %}
@@ -218,7 +218,7 @@
     <!-- Comments -->
     <div class="content-module">
         <div class="content-module-heading cf">
-            <h3 class="fl">Comments ({{ order.comment_count }})</h3>
+            <h3 class="fl">Comments (<span id="comment-count">{{ order.comment_count }}</span>)</h3>
 
             <span class="fr expand-collapse-text">Click to collapse</span>
             <span class="fr expand-collapse-text initial-expand">Click to expand</span>
@@ -228,7 +228,7 @@
                 {% if order.comment_list %}
                     {% for comment in order.comment_list %}
                         {% if comment.user %}
-                            <div id="comment_{{ comment.pk }}">
+                            <div id="comment-{{ comment.pk }}">
                                 <h3>
                                     {{ comment.created }} - <a href="{% url user_detail pk=comment.user.pk %}">{{ comment.user.get_full_name }}</a>
                                 </h3>
@@ -237,7 +237,7 @@
                                 </p>
                             </div>
                         {% else %}
-                            <div id="comment_{{ comment.pk }}" class="round info-box smaller">{{ comment.created }} - {{ comment.comment }}</div>
+                            <div id="comment-{{ comment.pk }}" class="round info-box smaller">{{ comment.created }} - {{ comment.comment }}</div>
                         {% endif %}
                     {% endfor %}
                 {% else %}
@@ -247,7 +247,7 @@
 
             <div class="stripe-separator"></div>
 
-            <div id="comment_form">
+            <div id="comment-form">
                 <form action="{% url comment_create order_pk=order.pk%}" method="post">
                     {% csrf_token %}
 

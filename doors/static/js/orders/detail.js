@@ -24,22 +24,23 @@ function update_steps(data) {
             if(disabled_steps.indexOf(i) >= 0) {
                 console.log(i + ' needs to be disabled')
 
-                $('#step_' + i).attr('disabled', 'disabled')
+                $('#step-' + i).attr('disabled', 'disabled')
             }
             else {
                 console.log(i + ' needs to be enabled')
 
-                $('#step_' + i).removeAttr('disabled')
+                $('#step-' + i).removeAttr('disabled')
             }
 
             if(i == step_pk) {
-                $('#step_' + i + '_datetime').text(checked ? datetime : 'None')
+                $('#step-' + i + '-datetime').text(checked ? datetime : 'None')
             }
         }
 
-        $('#no_comments').remove()
+        $('#no-comments').remove()
+        $('#comment-count').text(parseInt($('#comment-count').text()) + 1)
 
         var full_comment = datetime + ' - ' + comment
-        $('#comment_list').append('<div id="comment_' + comment_pk + '" class = "round info-box smaller">' + full_comment + '</div>').scrollTop($('#comment_list').scrollHeight)
+        $('#comment-list').append('<div id="comment-' + comment_pk + '" class = "round info-box smaller">' + full_comment + '</div>').scrollTop($('#comment-list').scrollHeight)
     }
 }
