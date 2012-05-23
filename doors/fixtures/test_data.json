@@ -283,7 +283,8 @@
             "address_line_one": "123 Easy St.",
             "address_line_two": "",
             "zip_code": "30021",
-            "status": "a"
+            "status": "a",
+            "max_quote": 200
         }
     },
     {
@@ -363,12 +364,12 @@
             "sa_date": "2012-03-17T19:09:49Z",
             "fa_duration": 15,
             "sa_duration": 120,
-            "fa_status_creator": true,
-            "fa_status_vendor": true,
-            "sa_status_creator": true,
-            "sa_status_vendor": true,
-            "quote_status_approver": true,
-            "quote_status_owner": null
+            "fa_status_creator": "a",
+            "fa_status_vendor": "a",
+            "sa_status_creator": "a",
+            "sa_status_vendor": "a",
+            "quote_status_approver": "a",
+            "quote_status_owner": "p"
         }
     },
     {
@@ -399,12 +400,12 @@
             "sa_date": "2012-03-17T19:09:49Z",
             "fa_duration": null,
             "sa_duration": null,
-            "fa_status_creator": null,
-            "fa_status_vendor": null,
-            "sa_status_creator": null,
-            "sa_status_vendor": null,
-            "quote_status_approver": null,
-            "quote_status_owner": null
+            "fa_status_creator": "p",
+            "fa_status_vendor": "p",
+            "sa_status_creator": "p",
+            "sa_status_vendor": "p",
+            "quote_status_approver": "p",
+            "quote_status_owner": "p"
         }
     },
     {
@@ -435,12 +436,12 @@
             "sa_date": "2012-03-17T19:09:49Z",
             "fa_duration": 15,
             "sa_duration": 120,
-            "fa_status_creator": true,
-            "fa_status_vendor": true,
-            "sa_status_creator": true,
-            "sa_status_vendor": true,
-            "quote_status_approver": true,
-            "quote_status_owner": null
+            "fa_status_creator": "a",
+            "fa_status_vendor": "a",
+            "sa_status_creator": "a",
+            "sa_status_vendor": "r",
+            "quote_status_approver": "a",
+            "quote_status_owner": "p"
         }
     },
     {
@@ -471,12 +472,12 @@
             "sa_date": "2012-03-17T19:09:49Z",
             "fa_duration": null,
             "sa_duration": null,
-            "fa_status_creator": null,
-            "fa_status_vendor": null,
-            "sa_status_creator": null,
-            "sa_status_vendor": null,
-            "quote_status_approver": null,
-            "quote_status_owner": null
+            "fa_status_creator": "p",
+            "fa_status_vendor": "p",
+            "sa_status_creator": "p",
+            "sa_status_vendor": "p",
+            "quote_status_approver": "p",
+            "quote_status_owner": "p"
         }
     }
 ]

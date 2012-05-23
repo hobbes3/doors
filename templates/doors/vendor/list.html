@@ -20,7 +20,7 @@
         </div>
         <div class="content-module-main">
 
-            <p>{{ all_vendor_count }} total vendor{{ vendor_list.count|pluralize }} on Doors.</p>
+            <p>{{ all_vendor_count }} total vendor{{ vendor_list.count|pluralize }} on {{ site.name }}.</p>
 
             {% autopaginate vendor_list 10 %}
             {% paginate %}

@@ -41,6 +41,6 @@ function update_steps(data) {
         $('#comment-count').text(parseInt($('#comment-count').text()) + 1)
 
         var full_comment = datetime + ' - ' + comment
-        $('#comment-list').append('<div id="comment-' + comment_pk + '" class = "round info-box smaller">' + full_comment + '</div>').scrollTop($('#comment-list').scrollHeight)
+        $('#comment-list').append('<div id="comment-' + comment_pk + '" class = "round info-box smaller">' + full_comment + '</div>').scrollTo('100%')
     }
 }

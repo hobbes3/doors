@@ -18,6 +18,7 @@ urlpatterns = patterns('doors.views',
     url(r'^order/$', OrderListView.as_view(), name='order_list'),
     url(r'^order/create/$', 'order_create', name='order_create'),
     url(r'^order/(?P<pk>\d+)/$', 'order_detail', name='order_detail'),
+    url(r'^order/(?P<pk>\d+)/edit/$', 'order_edit', name='order_edit'),
     # Comment
     url(r'^order/(?P<order_pk>\d+)/comment/create/$', 'comment_create', name='comment_create'),
     # User

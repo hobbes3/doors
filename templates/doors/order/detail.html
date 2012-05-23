@@ -2,7 +2,7 @@
 
 {% load dajaxice_templatetags %}
 {% load breadcrumbs %}
-{% load duration from doors_custom_tags %}
+{% load doors_custom_tags %}
 {% load widget_tweaks %}
 
 {% block title %}View order #{{ order.pk }}{% endblock %}
@@ -10,9 +10,21 @@
 {% block head %}
     {% dajaxice_js_import %}
     <script src="{{ STATIC_URL }}js/orders/detail.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ STATIC_URL }}js/jquery-ui.timepicker-addon.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript">
         $(document).ready(function() {
-            $('#comment_list').scrollTo('100%')
+            $('#comment-list').scrollTo('100%')
+            $('.radio').buttonset()
+            $('.datetimepicker').datetimepicker({
+                {% if not is_moderator and not is_administrator %}
+                    minDate: new Date(),
+                {% endif %}
+                dateFormat: "MM d, yy",
+                timeFormat: "h:mm tt",
+                separator: ', ',
+                stepMinute: 5,
+                ampm: true
+            })
         })
     </script>
 
@@ -21,7 +33,6 @@
             background-image: url("{{ STATIC_URL }}img/icons/message-boxes/success.png");
             background-repeat: no-repeat;
         }
-
         .error-image {
             background-image: url("{{ STATIC_URL }}img/icons/message-boxes/error.png");
             background-repeat: no-repeat;
@@ -29,10 +40,7 @@
 
         #step-time { width: 11em; }
 
-        #comment {
-            width: 85%;
-        }
-
+        #comment { width: 85%; }
         #comment-list {
             height: 20em;
             border: 1px solid #eeeeee;
@@ -58,11 +66,15 @@
         </div>
         <div class="content-module-main cf">
             <div class="half-size-column fl cf">
-                <a class="button round blue image-right ic-edit text-upper" href="#">Edit</a>
-                <a class="button round red image-right ic-delete text-upper" href="#">Delete</a><br />
+                {% if can_assign %}
+                    <a class="button round blue image-right ic-right-arrow text-upper" href="#">Take</a>
+                {% endif %}
+                {% if can_delete %}
+                    <a class="button round red image-right ic-delete text-upper" href="#">Delete</a><br />
+                {% endif %}
                 <br />
 
-                <form action="">
+                <form action="{% url order_edit pk=order.pk %}">
                     <!-- Order details -->
                     <p>
                         Created on {{ order.created }}
@@ -113,14 +125,14 @@
                                 {% if order.fa_duration %}
                                     Duration: {{ order.fa_duration|duration }}.
                                 {% endif %}<br />
-                                {% if order.fa_status_creator %} {# True #}
+                                {% if order.fa_status_creator == "a" %}
                                     <span class="success-image image-left">{{ order.creator.first_name }}</span><br />
-                                {% elif order.fa_status_creator != None %} {# False #}
+                                {% elif order.fa_status_creator == "r" %}
                                     <span class="error-image image-left">{{ order.creator.first_name }}</span><br />
                                 {% endif %}
-                                {% if order.fa_status_vendor and order.vendor %} {# True #}
+                                {% if order.fa_status_vendor == "a" and order.vendor %} {# True #}
                                     <span class="success-image image-left">{{ order.vendor }}</span>
-                                {% elif order.fa_status_creator != None %} {# False #}
+                                {% elif order.fa_status_vendor == "r" %} {# False #}
                                     <span class="error-image image-left">{{ order.vendor }}</span>
                                 {% endif %}
                         </p>
@@ -131,14 +143,14 @@
                                 {% else %}
                                     No quote yet.
                                 {% endif %}<br />
-                                {% if order.quote_status_approver %} {# True #}
+                                {% if order.quote_status_approver == "a" %}
                                     <span class="success-image image-left">{{ order.approver.first_name }}</span><br />
-                                {% elif order.quote_status_approver != None %} {# False #}
+                                {% elif order.quote_status_approver == "r" %}
                                     <span class="error-image image-left">{{ order.approver.first_name }}</span><br />
                                 {% endif %}
-                                {% if order.quote_status_owner and order.quote_owner %} {# True #}
+                                {% if order.quote_status_owner == "a" and order.quote_owner %}
                                     <span class="success-image image-left">{{ order.quote_owner.first_name }}</span>
-                                {% elif order.quote_status_owner != None %} {# False #}
+                                {% elif order.quote_status_owner == "r" %}
                                     <span class="error-image image-left">{{ order.quote_owner.first_name }}</span>
                                 {% endif %}
                         </p>
@@ -148,14 +160,14 @@
                                 {% if order.sa_duration %}
                                     Duration: {{ order.sa_duration|duration }}.
                                 {% endif %}<br />
-                                {% if order.sa_status_creator %} {# True #}
+                                {% if order.sa_status_creator == "a" %}
                                     <span class="success-image image-left">{{ order.creator.first_name }}</span><br />
-                                {% elif order.sa_status_creator != None %} {# False #}
+                                {% elif order.sa_status_creator == "r" %}
                                     <span class="error-image image-left">{{ order.creator.first_name }}</span><br />
                                 {% endif %}
-                                {% if order.sa_status_vendor and order.vendor %} {# True #}
+                                {% if order.sa_status_vendor == "a" and order.vendor %}
                                     <span class="success-image image-left">{{ order.vendor }}</span>
-                                {% elif order.sa_status_creator != None %} {# False #}
+                                {% elif order.sa_status_vendor == "r" %}
                                     <span class="error-image image-left">{{ order.vendor }}</span>
                                 {% endif %}
                         </p>
@@ -197,7 +209,7 @@
                                         {% if step.0 %}
                                             checked="yes"
                                         {% endif %}
-                                        {% if forloop.counter in order.disabled_steps or not can_edit %}
+                                        {% if forloop.counter in order.disabled_steps or not can_check_steps %}
                                             disabled
                                         {% endif %}
                                         />
@@ -211,6 +223,55 @@
                         {% endif %}
                     </tbody>
                 </table>
+            </div>
+
+            <div class="cb">
+                <div class="stripe-separator"></div>
+
+                <form action="{% url order_edit pk=order.pk %}">
+                    {% csrf_token %}
+                    {{ order_form.non_field_errors }}
+
+                    {% for field in order_form %}
+                        {% if field.errors %}
+                            <p class="form-error">
+                            {% for error in field.errors %}
+                                <em>{{ error|escape }}</em>
+                            {% endfor %}
+                        {% else %}
+                            <p>
+                        {% endif %}
+                            {{ field.label_tag }}
+
+                            {% with field.field.widget|class_name as input_name %}
+                                {% if input_name == "TextInput" or input_name == "Textarea" %}
+                                    {{ field|add_class:"round"|add_error_class:"error-input" }}
+                                {% elif input_name == "DateTimeInput" %}
+                                    <input id="{{ field.id_for_label }}" type="text" name="{{ field.name }}" value="{{ field.value|date:"F j, Y, g:i a" }}"
+                                        class="round datetimepicker
+                                            {% if field.errors %}
+                                                error-input
+                                            {% endif %}
+                                    " />
+                                {% elif input_name == "RadioSelect" %}
+                                    <span class="radio">
+                                        {% for radio in field %}
+                                            <input type="radio" id="{{ radio.name }}{{ forloop.counter }}" name="{{ radio.name }}"
+                                                {% if radio.is_checked %}
+                                                    checked="checked"
+                                                {% endif %}
+                                            /><label for="{{ radio.name }}{{ forloop.counter }}">{{ radio.choice_label }}</label>
+                                        {% endfor %}
+                                    </span>
+                                {% else %}
+                                    {{ field }}
+                                {% endif %}
+                            {% endwith %}
+                        </p>
+                    {% endfor %}
+
+                    <input type="submit" value="Save changes" class="round blue ic-right-arrow" />
+                </form>
             </div>
         </div>
     </div>
