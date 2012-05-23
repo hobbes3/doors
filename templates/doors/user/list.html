@@ -25,7 +25,7 @@
         </div>
         <div class="content-module-main">
 
-            <p>{{ all_user_count }} total user{{ user_list.count|pluralize }} on Doors.</p>
+            <p>{{ all_user_count }} total user{{ user_list.count|pluralize }} on {{ site.name }}.</p>
 
             {% autopaginate user_list 5 %}
             {% paginate %}

@@ -1,8 +1,9 @@
+from django import forms
 from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth.models import User
 from doors.models import Order, Place
-from doors.forms import OrderCreateForm, CommentCreateForm
+from doors.forms import OrderCreateForm, OrderDetailForm, CommentCreateForm
 from itertools import chain
 
 # Returns a list of orders that the user is allowed to view.
@@ -39,14 +40,14 @@ def get_order_create_dictionary(user, POST_data=None):
             Q(userprofile_from_user__user_types__name='te') |
             Q(userprofile_from_user__user_types__name='pm')
         ).distinct()
-        can_assign_creator = 1
+        can_edit_creator = 1
     # All property managers can create orders but only assign creators whose property the property manager manages.
     elif user.profile.has_user_types(['pm']):
         creator_list = User.objects.filter(
             Q(userprofile_from_user__place__managers=user) |
             Q(pk=user.pk)
         )
-        can_assign_creator = 1
+        can_edit_creator = 1
     # Next allow tenants to create orders (and not assign creators).
     elif user.profile.has_user_types(['te']):
         # Tenants without a place can't create orders
@@ -55,7 +56,7 @@ def get_order_create_dictionary(user, POST_data=None):
             return None
 
         creator_list = User.objects.filter(pk=user.pk)
-        can_assign_creator = 0
+        can_edit_creator = 0
     # Everyone else left can't create orders.
     else:
         messages.error(request, "Only tenants, property managers, moderators, and administrators can create orders!")
@@ -76,30 +77,112 @@ def get_order_create_dictionary(user, POST_data=None):
 
     return {
         'form': form,
-        'can_assign_creator': can_assign_creator
+        'can_edit_creator': can_edit_creator
     }
 
 def get_order_detail_dictionary(order, user, POST_data=None):
+    can_delete           = 0
+    can_assign           = 0
+    can_check_steps      = 0
+    can_comment          = 0
+    can_edit_work_type   = 0
+    can_edit_vendor      = 0
+    can_edit_note        = 0
+    can_edit_status      = 0
+    can_edit_quote       = 0
+    can_edit_payment     = 0
+    can_edit_fa_date     = 0
+    can_edit_sa_date     = 0
+    can_edit_fa_duration = 0
+    can_edit_sa_duration = 0
+    can_accept_fa        = 0
+    can_accept_sa        = 0
+    can_accept_quote     = 0
+
+    if user.profile.has_user_types(['mo', 'ad']):
+        can_delete           = 1
+        can_assign           = 1
+        can_check_steps      = 1
+        can_comment          = 1
+        can_edit_work_type   = 1
+        can_edit_vendor      = 1
+        can_edit_note        = 1
+        can_edit_status      = 1
+        can_edit_quote       = 1
+        can_edit_payment     = 1
+        can_edit_fa_date     = 1
+        can_edit_sa_date     = 1
+        can_edit_fa_duration = 1
+        can_edit_sa_duration = 1
+        can_accept_fa        = 1
+        can_accept_sa        = 1
+        can_accept_quote     = 1
+    elif user.profile.has_user_types(['pm']):
+        can_delete           = 1
+        can_assign           = 1
+        can_check_steps      = 1
+        can_comment          = 1
+        can_edit_work_type   = 1
+        can_edit_vendor      = 1
+        can_edit_note        = 1
+        can_edit_status      = 1
+        can_accept_quote     = 1
+    elif user.profile.has_user_types(['po']):
+        can_accept_quote     = 1
+    elif user.profile.has_user_types(['vm', 've']):
+        can_comment          = 1
+        can_edit_quote       = 1
+        can_edit_payment     = 1
+        can_edit_fa_date     = 1
+        can_edit_sa_date     = 1
+        can_edit_fa_duration = 1
+        can_edit_sa_duration = 1
+        can_accept_fa        = 1
+        can_accept_sa        = 1
+    elif user.profile.has_user_types(['te']):
+        can_comment          = 1
+        can_edit_fa_date     = 1
+        can_edit_sa_date     = 1
+        can_accept_fa        = 1
+        can_accept_sa        = 1
+    else:
+        return {
+            'order': order,
+            'order_form': None,
+            'comment_form': None,
+            'can_delete': can_delete,
+            'can_assign': can_assign,
+            'can_check_steps': can_check_steps,
+            'can_comment': can_comment,
+        }
+
+    order_form = OrderDetailForm(
+        data=POST_data,
+        user=user,
+        order=order,
+        can_edit_work_type=can_edit_work_type,
+        can_edit_vendor=can_edit_vendor,
+        can_edit_note=can_edit_note,
+        can_edit_status=can_edit_status,
+        can_edit_quote=can_edit_quote,
+        can_edit_payment=can_edit_payment,
+        can_edit_fa_date=can_edit_fa_date,
+        can_edit_sa_date=can_edit_sa_date,
+        can_edit_fa_duration=can_edit_fa_duration,
+        can_edit_sa_duration=can_edit_sa_duration,
+        can_accept_fa=can_accept_fa,
+        can_accept_sa=can_accept_sa,
+        can_accept_quote=can_accept_quote,
+    )
+
     comment_form = CommentCreateForm(data=POST_data)
-
-    # All property managers, moderators, and administrators can edit orders.
-    if user.profile.has_user_types(['pm', 'mo', 'ad']):
-        can_edit = 1
-    # Everyone else left can't edit orders.
-    else:
-        can_edit = 0
-
-    # Vendors and vendor managers who are part of the vendor that is assigned to the order can add a quote.
-    # list(chain(...)) combines multiple QuerySet into a list.
-    # http://stackoverflow.com/questions/431628/how-to-combine-2-or-more-querysets-in-a-django-view
-    if user.profile.has_user_types(['ve', 'vm']) and user in list(chain(order.vendor.mangers.all(), order.vendor.representatives.all())):
-        can_add_quote = 1
-    else:
-        can_add_quote = 0
 
     return {
         'order': order,
+        'order_form': order_form,
         'comment_form': comment_form,
-        'can_edit': can_edit,
-        'can_add_quote': can_add_quote,
+        'can_delete': can_delete,
+        'can_assign': can_assign,
+        'can_check_steps': can_check_steps,
+        'can_comment': can_comment,
     }

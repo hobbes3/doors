@@ -48,9 +48,11 @@ def order_detail(request, pk):
 
 @login_required
 def order_create(request):
+    user = request.user
+
     if request.method == 'POST':
         #import ipdb; ipdb.set_trace()
-        dictionary = get_order_create_dictionary(user=request.user, POST_data=request.POST)
+        dictionary = get_order_create_dictionary(user=user, POST_data=request.POST)
 
         form = dictionary['form']
 
@@ -58,27 +60,48 @@ def order_create(request):
             creator   = form.cleaned_data['creator']
             place     = form.cleaned_data['place']
             work_type = form.cleaned_data['work_type']
-            comment   = form.cleaned_data['comment']
+            note      = form.cleaned_data['note']
 
             new_order = Order.objects.create(
                 creator=creator,
                 place=place,
                 work_type=work_type,
-                comment=comment
+                note=note
             )
 
             messages.success(request, "Your order #{} had been created!".format(new_order.pk))
-            logger.info("{user} created order #{pk}".format(user=request.user, pk=new_order.pk))
+            logger.info("{user} created order #{pk}".format(user=user, pk=new_order.pk))
 
             return HttpResponseRedirect(reverse('order_detail', kwargs={'pk': new_order.pk}))
     # Not POST.
     else:
-        dictionary = get_order_create_dictionary(user=request.user)
+        dictionary = get_order_create_dictionary(user=user)
         if dictionary is None:
             # Messages called in get_order_create_dictionary().
             return HttpResponseRedirect(reverse('order_list'))
 
     return render(request, 'doors/order/create.html', dictionary)
+
+def order_edit(request, pk):
+    user = request.user
+    order = Order.objects.get(pk=pk)
+
+    if request.method == 'POST':
+        dictionary = get_order_detail_dictionary(order=order, user=user, POST_data=request.POST)
+        form = dictionary['order_form']
+
+        if form.is_valid():
+            pass
+        else:
+            dictionary['focus'] = 'asd'
+            return render(request, 'doors/order/detail.html', {})
+    else:
+        dictionary = get_order_detail_dictionary(order=order, user=user)
+        if dictionary['order_form'] is None:
+            # Messages called in get_order_detail_dictionary().
+            return HttpResponseRedirect(reverse('order_detail', kwargs={'pk': pk}))
+
+    return HttpResponseRedirect(reverse('order_detail', kwargs={'pk': pk}))
 
 def comment_create(request, order_pk):
     #import ipdb; ipdb.set_trace()
@@ -87,7 +110,7 @@ def comment_create(request, order_pk):
         order = Order.objects.get(pk=order_pk)
         user = request.user
 
-        dictionary = get_order_detail_dictionary(order=order, user=request.user, POST_data=request.POST)
+        dictionary = get_order_detail_dictionary(order=order, user=user, POST_data=request.POST)
         form = dictionary['comment_form']
 
         if form.is_valid():
@@ -121,21 +144,9 @@ class UserListView(ListView):
 def user_detail(request, pk):
     user = get_object_or_404(User, pk=pk)
 
-    is_tenant           = user.profile.has_user_types(["te"])
-    is_property_manager = user.profile.has_user_types(["pm"])
-    is_property_owner   = user.profile.has_user_types(["po"])
-    is_vendor           = user.profile.has_user_types(["ve"])
-    is_vendor_manager   = user.profile.has_user_types(["vm"])
-
     dictionary = {
         # Have to use "user_object" because "user" is the logged-in user.
         'user_object': user,
-        'is_tenant': is_tenant,
-        'is_property_manager': is_property_manager,
-        'is_property_owner': is_property_owner,
-        'is_vendor': is_vendor,
-        'is_vendor_manager': is_vendor_manager,
-        'more_info': is_tenant + is_property_manager + is_property_owner + is_vendor + is_vendor_manager,
     }
 
     return render(request, 'doors/user/detail.html', dictionary)

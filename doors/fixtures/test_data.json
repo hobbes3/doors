@@ -129,7 +129,7 @@
         "pk": 3,
         "model": "doors.userprofile",
         "fields": {
-            "comment": "",
+            "note": "",
             "local_timezone": "east",
             "building": "",
             "room": "",
@@ -148,7 +148,7 @@
         "pk": 4,
         "model": "doors.userprofile",
         "fields": {
-            "comment": "",
+            "note": "",
             "local_timezone": "east",
             "building": "",
             "room": "",
@@ -167,7 +167,7 @@
         "pk": 5,
         "model": "doors.userprofile",
         "fields": {
-            "comment": "",
+            "note": "",
             "local_timezone": "east",
             "building": "",
             "room": "",
@@ -186,7 +186,7 @@
         "pk": 6,
         "model": "doors.userprofile",
         "fields": {
-            "comment": "",
+            "note": "",
             "local_timezone": "east",
             "building": "",
             "room": "",
@@ -206,7 +206,7 @@
         "pk": 7,
         "model": "doors.userprofile",
         "fields": {
-            "comment": "",
+            "note": "",
             "local_timezone": "east",
             "building": "",
             "room": "",
@@ -226,7 +226,7 @@
         "pk": 8,
         "model": "doors.userprofile",
         "fields": {
-            "comment": "",
+            "note": "",
             "local_timezone": "east",
             "building": "",
             "room": "",
@@ -246,7 +246,7 @@
         "pk": 9,
         "model": "doors.userprofile",
         "fields": {
-            "comment": "",
+            "note": "",
             "local_timezone": "east",
             "building": "",
             "room": "",
@@ -265,7 +265,7 @@
         "pk": 1,
         "model": "doors.place",
         "fields": {
-            "comment": "",
+            "note": "",
             "city": "Atlanta",
             "name": "The Red House",
             "created": "2012-03-16T19:05:19.719Z",
@@ -283,14 +283,15 @@
             "address_line_one": "123 Easy St.",
             "address_line_two": "",
             "zip_code": "30021",
-            "status": "a"
+            "status": "a",
+            "max_quote": 200
         }
     },
     {
         "pk": 2,
         "model": "doors.place",
         "fields": {
-            "comment": "",
+            "note": "",
             "city": "Atlanta",
             "name": "The Blue House",
             "created": "2012-03-16T19:05:19.719Z",
@@ -315,7 +316,7 @@
         "pk": 1,
         "model": "doors.vendor",
         "fields": {
-            "comment": "",
+            "note": "",
             "website": "",
             "name": "Awesome Repair",
             "city": "Clarkston",
@@ -339,7 +340,7 @@
         "pk": 1,
         "model": "doors.order",
         "fields": {
-            "comment": "Upstairs bathroom sink pipe is leaking.",
+            "note": "Upstairs bathroom sink pipe is leaking.",
             "status": "c",
             "work_type": "pl",
             "vendor": 1,
@@ -363,19 +364,19 @@
             "sa_date": "2012-03-17T19:09:49Z",
             "fa_duration": 15,
             "sa_duration": 120,
-            "fa_status_creator": true,
-            "fa_status_vendor": true,
-            "sa_status_creator": true,
-            "sa_status_vendor": true,
-            "quote_status_approver": true,
-            "quote_status_owner": null
+            "fa_status_creator": "a",
+            "fa_status_vendor": "a",
+            "sa_status_creator": "a",
+            "sa_status_vendor": "a",
+            "quote_status_approver": "a",
+            "quote_status_owner": "p"
         }
     },
     {
         "pk": 2,
         "model": "doors.order",
         "fields": {
-            "comment": "The A/C is broken.",
+            "note": "The A/C is broken.",
             "status": "a",
             "work_type": "hc",
             "vendor": null,
@@ -399,19 +400,19 @@
             "sa_date": "2012-03-17T19:09:49Z",
             "fa_duration": null,
             "sa_duration": null,
-            "fa_status_creator": null,
-            "fa_status_vendor": null,
-            "sa_status_creator": null,
-            "sa_status_vendor": null,
-            "quote_status_approver": null,
-            "quote_status_owner": null
+            "fa_status_creator": "p",
+            "fa_status_vendor": "p",
+            "sa_status_creator": "p",
+            "sa_status_vendor": "p",
+            "quote_status_approver": "p",
+            "quote_status_owner": "p"
         }
     },
     {
         "pk": 3,
         "model": "doors.order",
         "fields": {
-            "comment": "The back door is broken.",
+            "note": "The back door is broken.",
             "status": "a",
             "work_type": "ex",
             "vendor": 1,
@@ -435,19 +436,19 @@
             "sa_date": "2012-03-17T19:09:49Z",
             "fa_duration": 15,
             "sa_duration": 120,
-            "fa_status_creator": true,
-            "fa_status_vendor": true,
-            "sa_status_creator": true,
-            "sa_status_vendor": true,
-            "quote_status_approver": true,
-            "quote_status_owner": null
+            "fa_status_creator": "a",
+            "fa_status_vendor": "a",
+            "sa_status_creator": "a",
+            "sa_status_vendor": "r",
+            "quote_status_approver": "a",
+            "quote_status_owner": "p"
         }
     },
     {
         "pk": 4,
         "model": "doors.order",
         "fields": {
-            "comment": "My cat is on fire!",
+            "note": "My cat is on fire!",
             "status": "p",
             "work_type": "ot",
             "vendor": null,
@@ -471,12 +472,12 @@
             "sa_date": "2012-03-17T19:09:49Z",
             "fa_duration": null,
             "sa_duration": null,
-            "fa_status_creator": null,
-            "fa_status_vendor": null,
-            "sa_status_creator": null,
-            "sa_status_vendor": null,
-            "quote_status_approver": null,
-            "quote_status_owner": null
+            "fa_status_creator": "p",
+            "fa_status_vendor": "p",
+            "sa_status_creator": "p",
+            "sa_status_vendor": "p",
+            "quote_status_approver": "p",
+            "quote_status_owner": "p"
         }
     }
 ]

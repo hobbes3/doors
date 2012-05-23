@@ -24,7 +24,7 @@
                 {% csrf_token %}
                 {{ form.non_field_errors }}
 
-                {% if can_assign_creator %}
+                {% if can_edit_creator %}
                     {% if form.creator.errors %}
                         <p class="form-error">
                         {% for error in form.creator.errors %}
@@ -43,7 +43,7 @@
                 {% endif %}
                 </p>
 
-                {% if can_assign_creator %}
+                {% if can_edit_creator %}
                     {% if form.place.errors %}
                         <p class="form-error">
                         {% for error in form.place.errors %}
@@ -76,16 +76,16 @@
 
                 <div class="stripe-separator"></div>
 
-                {% if form.comment.errors %}
+                {% if form.note.errors %}
                     <p class="form-error">
-                    {% for error in form.comment.errors %}
+                    {% for error in form.note.errors %}
                         <em>{{ error|escape }}</em>
                     {% endfor %}
                 {% else %}
                     <p>
                 {% endif %}
-                    <label for="id_comment">A brief comment</label>
-                    {{ form.comment|add_class:"round"|add_error_class:"error-input" }}
+                    <label for="id_note">A brief note</label>
+                    {{ form.note|add_class:"round"|add_error_class:"error-input" }}
                 </p>
                 <input type="submit" value="Create order" class="round blue ic-right-arrow" />
             </form>

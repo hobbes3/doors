@@ -18,3 +18,12 @@ def has_user_types(user_pk, *args):
     user = User.objects.get(pk=user_pk)
 
     return user.profile.has_user_types(args)
+
+@register.filter
+def class_name(ob):
+    return ob.__class__.__name__
+
+@register.filter
+def pdb(element):
+    import pdb; pdb.set_trace()
+    return element

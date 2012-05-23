@@ -93,7 +93,7 @@
         "pk": 1,
         "model": "doors.userprofile",
         "fields": {
-            "comment": "",
+            "note": "",
             "local_timezone": "east",
             "building": "",
             "room": "",
@@ -131,7 +131,7 @@
         "pk": 2,
         "model": "doors.userprofile",
         "fields": {
-            "comment": "",
+            "note": "",
             "local_timezone": "east",
             "building": "",
             "room": "",

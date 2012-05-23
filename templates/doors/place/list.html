@@ -23,7 +23,7 @@
         </div>
         <div class="content-module-main">
 
-            <p>{{ all_place_count }} total propert{{ place_list.count|pluralize:"y,ies" }} on Doors.</p>
+            <p>{{ all_place_count }} total propert{{ place_list.count|pluralize:"y,ies" }} on {{ site.name }}.</p>
 
             {% autopaginate place_list 10 %}
             {% paginate %}

@@ -26,7 +26,7 @@ class Place(models.Model):
     status           = models.CharField(max_length=1, choices=STATUS_CHOICES)
     managers         = models.ManyToManyField(User, related_name='places_from_managers', limit_choices_to={'userprofile_from_user__user_types': 'pm'})
     owners           = models.ManyToManyField(User, related_name='places_from_owners'  , limit_choices_to={'userprofile_from_user__user_types': 'po'}, null=True, blank=True)
-    comment          = models.TextField(max_length=1000, blank=True)
+    note             = models.TextField(max_length=1000, blank=True)
     address_line_one = models.CharField(max_length=135)
     address_line_two = models.CharField(max_length=135, blank=True)
     city             = models.CharField(max_length=135)
@@ -35,6 +35,7 @@ class Place(models.Model):
     phone            = models.CharField(max_length=135, blank=True)
     website          = models.URLField(blank=True)
     list_publicly    = models.BooleanField()
+    max_quote        = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     created          = models.DateTimeField(auto_now_add=True)
     modified         = models.DateTimeField(auto_now=True)
 
@@ -94,7 +95,7 @@ class UserProfile(models.Model):
 
     user           = models.OneToOneField(User, related_name='userprofile_from_user')
     user_types     = models.ManyToManyField(UserType, related_name='userprofiles_from_user_types', null=True, blank=True)
-    comment        = models.TextField(max_length=1000, blank=True)
+    note           = models.TextField(max_length=1000, blank=True)
     local_timezone = models.CharField(max_length=4, choices=TIMEZONE_CHOICES, default='east')
     phone          = models.CharField(max_length=135, blank=True)
     room           = models.CharField(max_length=135, blank=True)
@@ -171,7 +172,7 @@ User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 
 class Vendor(models.Model):
     name             = models.CharField(max_length=135)
-    comment          = models.TextField(max_length=1000, blank=True)
+    note             = models.TextField(max_length=1000, blank=True)
     phone            = models.CharField(max_length=135, blank=True)
     email            = models.EmailField(blank=True)
     website          = models.URLField(blank=True)
@@ -209,35 +210,36 @@ class Order(models.Model):
     )
 
     STATUS_CHOICES = (
-        ('p', 'Pending' ),
-        ('a', 'Approved'),
-        ('r', 'Rejected'),
-        ('c', 'Closed'  ),
-        ('l', 'Locked'  ),
+        ('p', 'pending' ),
+        ('a', 'approved'),
+        ('r', 'rejected'),
+        ('c', 'closed'  ),
+        ('l', 'locked'  ),
     )
 
     WORK_TYPE_CHOICES = (
-        ('hc', 'Heating and cooling'),
-        ('el', 'Electrical'         ),
-        ('pl', 'Plumbing'           ),
-        ('ap', 'Appliances'         ),
-        ('pe', 'Pests'              ),
-        ('ex', 'Exterior'           ),
-        ('in', 'Interior'           ),
-        ('sa', 'Safety'             ),
-        ('ot', 'Others'             ),
+        ('hc', 'heating and cooling'),
+        ('el', 'electrical'         ),
+        ('pl', 'plumbing'           ),
+        ('ap', 'appliances'         ),
+        ('pe', 'pests'              ),
+        ('ex', 'exterior'           ),
+        ('in', 'interior'           ),
+        ('sa', 'safety'             ),
+        ('ot', 'others'             ),
     )
 
-    APPROVE_CHOICES = (
-        (True , 'Accepted'),
-        (False, 'Rejected'),
+    ACCEPT_CHOICES = (
+        ('p', 'pending' ),
+        ('a', 'accepted'),
+        ('r', 'rejected'),
     )
 
     creator   = models.ForeignKey(User, related_name='orders_from_creator')
     approver  = models.ForeignKey(User, related_name='orders_from_approver', null=True, blank=True)
     vendor    = models.ForeignKey(Vendor, related_name='orders_from_vendor', null=True, blank=True)
     place     = models.ForeignKey(Place, related_name='orders_from_place')
-    comment   = models.TextField(max_length=1000)
+    note      = models.TextField(max_length=1000)
     status    = models.CharField(max_length=1, choices=STATUS_CHOICES)
     quote     = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     payment   = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
@@ -261,14 +263,14 @@ class Order(models.Model):
     fa_duration = models.IntegerField(null=True, blank=True, verbose_name='first appointment duration')
     sa_duration = models.IntegerField(null=True, blank=True, verbose_name='second appointment duration')
 
-    fa_status_creator = models.NullBooleanField(choices=APPROVE_CHOICES, verbose_name='first appointment creator status')
-    fa_status_vendor  = models.NullBooleanField(choices=APPROVE_CHOICES, verbose_name='first appointment vendor status')
+    fa_status_creator = models.CharField(max_length=1, choices=ACCEPT_CHOICES, verbose_name='first appointment creator status')
+    fa_status_vendor  = models.CharField(max_length=1, choices=ACCEPT_CHOICES, verbose_name='first appointment vendor status')
 
-    sa_status_creator = models.NullBooleanField(choices=APPROVE_CHOICES, verbose_name='second appointment creator status')
-    sa_status_vendor  = models.NullBooleanField(choices=APPROVE_CHOICES, verbose_name='second appointment vendor status')
+    sa_status_creator = models.CharField(max_length=1, choices=ACCEPT_CHOICES, verbose_name='second appointment creator status')
+    sa_status_vendor  = models.CharField(max_length=1, choices=ACCEPT_CHOICES, verbose_name='second appointment vendor status')
 
-    quote_status_approver = models.NullBooleanField(choices=APPROVE_CHOICES, verbose_name='quote approver status')
-    quote_status_owner    = models.NullBooleanField(choices=APPROVE_CHOICES, verbose_name='quote owner status')
+    quote_status_approver = models.CharField(max_length=1, choices=ACCEPT_CHOICES, verbose_name='quote approver status')
+    quote_status_owner    = models.CharField(max_length=1, choices=ACCEPT_CHOICES, verbose_name='quote owner status')
 
     quote_owner = models.ForeignKey(User, related_name='orders_from_quote_owner', limit_choices_to={'userprofile_from_user__user_types__name': 'po'}, null=True, blank=True)
 
@@ -298,8 +300,8 @@ class Order(models.Model):
     def current_step(self):
         i = next(
             (i for i, (attr, code, task) in enumerate(self.STEPS) if getattr(self, attr) is None),
-            None
-       )
+            None,
+        )
 
         if i is None:
             return 0
@@ -325,7 +327,7 @@ class Order(models.Model):
         else:
             return "{number}: {step}".format(
                 number=str(c),
-                step=self.STEPS[c - 1][2].format(creator=creator, vendor=self.vendor if self.vendor else "the vendor")
+                step=self.STEPS[c - 1][2].format(creator=creator, vendor=self.vendor if self.vendor else "the vendor"),
            )
 
     def total_steps(self):
@@ -340,7 +342,7 @@ class Comment(models.Model):
         ('ad-fa', 'add first appointment duration'  , "{user} added an estimate of {value} for the first appointment."),
         ('ad-fa', 'add second appointment duration' , "{user} added an estimate of {value} for the second appointment."),
         ('ed-wt', 'edit work type'                  , "{user} changed the work type to {value}."),
-        ('ed-co', 'edit comment'                    , "{user} edited the comment."),
+        ('ed-co', 'edit note'                       , "{user} edited the note."),
         ('ed-qu', 'edit quote'                      , "{user} edited the quote to {value}."),
         ('ed-pa', 'edit payment'                    , "{user} edited the payment to {value}."),
         ('ed-ve', 'edit vendor'                     , "{user} changed the vendor to {vendor}."),

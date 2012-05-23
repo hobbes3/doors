@@ -162,7 +162,7 @@ p, .button, form input, ul#nav li ul, ul#tabs, div.side-menu ul li a, table,
 .information-box, .confirmation-box, .error-box, .warning-box, ol, .regular-ul,
 .custom-ul, blockquote, cite { font-size: 0.75em; /* 12/16 */ }
 
-div.content-module-heading span { font-size: 0.625em; /* 10/16 */ }
+div.content-module-heading span.expand-collapse-text { font-size: 0.625em; /* 10/16 */ }
 
 form p input[type="text"], form p input[type="password"], form p input[type="checkbox"], form p input[type="radio"] { font-size: 1em; /* 12/12. I did 12 because they're contained within a P tag, that has font size of 12px*/ }
 
@@ -699,7 +699,7 @@ div.content-module-heading {
 		margin: 1.25em; /* 15/12 */
 	}
 
-	div.content-module-heading span {
+	div.content-module-heading span.expand-collapse-text {
 		color: #969dac;
 		text-transform: uppercase;
 		margin: 1.5em; /* 15/10 */
