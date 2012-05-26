@@ -240,7 +240,7 @@ class Order(models.Model):
     vendor    = models.ForeignKey(Vendor, related_name='orders_from_vendor', null=True, blank=True)
     place     = models.ForeignKey(Place, related_name='orders_from_place')
     note      = models.TextField(max_length=1000)
-    status    = models.CharField(max_length=1, choices=STATUS_CHOICES)
+    status    = models.CharField(max_length=1, choices=STATUS_CHOICES, default='p')
     quote     = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     payment   = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     work_type = models.CharField(max_length=2, choices=WORK_TYPE_CHOICES)
@@ -263,14 +263,14 @@ class Order(models.Model):
     fa_duration = models.IntegerField(null=True, blank=True, verbose_name='first appointment duration')
     sa_duration = models.IntegerField(null=True, blank=True, verbose_name='second appointment duration')
 
-    fa_status_creator = models.CharField(max_length=1, choices=ACCEPT_CHOICES, verbose_name='first appointment creator status')
-    fa_status_vendor  = models.CharField(max_length=1, choices=ACCEPT_CHOICES, verbose_name='first appointment vendor status')
+    fa_status_creator = models.CharField(max_length=1, choices=ACCEPT_CHOICES, default='p', verbose_name='first appointment creator status')
+    fa_status_vendor  = models.CharField(max_length=1, choices=ACCEPT_CHOICES, default='p', verbose_name='first appointment vendor status')
 
-    sa_status_creator = models.CharField(max_length=1, choices=ACCEPT_CHOICES, verbose_name='second appointment creator status')
-    sa_status_vendor  = models.CharField(max_length=1, choices=ACCEPT_CHOICES, verbose_name='second appointment vendor status')
+    sa_status_creator = models.CharField(max_length=1, choices=ACCEPT_CHOICES, default='p', verbose_name='second appointment creator status')
+    sa_status_vendor  = models.CharField(max_length=1, choices=ACCEPT_CHOICES, default='p', verbose_name='second appointment vendor status')
 
-    quote_status_approver = models.CharField(max_length=1, choices=ACCEPT_CHOICES, verbose_name='quote approver status')
-    quote_status_owner    = models.CharField(max_length=1, choices=ACCEPT_CHOICES, verbose_name='quote owner status')
+    quote_status_approver = models.CharField(max_length=1, choices=ACCEPT_CHOICES, default='p', verbose_name='quote approver status')
+    quote_status_owner    = models.CharField(max_length=1, choices=ACCEPT_CHOICES, default='p', verbose_name='quote owner status')
 
     quote_owner = models.ForeignKey(User, related_name='orders_from_quote_owner', limit_choices_to={'userprofile_from_user__user_types__name': 'po'}, null=True, blank=True)
 

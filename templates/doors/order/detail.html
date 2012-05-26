@@ -91,7 +91,7 @@
                         </p>
                         <p>
                             <label>Work type:</label>
-                            {{ order.get_work_type_display }}
+                            {{ order.get_work_type_display|capfirst }}
                         </p>
                         <p>
                             <label>Approver:</label>
@@ -125,14 +125,15 @@
                                 {% if order.fa_duration %}
                                     Duration: {{ order.fa_duration|duration }}.
                                 {% endif %}<br />
+                                {# "p" = pending, "a" = accepted, "r" = rejected #}
                                 {% if order.fa_status_creator == "a" %}
                                     <span class="success-image image-left">{{ order.creator.first_name }}</span><br />
                                 {% elif order.fa_status_creator == "r" %}
                                     <span class="error-image image-left">{{ order.creator.first_name }}</span><br />
                                 {% endif %}
-                                {% if order.fa_status_vendor == "a" and order.vendor %} {# True #}
+                                {% if order.fa_status_vendor == "a" and order.vendor %}
                                     <span class="success-image image-left">{{ order.vendor }}</span>
-                                {% elif order.fa_status_vendor == "r" %} {# False #}
+                                {% elif order.fa_status_vendor == "r" %}
                                     <span class="error-image image-left">{{ order.vendor }}</span>
                                 {% endif %}
                         </p>
@@ -228,7 +229,7 @@
             <div class="cb">
                 <div class="stripe-separator"></div>
 
-                <form action="{% url order_edit pk=order.pk %}">
+                <form action="{% url order_edit pk=order.pk %}" method="post">
                     {% csrf_token %}
                     {{ order_form.non_field_errors }}
 
@@ -256,7 +257,7 @@
                                 {% elif input_name == "RadioSelect" %}
                                     <span class="radio">
                                         {% for radio in field %}
-                                            <input type="radio" id="{{ radio.name }}{{ forloop.counter }}" name="{{ radio.name }}"
+                                            <input type="radio" id="{{ radio.name }}{{ forloop.counter }}" name="{{ radio.name }}" value="{{ radio.choice_value }}"
                                                 {% if radio.is_checked %}
                                                     checked="checked"
                                                 {% endif %}

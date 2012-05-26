@@ -41,11 +41,14 @@ class OrderCreateForm(forms.Form):
 
         return self.cleaned_data
 
-class OrderDetailForm(forms.Form):
+class OrderDetailForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = []
+
     def __init__(
         self,
         user,
-        order,
         can_edit_work_type=None,
         can_edit_vendor=None,
         can_edit_note=None,
@@ -65,52 +68,51 @@ class OrderDetailForm(forms.Form):
         super(OrderDetailForm, self).__init__(*args, **kwargs)
 
         if can_edit_work_type:
-            self.fields['work_type'] = forms.ChoiceField(choices=Order.WORK_TYPE_CHOICES, initial=order.work_type)
+            self.fields['work_type'] = forms.ChoiceField(choices=Order.WORK_TYPE_CHOICES)
         if can_edit_note:
-            self.fields['note'] = forms.CharField(widget=forms.Textarea, initial=order.note)
+            self.fields['note'] = forms.CharField(widget=forms.Textarea())
         if can_edit_status:
-            self.fields['status'] = forms.ChoiceField(choices=Order.STATUS_CHOICES, initial=order.status, widget=forms.RadioSelect)
+            self.fields['status'] = forms.ChoiceField(choices=Order.STATUS_CHOICES)
         if can_edit_vendor:
             self.fields['vendor'] = forms.ModelChoiceField(
                 queryset=Vendor.objects.all(),
                 empty_label="Choose a vendor",
-                initial=order.vendor
             )
         if can_edit_fa_date:
             self.fields['fa_date'] = forms.DateTimeField(initial=order.fa_date, label="first appointment suggested time")
         if can_edit_fa_duration:
-            self.fields['fa_duration'] = forms.IntegerField(min_value=1, initial=order.fa_duration, label="first appointment duration")
+            self.fields['fa_duration'] = forms.IntegerField(min_value=1, label="first appointment duration")
         if can_accept_fa:
             if user.profile.has_user_types(['te', 'mo', 'ad']):
-                self.fields['fa_status_creator'] = forms.ChoiceField(choices=Order.ACCEPT_CHOICES, initial=order.fa_status_creator, widget=forms.RadioSelect, label="accept first appointment time?")
+                self.fields['fa_status_creator'] = forms.ChoiceField(choices=Order.ACCEPT_CHOICES, widget=forms.RadioSelect, label="accept first appointment time?")
                 if user.profile.has_user_types(['mo', 'ad']):
                     self.fields['fa_status_creator'].label += ' (creator)'
             if user.profile.has_user_types(['ve', 'vm', 'mo', 'ad']):
-                self.fields['fa_status_vendor'] = forms.ChoiceField(choices=Order.ACCEPT_CHOICES, initial=order.fa_status_vendor, widget=forms.RadioSelect, label="accept first appointment time?")
+                self.fields['fa_status_vendor'] = forms.ChoiceField(choices=Order.ACCEPT_CHOICES, widget=forms.RadioSelect, label="accept first appointment time?")
                 if user.profile.has_user_types(['mo', 'ad']):
                     self.fields['fa_status_vendor'].label += ' (vendor)'
         if can_edit_quote:
             self.fields['quote'] = forms.DecimalField(initial=order.quote)
         if can_accept_quote:
             if user.profile.has_user_types(['pm', 'mo', 'ad']):
-                self.fields['quote_status_approver'] = forms.ChoiceField(choices=Order.ACCEPT_CHOICES, initial=order.quote_status_approver, widget=forms.RadioSelect, label="accept quote?")
+                self.fields['quote_status_approver'] = forms.ChoiceField(choices=Order.ACCEPT_CHOICES, widget=forms.RadioSelect, label="accept quote?")
                 if user.profile.has_user_types(['mo', 'ad']):
                     self.fields['quote_status_approver'].label += ' (approver)'
             if user.profile.has_user_types(['po', 'mo', 'ad']):
-                self.fields['quote_status_owner'] = forms.ChoiceField(choices=Order.ACCEPT_CHOICES, initial=order.quote_status_owner, widget=forms.RadioSelect, label="accept quote?")
+                self.fields['quote_status_owner'] = forms.ChoiceField(choices=Order.ACCEPT_CHOICES, widget=forms.RadioSelect, label="accept quote?")
                 if user.profile.has_user_types(['mo', 'ad']):
                     self.fields['quote_status_owner'].label += ' (owner)'
         if can_edit_sa_date:
             self.fields['sa_date'] = forms.DateTimeField(initial=order.sa_date, label="second appointment suggested time")
         if can_edit_sa_duration:
-            self.fields['sa_duration'] = forms.IntegerField(min_value=1, initial=order.sa_duration, label="second appointment duration")
+            self.fields['sa_duration'] = forms.IntegerField(min_value=1, label="second appointment duration")
         if can_accept_sa:
             if user.profile.has_user_types(['te', 'mo', 'ad']):
-                self.fields['sa_status_creator'] = forms.ChoiceField(choices=Order.ACCEPT_CHOICES, initial=order.sa_status_creator, widget=forms.RadioSelect, label="accept second appointment time?")
+                self.fields['sa_status_creator'] = forms.ChoiceField(choices=Order.ACCEPT_CHOICES, widget=forms.RadioSelect, label="accept second appointment time?")
                 if user.profile.has_user_types(['mo', 'ad']):
                     self.fields['sa_status_creator'].label += ' (creator)'
             if user.profile.has_user_types(['ve', 'vm', 'mo', 'ad']):
-                self.fields['sa_status_vendor'] = forms.ChoiceField(choices=Order.ACCEPT_CHOICES, initial=order.sa_status_vendor, widget=forms.RadioSelect, label="accept second appointment time?")
+                self.fields['sa_status_vendor'] = forms.ChoiceField(choices=Order.ACCEPT_CHOICES, widget=forms.RadioSelect, label="accept second appointment time?")
                 if user.profile.has_user_types(['mo', 'ad']):
                     self.fields['sa_status_vendor'].label += ' (vendor)'
         if can_edit_payment:

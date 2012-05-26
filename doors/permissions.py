@@ -158,8 +158,8 @@ def get_order_detail_dictionary(order, user, POST_data=None):
 
     order_form = OrderDetailForm(
         data=POST_data,
+        instance=order,
         user=user,
-        order=order,
         can_edit_work_type=can_edit_work_type,
         can_edit_vendor=can_edit_vendor,
         can_edit_note=can_edit_note,

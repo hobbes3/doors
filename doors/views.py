@@ -37,6 +37,7 @@ class OrderListView(ListView):
 
 @login_required
 def order_detail(request, pk):
+    user = request.user
     order = get_object_or_404(Order, pk=pk)
 
     if order not in get_viewable_order_list(request.user):
@@ -44,7 +45,7 @@ def order_detail(request, pk):
 
         return HttpResponseRedirect(reverse('order_list'))
 
-    return render(request, 'doors/order/detail.html', get_order_detail_dictionary(order=order, user=request.user))
+    return render(request, 'doors/order/detail.html', get_order_detail_dictionary(order=order, user=user))
 
 @login_required
 def order_create(request):
@@ -82,34 +83,36 @@ def order_create(request):
 
     return render(request, 'doors/order/create.html', dictionary)
 
+@login_required
 def order_edit(request, pk):
     user = request.user
     order = Order.objects.get(pk=pk)
+
+    import ipdb; ipdb.set_trace()
 
     if request.method == 'POST':
         dictionary = get_order_detail_dictionary(order=order, user=user, POST_data=request.POST)
         form = dictionary['order_form']
 
         if form.is_valid():
-            pass
+            form.save()
         else:
-            dictionary['focus'] = 'asd'
-            return render(request, 'doors/order/detail.html', {})
-    else:
-        dictionary = get_order_detail_dictionary(order=order, user=user)
-        if dictionary['order_form'] is None:
-            # Messages called in get_order_detail_dictionary().
-            return HttpResponseRedirect(reverse('order_detail', kwargs={'pk': pk}))
+            focus = 'id_work_type'
 
-    return HttpResponseRedirect(reverse('order_detail', kwargs={'pk': pk}))
+    url = reverse('order_detail', kwargs={'pk': pk})
+    if focus:
+        url += "?focus=" + focus
 
+    return HttpResponseRedirect(url)
+
+@login_required
 def comment_create(request, order_pk):
+    user = request.user
+    order = Order.objects.get(pk=order_pk)
+
     #import ipdb; ipdb.set_trace()
 
     if request.method == 'POST':
-        order = Order.objects.get(pk=order_pk)
-        user = request.user
-
         dictionary = get_order_detail_dictionary(order=order, user=user, POST_data=request.POST)
         form = dictionary['comment_form']
 
