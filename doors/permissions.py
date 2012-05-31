@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth.models import User
 from doors.models import Order, Place
-from doors.forms import OrderCreateForm, OrderDetailForm, CommentCreateForm
+from doors.forms import CustomDateTimeField, OrderCreateForm, CommentCreateForm
 from itertools import chain
 
 # Returns a list of orders that the user is allowed to view.
@@ -81,70 +81,86 @@ def get_order_create_dictionary(user, POST_data=None):
     }
 
 def get_order_detail_dictionary(order, user, POST_data=None):
-    can_delete           = 0
-    can_assign           = 0
-    can_check_steps      = 0
-    can_comment          = 0
-    can_edit_work_type   = 0
-    can_edit_vendor      = 0
-    can_edit_note        = 0
-    can_edit_status      = 0
-    can_edit_quote       = 0
-    can_edit_payment     = 0
-    can_edit_fa_date     = 0
-    can_edit_sa_date     = 0
-    can_edit_fa_duration = 0
-    can_edit_sa_duration = 0
-    can_accept_fa        = 0
-    can_accept_sa        = 0
-    can_accept_quote     = 0
+    can_delete       = 0
+    can_assign       = 0
+    can_check_steps  = 0
+    can_comment      = 0
+
+    custom_widgets = {
+        'status':                forms.RadioSelect(),
+        'fa_status_creator':     forms.RadioSelect(),
+        'fa_status_vendor':      forms.RadioSelect(),
+        'quote_status_approver': forms.RadioSelect(),
+        'quote_status_owner':    forms.RadioSelect(),
+        'sa_status_creator':     forms.RadioSelect(),
+        'sa_status_vendor':      forms.RadioSelect(),
+    }
 
     if user.profile.has_user_types(['mo', 'ad']):
-        can_delete           = 1
-        can_assign           = 1
-        can_check_steps      = 1
-        can_comment          = 1
-        can_edit_work_type   = 1
-        can_edit_vendor      = 1
-        can_edit_note        = 1
-        can_edit_status      = 1
-        can_edit_quote       = 1
-        can_edit_payment     = 1
-        can_edit_fa_date     = 1
-        can_edit_sa_date     = 1
-        can_edit_fa_duration = 1
-        can_edit_sa_duration = 1
-        can_accept_fa        = 1
-        can_accept_sa        = 1
-        can_accept_quote     = 1
+        can_delete      = 1
+        can_assign      = 1
+        can_check_steps = 1
+        can_comment     = 1
+
+        include_fields = (
+            'status',
+            'work_type',
+            'note',
+            'vendor',
+            'fa_date',
+            'fa_duration',
+            'fa_status_creator',
+            'fa_status_vendor',
+            'quote',
+            'quote_status_approver',
+            'quote_status_owner',
+            'sa_date',
+            'sa_duration',
+            'sa_status_creator',
+            'sa_status_vendor',
+            'payment',
+        )
     elif user.profile.has_user_types(['pm']):
-        can_delete           = 1
-        can_assign           = 1
-        can_check_steps      = 1
-        can_comment          = 1
-        can_edit_work_type   = 1
-        can_edit_vendor      = 1
-        can_edit_note        = 1
-        can_edit_status      = 1
-        can_accept_quote     = 1
+        can_delete      = 1
+        can_assign      = 1
+        can_check_steps = 1
+        can_comment     = 1
+
+        include_fields = (
+            'status',
+            'work_type',
+            'note',
+            'vendor',
+            'quote_status_approver',
+        )
     elif user.profile.has_user_types(['po']):
-        can_accept_quote     = 1
+        can_comment     = 1
+
+        include_fields = (
+            'quote_status_owner',
+        )
     elif user.profile.has_user_types(['vm', 've']):
-        can_comment          = 1
-        can_edit_quote       = 1
-        can_edit_payment     = 1
-        can_edit_fa_date     = 1
-        can_edit_sa_date     = 1
-        can_edit_fa_duration = 1
-        can_edit_sa_duration = 1
-        can_accept_fa        = 1
-        can_accept_sa        = 1
+        can_comment     = 1
+
+        include_fields = (
+            'fa_date',
+            'fa_duration',
+            'fa_status_vendor',
+            'quote',
+            'sa_date',
+            'sa_duration',
+            'sa_status_vendor',
+            'payment',
+        )
     elif user.profile.has_user_types(['te']):
-        can_comment          = 1
-        can_edit_fa_date     = 1
-        can_edit_sa_date     = 1
-        can_accept_fa        = 1
-        can_accept_sa        = 1
+        can_comment     = 1
+
+        include_fields = (
+            'fa_date',
+            'fa_status_creator',
+            'sa_date',
+            'sa_status_creator',
+        )
     else:
         return {
             'order': order,
@@ -156,24 +172,29 @@ def get_order_detail_dictionary(order, user, POST_data=None):
             'can_comment': can_comment,
         }
 
-    order_form = OrderDetailForm(
-        data=POST_data,
-        instance=order,
-        user=user,
-        can_edit_work_type=can_edit_work_type,
-        can_edit_vendor=can_edit_vendor,
-        can_edit_note=can_edit_note,
-        can_edit_status=can_edit_status,
-        can_edit_quote=can_edit_quote,
-        can_edit_payment=can_edit_payment,
-        can_edit_fa_date=can_edit_fa_date,
-        can_edit_sa_date=can_edit_sa_date,
-        can_edit_fa_duration=can_edit_fa_duration,
-        can_edit_sa_duration=can_edit_sa_duration,
-        can_accept_fa=can_accept_fa,
-        can_accept_sa=can_accept_sa,
-        can_accept_quote=can_accept_quote,
-    )
+    class OrderDetailForm(forms.ModelForm):
+        if 'fa_date' in include_fields:
+            fa_date = CustomDateTimeField(label="first appointment time")
+        if 'sa_date' in include_fields:
+            sa_date = CustomDateTimeField(label="second appointment time")
+
+        class Meta:
+            model = Order
+            fields = include_fields
+            widgets = custom_widgets
+
+        def clean(self):
+            super(OrderDetailForm, self).clean()
+
+            if 'note' in self.cleaned_data:
+                if len(self.cleaned_data['note']) < 50:
+                    self._errors['note'] = self.error_class([u"Please enter a longer note."])
+
+                    del self.cleaned_data['note']
+
+            return self.cleaned_data
+
+    order_form = OrderDetailForm(data=POST_data, instance=order)
 
     comment_form = CommentCreateForm(data=POST_data)
 

@@ -87,8 +87,9 @@ def order_create(request):
 def order_edit(request, pk):
     user = request.user
     order = Order.objects.get(pk=pk)
+    focus = None
 
-    import ipdb; ipdb.set_trace()
+    #import ipdb; ipdb.set_trace()
 
     if request.method == 'POST':
         dictionary = get_order_detail_dictionary(order=order, user=user, POST_data=request.POST)
