@@ -54,7 +54,7 @@ def order_create_creator_changed(request, creator_pk):
     if not creator_pk:
         return simplejson.dumps({
             'error': False,
-            'places': [('', "Select a creator first")]
+            'properties': [('', "Select a creator first")]
         })
     else:
         creator_pk = int(creator_pk)
@@ -62,18 +62,18 @@ def order_create_creator_changed(request, creator_pk):
     creator = User.objects.get(pk=creator_pk)
 
     if creator.profile.has_user_types(['pm']):
-        places = [(place.pk, place.name) for place in creator.places_from_managers.all()]
+        properties = [(property.pk, property.name) for property in creator.properties_from_managers.all()]
     elif creator.profile.has_user_types(['te']):
-        place = creator.profile.place
-        if place:
-            places = [(place.pk, place.name)]
+        property = creator.profile.property
+        if property:
+            properties = [(property.pk, property.name)]
         else:
-            places = [('', "Creator is not part of a property")]
+            properties = [('', "Creator is not part of a property")]
     else:
         messages.error(request, "Something went wrong! The creator is suppose to be either a tenant or a property manager!")
         return simplejson.dumps({'error': True})
 
     return simplejson.dumps({
         'error': False,
-        'places': places
+        'properties': properties
     })

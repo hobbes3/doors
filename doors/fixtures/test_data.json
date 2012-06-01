@@ -137,7 +137,7 @@
             "created": "2012-03-16T19:04:03.418Z",
             "modified": "2012-03-16T19:04:03.418Z",
             "phone": "",
-            "place": null,
+            "property": null,
             "user": 3,
             "user_types": [
                 4
@@ -156,7 +156,7 @@
             "created": "2012-03-16T19:04:25.039Z",
             "modified": "2012-03-16T19:04:25.039Z",
             "phone": "",
-            "place": null,
+            "property": null,
             "user": 4,
             "user_types": [
                 7
@@ -175,7 +175,7 @@
             "created": "2012-03-16T19:04:15.134Z",
             "modified": "2012-03-16T19:04:15.135Z",
             "phone": "",
-            "place": null,
+            "property": null,
             "user": 5,
             "user_types": [
                 5
@@ -190,12 +190,12 @@
             "local_timezone": "east",
             "building": "",
             "room": "",
-            "place_status": "a",
+            "property_status": "a",
             "floor": "",
             "created": "2012-04-09T06:24:46.748Z",
             "modified": "2012-04-09T06:24:46.748Z",
             "phone": "",
-            "place": 2,
+            "property": 2,
             "user": 6,
             "user_types": [
                 8
@@ -210,12 +210,12 @@
             "local_timezone": "east",
             "building": "",
             "room": "",
-            "place_status": "n",
+            "property_status": "n",
             "floor": "",
             "created": "2012-04-09T06:24:46.748Z",
             "modified": "2012-04-09T06:24:46.748Z",
             "phone": "",
-            "place": null,
+            "property": null,
             "user": 7,
             "user_types": [
                 6
@@ -230,12 +230,12 @@
             "local_timezone": "east",
             "building": "",
             "room": "",
-            "place_status": "n",
+            "property_status": "n",
             "floor": "",
             "created": "2012-04-09T06:24:46.748Z",
             "modified": "2012-04-09T06:24:46.748Z",
             "phone": "",
-            "place": null,
+            "property": null,
             "user": 8,
             "user_types": [
                 5
@@ -254,7 +254,7 @@
             "created": "2012-03-16T19:03:50.212Z",
             "modified": "2012-03-30T22:35:36.681Z",
             "phone": "555-123-4567",
-            "place": 1,
+            "property": 1,
             "user": 9,
             "user_types": [
                 8
@@ -263,14 +263,14 @@
     },
     {
         "pk": 1,
-        "model": "doors.place",
+        "model": "doors.property",
         "fields": {
             "note": "",
             "city": "Atlanta",
             "name": "The Red House",
             "created": "2012-03-16T19:05:19.719Z",
             "state": "GA",
-            "place_type": "s",
+            "property_type": "s",
             "modified": "2012-03-16T19:05:19.719Z",
             "website": "",
             "phone": "",
@@ -289,14 +289,14 @@
     },
     {
         "pk": 2,
-        "model": "doors.place",
+        "model": "doors.property",
         "fields": {
             "note": "",
             "city": "Atlanta",
             "name": "The Blue House",
             "created": "2012-03-16T19:05:19.719Z",
             "state": "GA",
-            "place_type": "s",
+            "property_type": "s",
             "modified": "2012-03-16T19:05:19.719Z",
             "website": "",
             "phone": "",
@@ -359,7 +359,7 @@
             "first_appointment": "2012-03-18T20:45:32Z",
             "action": "2012-03-16T19:09:49Z",
             "payment": "154.65",
-            "place": 1,
+            "property": 1,
             "fa_date": "2012-03-16T19:09:49Z",
             "sa_date": "2012-03-17T19:09:49Z",
             "fa_duration": 15,
@@ -395,7 +395,7 @@
             "first_appointment": null,
             "action": "2012-03-30T16:32:06Z",
             "payment": null,
-            "place": 1,
+            "property": 1,
             "fa_date": "2012-03-16T19:09:49Z",
             "sa_date": "2012-03-17T19:09:49Z",
             "fa_duration": null,
@@ -431,7 +431,7 @@
             "first_appointment": "2012-03-30T16:32:12.897Z",
             "action": "2012-03-30T16:32:06Z",
             "payment": "73.45",
-            "place": 2,
+            "property": 2,
             "fa_date": "2012-03-16T19:09:49Z",
             "sa_date": "2012-03-17T19:09:49Z",
             "fa_duration": 15,
@@ -467,7 +467,7 @@
             "first_appointment": null,
             "action": null,
             "payment": null,
-            "place": 1,
+            "property": 1,
             "fa_date": "2012-03-16T19:09:49Z",
             "sa_date": "2012-03-17T19:09:49Z",
             "fa_duration": null,

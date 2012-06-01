@@ -2,6 +2,7 @@
 
 {% load breadcrumbs %}
 {% load humanize %}
+{% load doors_custom_tags %}
 
 {% block title %}View user profile for {{ user_object.username }}{% endblock %}
 
@@ -34,23 +35,23 @@
                 <div class="smaller-detail-div">
                     <div class="half-size-column fl">
                         <p>
-                            <label>Username:</label>
+                            <label>Username</label>
                             {{ user_object.username }}
                         </p>
                         <p>
-                            <label>Email:</label>
+                            <label>Email</label>
                             {{ user_object.email }}
                         </p>
                         <p>
-                            <label>First name:</label>
+                            <label>First name</label>
                             {{ user_object.first_name }}
                         </p>
                         <p>
-                            <label>Last name:</label>
+                            <label>Last name</label>
                             {{ user_object.last_name }}
                         </p>
                         <p>
-                            <label>User types:</label>
+                            <label>User types</label>
                         </p>
                         <ul class="custom-ul">
                             {% if user_object.profile.user_types.all %}
@@ -62,19 +63,19 @@
                             {% endif %}
                         </ul>
                         <p>
-                            <label>Phone:</label>
+                            <label>Phone</label>
                             {{ user_object.profile.phone|default:"None" }}
                         </p>
                         <p>
-                            <label>Last login:</label>
+                            <label>Last login</label>
                             {{ user_object.last_login|naturaltime }}
                         </p>
                         <p>
-                            <label>Joined:</label>
+                            <label>Joined</label>
                             {{ user_object.date_joined|date:"DATE_FORMAT" }}
                         </p>
                         <p>
-                            <label>Local time zone:</label>
+                            <label>Local time zone</label>
                             {{ user_object.profile.get_local_timezone_display }}
                         </p>
                     </div>
@@ -83,7 +84,7 @@
                             <label>Orders created by {{ user_object.first_name }} ({{ user_object.profile.creator_order_count }})</label>
                             <a href="#">See all orders created by {{ user_object.first_name }}.</a>
                         </p>
-                        {% if is_property_manager %}
+                        {% if user_object|has_user_types:"pm" %}
                             <p>
                                 <label>Orders assigned to {{ user_object.first_name }} ({{ user_object.profile.approver_order_count }})</label>
                                 <a href="#">See all orders assigned to {{ user_object.first_name }}.</a>
@@ -93,37 +94,37 @@
                             <label>Comments created by {{ user_object.first_name }} ({{ user_object.profile.comment_count }})</label>
                             <a href="#">See all comments created by {{ user_object.first_name }}.</a>
                         </p>
-                        {% if is_tenant %}
+                        {% if user_object|has_user_types:"te" %}
                             <p>
-                                <label>Property:</label>
-                                {% if user_object.profile.place %}
-                                    <a href="{% url place_detail pk=user_object.profile.place.pk %}">{{ user_object.profile.place.name }}</a>
+                                <label>Property</label>
+                                {% if user_object.profile.property %}
+                                    <a href="{% url property_detail pk=user_object.profile.property.pk %}">{{ user_object.profile.property.name }}</a>
                                 {% else %}
                                     None
                                 {% endif %}
                             </p>
                             <p>
-                                <label>Building:</label>
+                                <label>Building</label>
                                 {{ user_object.profile.building|default:"None" }}
                             </p>
                             <p>
-                                <label>Floor:</label>
+                                <label>Floor</label>
                                 {{ user_object.profile.floor|default:"None" }}
                             </p>
                             <p>
-                                <label>Room:</label>
+                                <label>Room</label>
                                 {{ user_object.profile.room|default:"None" }}
                             </p>
                         {% endif %}
-                        {% if is_property_manager %}
-                            {% with place_count=user_object.profile.manager_place_count place_list=user_object.profile.manager_place_list %}
+                        {% if user_object|has_user_types:"pm" %}
+                            {% with property_count=user_object.profile.manager_property_count property_list=user_object.profile.manager_property_list %}
                                 <p>
-                                    <label>Managed properties ({{ place_count }}):</label>
+                                    <label>Managed properties ({{ property_count }})</label>
                                 </p>
                                 <ul class="custom-ul">
-                                {% if place_list %}
-                                    {% for place in place_list %}
-                                        <li><a href="{% url place_detail place.pk %}">{{ place.name }}</a></li>
+                                {% if property_list %}
+                                    {% for property in property_list %}
+                                        <li><a href="{% url property_detail property.pk %}">{{ property.name }}</a></li>
                                     {% endfor %}
                                 {% else %}
                                     <li>No properties</li>
@@ -131,15 +132,15 @@
                                 </ul>
                             {% endwith %}
                         {% endif %}
-                        {% if is_property_owner %}
-                            {% with place_count=user_object.profile.owner_place_count place_list=user_object.profile.owner_place_list %}
+                        {% if user_object|has_user_types:"po" %}
+                            {% with property_count=user_object.profile.owner_property_count property_list=user_object.profile.owner_property_list %}
                                 <p>
-                                    <label>Owned properties ({{ place_count }}):</label>
+                                    <label>Owned properties ({{ property_count }})</label>
                                 </p>
                                 <ul class="custom-ul">
-                                    {% if place_list %}
-                                        {% for place in place_list %}
-                                            <li><a href="{% url place_detail place.pk %}">{{ place.name }}</a></li>
+                                    {% if property_list %}
+                                        {% for property in property_list %}
+                                            <li><a href="{% url property_detail property.pk %}">{{ property.name }}</a></li>
                                         {% endfor %}
                                     {% else %}
                                         <li>No properties</li>
@@ -147,10 +148,10 @@
                                 </ul>
                             {% endwith %}
                         {% endif %}
-                        {% if is_vendor %}
+                        {% if user_object|has_user_types:"ve" %}
                             {% with vendor_count=user_object.profile.representative_vendor_count vendor_list=user_object.profile.representative_vendor_list %}
                                 <p>
-                                    <label>Represented vendors ({{ vendor_count }}):</label>
+                                    <label>Represented vendors ({{ vendor_count }})</label>
                                 </p>
                                 <ul class="custom-ul">
                                     {% if vendor_list %}
@@ -163,10 +164,10 @@
                                 </ul>
                             {% endwith %}
                         {% endif %}
-                        {% if is_vendor_manager %}
+                        {% if user_object|has_user_types:"vm" %}
                             {% with vendor_count=user_object.profile.manager_vendor_count vendor_list=user_object.profile.manager_vendor_list %}
                                 <p>
-                                    <label>Managed vendors ({{ vendor_count }}):</label>
+                                    <label>Managed vendors ({{ vendor_count }})</label>
                                 </p>
                                 <ul class="custom-ul">
                                     {% if vendor_list %}
@@ -182,7 +183,7 @@
                     </div>
                     <div class="cb">
                         <p>
-                            <label>Note:</label>
+                            <label>Note</label>
                             {{ user_object.profile.note|linebreaksbr|default:"No note." }}
                         </p>
                     </div>

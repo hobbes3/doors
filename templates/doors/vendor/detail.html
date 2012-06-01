@@ -27,19 +27,19 @@
                 <div class="smaller-detail-div">
                     <div class="half-size-column fl">
                         <p>
-                            <label>Name:</label>
+                            <label>Name</label>
                             {{ vendor.name }}
                         </p>
                         <p>
-                            <label>Phone:</label>
+                            <label>Phone</label>
                             {{ vendor.phone|default:"None" }}
                         </p>
                         <p>
-                            <label>Email:</label>
+                            <label>Email</label>
                             {{ vendor.email|default:"None" }}
                         </p>
                         <p>
-                            <label>Website:</label>
+                            <label>Website</label>
                             {% with website=vendor.website %}
                                 {% if website %}
                                     <a href="{{ website }}" target="_blank">{{ website }}</a>
@@ -49,7 +49,7 @@
                             {% endwith %}
                         </p>
                         <p>
-                            <label>Address:</label>
+                            <label>Address</label>
                             {{ vendor.address_line_one }}<br />
                             {% if vendor.address_line_two %}
                                 {{ vendor.address_line_two }}<br />
@@ -63,7 +63,7 @@
                             <a href="#">View all orders assigned to {{ vendor.name }}.</a>
                         </p>
                         <p>
-                            <label>Managers ({{ vendor.managers.count }}):</label>
+                            <label>Managers ({{ vendor.managers.count }})</label>
                         </p>
                         <ul class="custom-ul">
                             {% with manager_list=vendor.managers.all %}
@@ -77,7 +77,7 @@
                             {% endwith %}
                         </ul>
                         <p>
-                            <label>Representatives ({{ vendor.representatives.count }}):</label>
+                            <label>Representatives ({{ vendor.representatives.count }})</label>
                         </p>
                         <ul class="custom-ul">
                             {% with representative_list=vendor.representatives.all %}

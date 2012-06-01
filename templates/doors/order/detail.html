@@ -9,20 +9,19 @@
 
 {% block head %}
     {% dajaxice_js_import %}
-    <script src="{{ STATIC_URL }}js/orders/detail.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ STATIC_URL }}js/order/detail.js" type="text/javascript" charset="utf-8"></script>
     <script src="{{ STATIC_URL }}js/jquery-ui.timepicker-addon.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             $('#comment-list').scrollTo('100%')
             $('.radio').buttonset()
             $('.datetimepicker').datetimepicker({
-                {% if not is_moderator and not is_administrator %}
+                {% if not request.user|has_user_types:"mo, ad" %}
                     minDate: new Date(),
                 {% endif %}
                 dateFormat: "MM d, yy",
                 timeFormat: "h:mm tt",
                 separator: ', ',
-                stepMinute: 5,
                 ampm: true
             })
         })
@@ -74,27 +73,27 @@
                 {% endif %}
                 <br />
 
+                {# Order details #}
                 <form action="{% url order_edit pk=order.pk %}">
-                    <!-- Order details -->
                     <p>
                         Created on {{ order.created }}
                     </p>
 
                     <div class="half-size-column fl">
                         <p>
-                            <label>Creator:</label>
+                            <label>Creator</label>
                             <a href="{% url user_detail pk=order.creator.pk %}">{{ order.creator.get_full_name }}</a>
                         </p>
                         <p>
-                            <label>Property:</label>
-                            <a href="{% url place_detail pk=order.place.pk %}">{{ order.place.name }}</a>
+                            <label>Property</label>
+                            <a href="{% url property_detail pk=order.property.pk %}">{{ order.property.name }}</a>
                         </p>
                         <p>
-                            <label>Work type:</label>
-                            {{ order.get_work_type_display }}
+                            <label>Work type</label>
+                            {{ order.get_work_type_display|capfirst }}
                         </p>
                         <p>
-                            <label>Approver:</label>
+                            <label>Approver</label>
                                 {% if order.approver %}
                                     <a href="{% url user_detail pk=order.approver.pk %}">{{ order.approver.get_full_name }}</a>
                                 {% else %}
@@ -102,17 +101,17 @@
                                 {% endif %}
                         </p>
                         <p>
-                            <label>Status:</label>
+                            <label>Status</label>
                             {{ order.get_status_display|capfirst }}
                         </p>
                         <p>
-                            <label>Note:</label>
+                            <label>Note</label>
                             {{ order.note|linebreaksbr|default:"No note." }}
                         </p>
                     </div>
                     <div class="half-size-column fr">
                         <p>
-                            <label>Vendor:</label>
+                            <label>Vendor</label>
                                 {% if order.vendor %}
                                     <a href="{% url vendor_detail pk=order.vendor.pk %}">{{ order.vendor.name }}</a>
                                 {% else %}
@@ -120,24 +119,25 @@
                                 {% endif %}
                         </p>
                         <p>
-                            <label>First appointment:</label>
+                            <label>First appointment</label>
                                 {{ order.fa_date|default:"Not arranged yet." }}
                                 {% if order.fa_duration %}
                                     Duration: {{ order.fa_duration|duration }}.
                                 {% endif %}<br />
+                                {# "p" = pending, "a" = accepted, "r" = rejected #}
                                 {% if order.fa_status_creator == "a" %}
                                     <span class="success-image image-left">{{ order.creator.first_name }}</span><br />
                                 {% elif order.fa_status_creator == "r" %}
                                     <span class="error-image image-left">{{ order.creator.first_name }}</span><br />
                                 {% endif %}
-                                {% if order.fa_status_vendor == "a" and order.vendor %} {# True #}
+                                {% if order.fa_status_vendor == "a" and order.vendor %}
                                     <span class="success-image image-left">{{ order.vendor }}</span>
-                                {% elif order.fa_status_vendor == "r" %} {# False #}
+                                {% elif order.fa_status_vendor == "r" %}
                                     <span class="error-image image-left">{{ order.vendor }}</span>
                                 {% endif %}
                         </p>
                         <p>
-                            <label>Quote:</label>
+                            <label>Quote</label>
                                 {% if order.quote %}
                                     ${{ order.quote }}
                                 {% else %}
@@ -155,7 +155,7 @@
                                 {% endif %}
                         </p>
                         <p>
-                            <label>Second appointment:</label>
+                            <label>Second appointment</label>
                                 {{ order.sa_date|default:"Not arranged yet." }}
                                 {% if order.sa_duration %}
                                     Duration: {{ order.sa_duration|duration }}.
@@ -172,7 +172,7 @@
                                 {% endif %}
                         </p>
                         <p>
-                            <label>Payment:</label>
+                            <label>Payment</label>
                                 {% if order.payment %}
                                     ${{ order.payment }}
                                 {% else %}
@@ -184,7 +184,7 @@
             </div>
 
             <div class="half-size-column fr">
-                <!-- Steps -->
+                {# Steps #}
                 <table>
                     <thead>
                         <tr>
@@ -228,7 +228,8 @@
             <div class="cb">
                 <div class="stripe-separator"></div>
 
-                <form action="{% url order_edit pk=order.pk %}">
+                {# Order editing #}
+                <form action="{% url order_edit pk=order.pk %}" method="post">
                     {% csrf_token %}
                     {{ order_form.non_field_errors }}
 
@@ -248,15 +249,12 @@
                                     {{ field|add_class:"round"|add_error_class:"error-input" }}
                                 {% elif input_name == "DateTimeInput" %}
                                     <input id="{{ field.id_for_label }}" type="text" name="{{ field.name }}" value="{{ field.value|date:"F j, Y, g:i a" }}"
-                                        class="round datetimepicker
-                                            {% if field.errors %}
-                                                error-input
-                                            {% endif %}
-                                    " />
+                                        class="round datetimepicker {% if field.errors %}error-input{% endif %}"
+                                    />
                                 {% elif input_name == "RadioSelect" %}
                                     <span class="radio">
                                         {% for radio in field %}
-                                            <input type="radio" id="{{ radio.name }}{{ forloop.counter }}" name="{{ radio.name }}"
+                                            <input type="radio" id="{{ radio.name }}{{ forloop.counter }}" name="{{ radio.name }}" value="{{ radio.choice_value }}"
                                                 {% if radio.is_checked %}
                                                     checked="checked"
                                                 {% endif %}
@@ -276,7 +274,7 @@
         </div>
     </div>
 
-    <!-- Comments -->
+    {# Comments #}
     <div class="content-module">
         <div class="content-module-heading cf">
             <h3 class="fl">Comments (<span id="comment-count">{{ order.comment_count }}</span>)</h3>
