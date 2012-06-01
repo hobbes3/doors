@@ -9,14 +9,14 @@
 
 {% block head %}
     {% dajaxice_js_import %}
-    <script src="{{ STATIC_URL }}js/orders/detail.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ STATIC_URL }}js/order/detail.js" type="text/javascript" charset="utf-8"></script>
     <script src="{{ STATIC_URL }}js/jquery-ui.timepicker-addon.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             $('#comment-list').scrollTo('100%')
             $('.radio').buttonset()
             $('.datetimepicker').datetimepicker({
-                {% if not is_moderator and not is_administrator %}
+                {% if not request.user|has_user_types:"mo, ad" %}
                     minDate: new Date(),
                 {% endif %}
                 dateFormat: "MM d, yy",
@@ -86,7 +86,7 @@
                         </p>
                         <p>
                             <label>Property</label>
-                            <a href="{% url place_detail pk=order.place.pk %}">{{ order.place.name }}</a>
+                            <a href="{% url property_detail pk=order.property.pk %}">{{ order.property.name }}</a>
                         </p>
                         <p>
                             <label>Work type</label>

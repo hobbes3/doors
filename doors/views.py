@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.views.generic import ListView, DetailView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from doors.models import Order, Place, Vendor, Comment
+from doors.models import Order, Property, Vendor, Comment
 from doors.permissions import *
 from django.core.urlresolvers import reverse
 import logging
@@ -59,13 +59,13 @@ def order_create(request):
 
         if form.is_valid():
             creator   = form.cleaned_data['creator']
-            place     = form.cleaned_data['place']
+            property  = form.cleaned_data['property']
             work_type = form.cleaned_data['work_type']
             note      = form.cleaned_data['note']
 
             new_order = Order.objects.create(
                 creator=creator,
-                place=place,
+                property=property,
                 work_type=work_type,
                 note=note
             )
@@ -87,9 +87,8 @@ def order_create(request):
 def order_edit(request, pk):
     user = request.user
     order = Order.objects.get(pk=pk)
-    focus = None
 
-    #import ipdb; ipdb.set_trace()
+    import ipdb; ipdb.set_trace()
 
     if request.method == 'POST':
         dictionary = get_order_detail_dictionary(order=order, user=user, POST_data=request.POST)
@@ -97,14 +96,8 @@ def order_edit(request, pk):
 
         if form.is_valid():
             form.save()
-        else:
-            focus = 'id_work_type'
 
-    url = reverse('order_detail', kwargs={'pk': pk})
-    if focus:
-        url += "?focus=" + focus
-
-    return HttpResponseRedirect(url)
+    return render(request, 'doors/order/detail.html', dictionary)
 
 @login_required
 def comment_create(request, order_pk):
@@ -168,11 +161,11 @@ class VendorListView(ListView):
         context['all_vendor_count'] = Vendor.objects.count()
         return context
 
-class PlaceListView(ListView):
-    model = Place
-    template_name = 'doors/place/list.html'
+class PropertyListView(ListView):
+    model = Property
+    template_name = 'doors/property/list.html'
 
     def get_context_data(self, **kwargs):
-        context = super(PlaceListView, self).get_context_data(**kwargs)
-        context['all_place_count'] = Place.objects.count()
+        context = super(PropertyListView, self).get_context_data(**kwargs)
+        context['all_property_count'] = Property.objects.count()
         return context

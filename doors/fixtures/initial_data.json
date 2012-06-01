@@ -101,7 +101,7 @@
             "created": "2012-03-29T07:29:16.137Z",
             "modified": "2012-03-29T08:15:15.877Z",
             "phone": "",
-            "place": null,
+            "property": null,
             "user": 1,
             "user_types": [
                 1,
@@ -139,7 +139,7 @@
             "created": "2012-03-29T07:29:16.137Z",
             "modified": "2012-03-29T08:15:15.877Z",
             "phone": "",
-            "place": null,
+            "property": null,
             "user": 2,
             "user_types": [
                 1,

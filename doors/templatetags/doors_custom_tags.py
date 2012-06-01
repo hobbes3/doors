@@ -13,15 +13,19 @@ def duration(value):
 
     return ' '.join("{hours} {minutes}".format(hours=hours_string, minutes=minutes_string).split())
 
-@register.assignment_tag
-def has_user_types(user_pk, *args):
-    user = User.objects.get(pk=user_pk)
+@register.filter
+def has_user_types(element, args):
+    if isinstance(element, User):
+        user_types = args.replace(' ', '').split(',')
 
-    return user.profile.has_user_types(args)
+        if element.profile.has_user_types(user_types):
+            return True
+
+    return False
 
 @register.filter
-def class_name(ob):
-    return ob.__class__.__name__
+def class_name(element):
+    return element.__class__.__name__
 
 @register.filter
 def pdb(element):

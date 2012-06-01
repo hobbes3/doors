@@ -8,7 +8,7 @@
 
 {% block head %}
     {% dajaxice_js_import %}
-    <script src="{{ STATIC_URL }}js/orders/create.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ STATIC_URL }}js/order/create.js" type="text/javascript" charset="utf-8"></script>
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -44,21 +44,21 @@
                 </p>
 
                 {% if can_edit_creator %}
-                    {% if form.place.errors %}
+                    {% if form.property.errors %}
                         <p class="form-error">
-                        {% for error in form.place.errors %}
+                        {% for error in form.property.errors %}
                             <em>{{ error|escape }}</em>
                         {% endfor %}
                     {% else %}
                         <p>
                     {% endif %}
-                    <label for="id_place">Property</label>
-                    {{ form.place }}
+                    <label for="id_property">Property</label>
+                    {{ form.property }}
                 {% else %}
                     <p>
                         Property
-                        <input type="hidden" name="place" value="{{ request.user.profile.place.pk }}" />
-                        <a href="{% url place_detail pk=request.user.profile.place.pk %}">{{ request.user.profile.place.name }}</a>
+                        <input type="hidden" name="property" value="{{ request.user.profile.property.pk }}" />
+                        <a href="{% url property_detail pk=request.user.profile.property.pk %}">{{ request.user.profile.property.name }}</a>
                 {% endif %}
                 </p>
 

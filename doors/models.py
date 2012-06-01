@@ -3,10 +3,8 @@ from django.db.models import Q
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
-# "property" is a Python function so I use the word "place" instead in codes.
-# On the front-end, however, a location is always referred as a "property".
-class Place(models.Model):
-    PLACE_TYPE_CHOICES = (
+class Property(models.Model):
+    PROPERTY_TYPE_CHOICES = (
         ('s', 'single-family house (detached)'),
         ('m', 'multi-family house'            ),
         ('t', 'terrance house (townhouse)'    ),
@@ -22,10 +20,10 @@ class Place(models.Model):
     )
 
     name             = models.CharField(max_length=135)
-    place_type       = models.CharField(max_length=1, choices=PLACE_TYPE_CHOICES)
+    property_type    = models.CharField(max_length=1, choices=PROPERTY_TYPE_CHOICES)
     status           = models.CharField(max_length=1, choices=STATUS_CHOICES)
-    managers         = models.ManyToManyField(User, related_name='places_from_managers', limit_choices_to={'userprofile_from_user__user_types': 'pm'})
-    owners           = models.ManyToManyField(User, related_name='places_from_owners'  , limit_choices_to={'userprofile_from_user__user_types': 'po'}, null=True, blank=True)
+    managers         = models.ManyToManyField(User, related_name='properties_from_managers', limit_choices_to={'userprofile_from_user__user_types': 'pm'})
+    owners           = models.ManyToManyField(User, related_name='properties_from_owners'  , limit_choices_to={'userprofile_from_user__user_types': 'po'}, null=True, blank=True)
     note             = models.TextField(max_length=1000, blank=True)
     address_line_one = models.CharField(max_length=135)
     address_line_two = models.CharField(max_length=135, blank=True)
@@ -39,14 +37,17 @@ class Place(models.Model):
     created          = models.DateTimeField(auto_now_add=True)
     modified         = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        verbose_name_plural = "properties"
+
     def __unicode__(self):
         return self.name
 
     def tenant_count(self):
-        return self.userprofiles_from_place.count()
+        return self.userprofiles_from_property.count()
 
     def tenant_list(self):
-        return self.userprofiles_from_place.all()
+        return self.userprofiles_from_property.all()
 
 class UserType(models.Model):
     TYPE_CHOICES = (
@@ -86,25 +87,25 @@ class UserProfile(models.Model):
         ('utc' , 'UTC'        ),
     )
 
-    PLACE_STATUS_CHOICES = (
+    PROPERTY_STATUS_CHOICES = (
         ('n', 'none'    ),
         ('p', 'pending' ),
         ('a', 'approved'),
         ('r', 'rejected'),
     )
 
-    user           = models.OneToOneField(User, related_name='userprofile_from_user')
-    user_types     = models.ManyToManyField(UserType, related_name='userprofiles_from_user_types', null=True, blank=True)
-    note           = models.TextField(max_length=1000, blank=True)
-    local_timezone = models.CharField(max_length=4, choices=TIMEZONE_CHOICES, default='east')
-    phone          = models.CharField(max_length=135, blank=True)
-    room           = models.CharField(max_length=135, blank=True)
-    floor          = models.CharField(max_length=135, blank=True)
-    building       = models.CharField(max_length=135, blank=True)
-    place          = models.ForeignKey(Place, related_name='userprofiles_from_place', null=True, blank=True)
-    place_status   = models.CharField(max_length=1, choices=PLACE_STATUS_CHOICES)
-    created        = models.DateTimeField(auto_now_add=True)
-    modified       = models.DateTimeField(auto_now=True)
+    user            = models.OneToOneField(User, related_name='userprofile_from_user')
+    user_types      = models.ManyToManyField(UserType, related_name='userprofiles_from_user_types', null=True, blank=True)
+    note            = models.TextField(max_length=1000, blank=True)
+    local_timezone  = models.CharField(max_length=4, choices=TIMEZONE_CHOICES, default='east')
+    phone           = models.CharField(max_length=135, blank=True)
+    room            = models.CharField(max_length=135, blank=True)
+    floor           = models.CharField(max_length=135, blank=True)
+    building        = models.CharField(max_length=135, blank=True)
+    property        = models.ForeignKey(Property, related_name='userprofiles_from_property', null=True, blank=True)
+    property_status = models.CharField(max_length=1, choices=PROPERTY_STATUS_CHOICES)
+    created         = models.DateTimeField(auto_now_add=True)
+    modified        = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         return self.user.get_full_name()
@@ -125,19 +126,19 @@ class UserProfile(models.Model):
     def approver_order_list(self):
         return self.user.orders_from_approver.all()
 
-    def manager_place_count(self):
-        return self.user.places_from_managers.count()
+    def manager_property_count(self):
+        return self.user.properties_from_managers.count()
 
-    def manager_place_list(self):
-        return self.user.places_from_managers.all()
+    def manager_property_list(self):
+        return self.user.properties_from_managers.all()
     # End
 
     # For property owners
-    def owner_place_count(self):
-        return self.user.places_from_owners.count()
+    def owner_property_count(self):
+        return self.user.properties_from_owners.count()
 
-    def owner_place_list(self):
-        return self.user.places_from_owners.all()
+    def owner_property_list(self):
+        return self.user.properties_from_owners.all()
     # End
 
     # For vendor managers
@@ -238,7 +239,7 @@ class Order(models.Model):
     creator   = models.ForeignKey(User, related_name='orders_from_creator')
     approver  = models.ForeignKey(User, related_name='orders_from_approver', null=True, blank=True)
     vendor    = models.ForeignKey(Vendor, related_name='orders_from_vendor', null=True, blank=True)
-    place     = models.ForeignKey(Place, related_name='orders_from_place')
+    property  = models.ForeignKey(Property, related_name='orders_from_property')
     note      = models.TextField(max_length=1000)
     status    = models.CharField(max_length=1, choices=STATUS_CHOICES, default='p')
     quote     = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
@@ -257,20 +258,20 @@ class Order(models.Model):
     paid               = models.DateTimeField(null=True, blank=True)
     modified           = models.DateTimeField(auto_now=True)
 
-    fa_date = models.DateTimeField(null=True, blank=True, verbose_name='first appointment time')
-    sa_date = models.DateTimeField(null=True, blank=True, verbose_name='second appointment time')
+    fa_date = models.DateTimeField(null=True, blank=True, verbose_name="first appointment time")
+    sa_date = models.DateTimeField(null=True, blank=True, verbose_name="second appointment time")
 
-    fa_duration = models.IntegerField(null=True, blank=True, verbose_name='first appointment duration')
-    sa_duration = models.IntegerField(null=True, blank=True, verbose_name='second appointment duration')
+    fa_duration = models.IntegerField(null=True, blank=True, verbose_name="first appointment duration")
+    sa_duration = models.IntegerField(null=True, blank=True, verbose_name="second appointment duration")
 
-    fa_status_creator = models.CharField(max_length=1, choices=ACCEPT_CHOICES, default='p', verbose_name='first appointment creator status')
-    fa_status_vendor  = models.CharField(max_length=1, choices=ACCEPT_CHOICES, default='p', verbose_name='first appointment vendor status')
+    fa_status_creator = models.CharField(max_length=1, choices=ACCEPT_CHOICES, default='p', verbose_name="first appointment creator status")
+    fa_status_vendor  = models.CharField(max_length=1, choices=ACCEPT_CHOICES, default='p', verbose_name="first appointment vendor status")
 
-    sa_status_creator = models.CharField(max_length=1, choices=ACCEPT_CHOICES, default='p', verbose_name='second appointment creator status')
-    sa_status_vendor  = models.CharField(max_length=1, choices=ACCEPT_CHOICES, default='p', verbose_name='second appointment vendor status')
+    sa_status_creator = models.CharField(max_length=1, choices=ACCEPT_CHOICES, default='p', verbose_name="second appointment creator status")
+    sa_status_vendor  = models.CharField(max_length=1, choices=ACCEPT_CHOICES, default='p', verbose_name="second appointment vendor status")
 
-    quote_status_approver = models.CharField(max_length=1, choices=ACCEPT_CHOICES, default='p', verbose_name='quote approver status')
-    quote_status_owner    = models.CharField(max_length=1, choices=ACCEPT_CHOICES, default='p', verbose_name='quote owner status')
+    quote_status_approver = models.CharField(max_length=1, choices=ACCEPT_CHOICES, default='p', verbose_name="quote approver status")
+    quote_status_owner    = models.CharField(max_length=1, choices=ACCEPT_CHOICES, default='p', verbose_name="quote owner status")
 
     quote_owner = models.ForeignKey(User, related_name='orders_from_quote_owner', limit_choices_to={'userprofile_from_user__user_types__name': 'po'}, null=True, blank=True)
 
@@ -335,41 +336,41 @@ class Order(models.Model):
 
 class Comment(models.Model):
     ACTION_TYPES = (
-        ('comme', 'comment'                         , ""),
-        ('ad-qu', 'add quote'                       , "{user} quoted {value}."),
-        ('ad-pa', 'add payment'                     , "{user} paid {vendor} for {value}."),
-        ('ad-ve', 'add vendor'                      , "{user} added {vendor} as the vendor."),
-        ('ad-fa', 'add first appointment duration'  , "{user} added an estimate of {value} for the first appointment."),
-        ('ad-fa', 'add second appointment duration' , "{user} added an estimate of {value} for the second appointment."),
-        ('ed-wt', 'edit work type'                  , "{user} changed the work type to {value}."),
-        ('ed-co', 'edit note'                       , "{user} edited the note."),
-        ('ed-qu', 'edit quote'                      , "{user} edited the quote to {value}."),
-        ('ed-pa', 'edit payment'                    , "{user} edited the payment to {value}."),
-        ('ed-ve', 'edit vendor'                     , "{user} changed the vendor to {vendor}."),
-        ('ad-fa', 'edit first appointment duration' , "{user} changed first appointment estimated duration to {value}."),
-        ('ad-fa', 'edit second appointment duration', "{user} changed second appointment estimated duration to {value}."),
-        ('pr-fa', 'propose first appointment'       , "{user} proposed {value} for the first appointment."),
-        ('pr-sa', 'propose second appointment'      , "{user} proposed {value} for the second appointment."),
-        ('sa-pe', 'status pending'                  , "{user} set the status to pending."),
-        ('sa-ap', 'status approved'                 , "{user} approved the order."),
-        ('sa-re', 'status rejected'                 , "{user} rejected the order."),
-        ('sa-cl', 'status closed'                   , "{user} closed the order."),
-        ('sa-lo', 'status locked'                   , "{user} locked the order."),
-        ('ac-fa', 'accept first appointment'        , "{user} accepted the first appointment on {value}."),
-        ('ac-sa', 'accept second appointment'       , "{user} accepted the second appointment on {value}."),
-        ('ac-qu', 'accept quote'                    , "{user} accepted the quote of {value}."),
-        ('de-fa', 'decline first appointment'       , "{user} declined the first appointment on {value}."),
-        ('de-sa', 'decline second appointment'      , "{user} declined the second appointment on {value}."),
-        ('de-qu', 'decline quote'                   , "{user} declined the quote of {value}."),
-        ('se-aa', 'step assign approver'            , "{user} {action} step 1."),
-        ('se-ac', 'step action'                     , "{user} {action} step 2."),
-        ('se-av', 'step assign vendor'              , "{user} {action} step 3."),
-        ('se-fa', 'step first appointment'          , "{user} {action} step 4."),
-        ('se-qu', 'step quote'                      , "{user} {action} step 5."),
-        ('se-sa', 'step second appointment'         , "{user} {action} step 6."),
-        ('se-wd', 'step work done'                  , "{user} {action} step 7."),
-        ('se-fu', 'step follow-up'                  , "{user} {action} step 8."),
-        ('se-pa', 'step paid'                       , "{user} {action} step 9."),
+        ('comme', "comment"                         , ""),
+        ('ad-qu', "add quote"                       , "{user} quoted {value}."),
+        ('ad-pa', "add payment"                     , "{user} paid {vendor} for {value}."),
+        ('ad-ve', "add vendor"                      , "{user} added {vendor} as the vendor."),
+        ('ad-fa', "add first appointment duration"  , "{user} added an estimate of {value} for the first appointment."),
+        ('ad-fa', "add second appointment duration" , "{user} added an estimate of {value} for the second appointment."),
+        ('ed-wt', "edit work type"                  , "{user} changed the work type to {value}."),
+        ('ed-co', "edit note"                       , "{user} edited the note."),
+        ('ed-qu', "edit quote"                      , "{user} edited the quote to {value}."),
+        ('ed-pa', "edit payment"                    , "{user} edited the payment to {value}."),
+        ('ed-ve', "edit vendor"                     , "{user} changed the vendor to {vendor}."),
+        ('ad-fa', "edit first appointment duration" , "{user} changed first appointment estimated duration to {value}."),
+        ('ad-fa', "edit second appointment duration", "{user} changed second appointment estimated duration to {value}."),
+        ('pr-fa', "propose first appointment"       , "{user} proposed {value} for the first appointment."),
+        ('pr-sa', "propose second appointment"      , "{user} proposed {value} for the second appointment."),
+        ('sa-pe', "status pending"                  , "{user} set the status to pending."),
+        ('sa-ap', "status approved"                 , "{user} approved the order."),
+        ('sa-re', "status rejected"                 , "{user} rejected the order."),
+        ('sa-cl', "status closed"                   , "{user} closed the order."),
+        ('sa-lo', "status locked"                   , "{user} locked the order."),
+        ('ac-fa', "accept first appointment"        , "{user} accepted the first appointment on {value}."),
+        ('ac-sa', "accept second appointment"       , "{user} accepted the second appointment on {value}."),
+        ('ac-qu', "accept quote"                    , "{user} accepted the quote of {value}."),
+        ('de-fa', "decline first appointment"       , "{user} declined the first appointment on {value}."),
+        ('de-sa', "decline second appointment"      , "{user} declined the second appointment on {value}."),
+        ('de-qu', "decline quote"                   , "{user} declined the quote of {value}."),
+        ('se-aa', "step assign approver"            , "{user} {action} step 1."),
+        ('se-ac', "step action"                     , "{user} {action} step 2."),
+        ('se-av', "step assign vendor"              , "{user} {action} step 3."),
+        ('se-fa', "step first appointment"          , "{user} {action} step 4."),
+        ('se-qu', "step quote"                      , "{user} {action} step 5."),
+        ('se-sa', "step second appointment"         , "{user} {action} step 6."),
+        ('se-wd', "step work done"                  , "{user} {action} step 7."),
+        ('se-fu', "step follow-up"                  , "{user} {action} step 8."),
+        ('se-pa', "step paid"                       , "{user} {action} step 9."),
     )
 
     # Get rid of the last column in ACTION_TYPES, because choices can only be a tuple of 2-tuples.

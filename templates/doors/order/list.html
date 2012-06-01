@@ -51,7 +51,7 @@
                         <tr>
                             <td><a href="{% url order_detail pk=order.pk %}">{{ order.pk }}</a></td>
                             <td>{{ order.created }}</td>
-                            <td><a href="{% url place_detail pk=order.place.pk %}">{{ order.place }}</a></td>
+                            <td><a href="{% url property_detail pk=order.property.pk %}">{{ order.property }}</a></td>
                             <td><a href="{% url user_detail pk=order.creator.pk %}">{{ order.creator.get_full_name }}</a></td>
                             <td>{{ order.note|truncatechars:30 }}
                             <td>

@@ -23,9 +23,9 @@
         </div>
         <div class="content-module-main">
 
-            <p>{{ all_place_count }} total propert{{ place_list.count|pluralize:"y,ies" }} on {{ site.name }}.</p>
+            <p>{{ all_property_count }} total propert{{ property_list.count|pluralize:"y,ies" }} on {{ site.name }}.</p>
 
-            {% autopaginate place_list 10 %}
+            {% autopaginate property_list 10 %}
             {% paginate %}
             <table>
                 <thead>
@@ -42,27 +42,27 @@
                     </tr>
                 <thead>
                 <tbody>
-                {% if place_list %}
-                    {% for place in place_list %}
+                {% if property_list %}
+                    {% for property in property_list %}
                         <tr>
-                            <td><a href="{% url place_detail pk=place.pk %}">{{ place.name }}</a></td>
-                            <td>{{ place.get_place_type_display|capfirst }}</td>
-                            <td>{{ place.tenant_count }}</td>
+                            <td><a href="{% url property_detail pk=property.pk %}">{{ property.name }}</a></td>
+                            <td>{{ property.get_property_type_display|capfirst }}</td>
+                            <td>{{ property.tenant_count }}</td>
                             <td>
-                                {{ place.address_line_one }}
-                                {% if place.address_line_two %}
-                                    <br />{{ place.address_line_two }}
+                                {{ property.address_line_one }}
+                                {% if property.address_line_two %}
+                                    <br />{{ property.address_line_two }}
                                 {% endif %}
                             </td>
-                            <td>{{ place.city }}</td>
-                            <td>{{ place.state }}</td>
-                            <td>{{ place.phone }}</td>
-                            <td>{{ place.website }}</td>
-                            <td>{{ place.created|date:"DATE_FORMAT" }}</td>
+                            <td>{{ property.city }}</td>
+                            <td>{{ property.state }}</td>
+                            <td>{{ property.phone }}</td>
+                            <td>{{ property.website }}</td>
+                            <td>{{ property.created|date:"DATE_FORMAT" }}</td>
                         </tr>
                     {% endfor %}
                 {% else %}
-                    <tr><td colspan="9">There are no places.</td></tr>
+                    <tr><td colspan="9">There are no propertys.</td></tr>
                 {% endif %}
                 </tbody>
             </table>

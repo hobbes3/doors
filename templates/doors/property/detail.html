@@ -2,21 +2,21 @@
 
 {% load breadcrumbs %}
 
-{% block title %}View place {{ place.name }}{% endblock %}
+{% block title %}View property {{ property.name }}{% endblock %}
 
 {% block head %}
 {% endblock %}
 
 {% block breadcrumbs %}
     {% breadcrumb_url "Home" %}
-    {% breadcrumb_url "Properties" place_list %}
-    {% breadcrumb place.name %}
+    {% breadcrumb_url "Properties" property_list %}
+    {% breadcrumb property.name %}
 {% endblock %}
 
 {% block content %}
     <div class="content-module">
         <div class="content-module-heading cf">
-            <h3 class="fl">{{ place.name }}</h3>
+            <h3 class="fl">{{ property.name }}</h3>
 
             <span class="fr expand-collapse-text">Click to collapse</span>
             <span class="fr expand-collapse-text initial-expand">Click to expand</span>
@@ -30,36 +30,36 @@
                 <div class="smaller-detail-div">
                     <div class="half-size-column fl">
                         <p>
-                            <label>Name:</label>
-                            {{ place.name }}
+                            <label>Name</label>
+                            {{ property.name }}
                         </p>
                         <p>
-                            <label>Phone:</label>
-                            {{ place.phone|default:"None" }}
+                            <label>Phone</label>
+                            {{ property.phone|default:"None" }}
                         </p>
                         <p>
-                            <label>Website:</label>
-                            {{ place.website|default:"None" }}
+                            <label>Website</label>
+                            {{ property.website|default:"None" }}
                         </p>
                         <p>
-                            <label>Category:</label>
-                            {{ place.get_place_type_display|capfirst }}
+                            <label>Category</label>
+                            {{ property.get_property_type_display|capfirst }}
                         </p>
                         <p>
-                            <label>Address:</label>
-                            {{ place.address_line_one }}<br />
-                            {% if place.address_line_two %}
-                                {{ place.address_line_two }}<br />
+                            <label>Address</label>
+                            {{ property.address_line_one }}<br />
+                            {% if property.address_line_two %}
+                                {{ property.address_line_two }}<br />
                             {% endif %}
-                            {{ place.city }}, {{ place.state }} {{place.zip_code }}
+                            {{ property.city }}, {{ property.state }} {{property.zip_code }}
                         </p>
                     </div>
                     <div class="half-size-column fr">
                         <p>
-                            <label>Owners ({{ place.owners.count }}):</label>
+                            <label>Owners ({{ property.owners.count }})</label>
                         </p>
                         <ul class="custom-ul">
-                            {% with owner_list=place.owners.all %}
+                            {% with owner_list=property.owners.all %}
                                 {% if owner_list %}
                                     {% for owner in owner_list %}
                                         <li><a href="{% url user_detail pk=owner.pk %}">{{ owner.get_full_name }}</a></li>
@@ -70,10 +70,10 @@
                             {% endwith %}
                         </ul>
                         <p>
-                            <label>Managers ({{ place.managers.count }}):</label>
+                            <label>Managers ({{ property.managers.count }})</label>
                         </p>
                         <ul class="custom-ul">
-                            {% with manager_list=place.managers.all %}
+                            {% with manager_list=property.managers.all %}
                                 {% if manager_list %}
                                     {% for manager in manager_list %}
                                         <li><a href="{% url user_detail pk=manager.pk %}">{{ manager.get_full_name }}</a></li>
@@ -84,10 +84,10 @@
                             {% endwith %}
                         </ul>
                         <p>
-                            <label>Tenants ({{ place.tenant_count }}):</label>
+                            <label>Tenants ({{ property.tenant_count }})</label>
                         </p>
                         <ul class="custom-ul">
-                        {% with tenant_list=place.tenant_list %}
+                        {% with tenant_list=property.tenant_list %}
                             {% if tenant_list %}
                                 {% for resident in tenant_list %}
                                     <li><a href="{% url user_detail pk=resident.user.pk %}">{{ resident.user.get_full_name }}</a></li>
@@ -101,7 +101,7 @@
                     <div class="cb">
                         <p>
                             <label>Note:</label>
-                            {{ place.note|linebreaksbr|default:"No note." }}
+                            {{ property.note|linebreaksbr|default:"No note." }}
                         </p>
                     </div>
                 </div>

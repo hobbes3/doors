@@ -1,10 +1,10 @@
 from django.contrib import admin
 from doors.models import *
 
-class PlaceAdmin(admin.ModelAdmin):
+class PropertyAdmin(admin.ModelAdmin):
     list_display = (
         'name',
-        'place_type',
+        'property_type',
         'tenant_count',
         'address_line_one',
         'address_line_two',
@@ -26,12 +26,12 @@ class UserTypeAdmin(admin.ModelAdmin):
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = (
         'user',
-        'place',
+        'property',
         'comment_count',
         'created',
         'modified',
     )
-    list_filter = ('place',)
+    list_filter = ('property',)
     filter_horizontal = ('user_types',)
     search_fields = ('email', 'first_name', 'last_name',)
 
@@ -57,7 +57,7 @@ class OrderAdmin(admin.ModelAdmin):
         'id',
         'creator',
         'approver',
-        'place',
+        'property',
         'action',
         'quote',
         'payment',
@@ -82,7 +82,7 @@ class OrderAdmin(admin.ModelAdmin):
         'modified',
     )
     date_hierarchy = 'created'
-    search_fields = ('place', 'creator', 'manager', 'comment',)
+    search_fields = ('property', 'creator', 'manager', 'comment',)
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = (
@@ -100,5 +100,5 @@ admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(UserType   , UserTypeAdmin   )
 admin.site.register(Order      , OrderAdmin      )
 admin.site.register(Comment    , CommentAdmin    )
-admin.site.register(Place      , PlaceAdmin      )
+admin.site.register(Property   , PropertyAdmin   )
 admin.site.register(Vendor     , VendorAdmin     )

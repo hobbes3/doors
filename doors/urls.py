@@ -2,7 +2,7 @@ from django.conf.urls.defaults import patterns, url, include
 from django.views.generic import ListView, CreateView, DetailView
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from doors.models import Order, Vendor, Place
+from doors.models import Order, Vendor, Property
 from doors.views import *
 
 # The order should be
@@ -35,14 +35,14 @@ urlpatterns = patterns('doors.views',
         ),
         name='vendor_detail'
     ),
-    # Place
-    url(r'^place/$', PlaceListView.as_view(), name='place_list'),
+    # Property
+    url(r'^property/$', PropertyListView.as_view(), name='property_list'),
     url(
-        r'^place/(?P<pk>\d+)/$',
+        r'^property/(?P<pk>\d+)/$',
         DetailView.as_view(
-            model=Place,
-            template_name='doors/place/detail.html',
+            model=Property,
+            template_name='doors/property/detail.html',
         ),
-        name='place_detail'
+        name='property_detail'
     ),
 )

@@ -1,7 +1,7 @@
 import datetime
 from django import forms
 from django.db.models.query import EmptyQuerySet
-from doors.models import Order, Place, Vendor
+from doors.models import Order, Property, Vendor
 
 class CustomDateTimeField(forms.DateTimeField):
     def strptime(self, value, format):
@@ -15,7 +15,7 @@ class OrderCreateForm(forms.Form):
     work_type = forms.ChoiceField(choices=Order.WORK_TYPE_CHOICES)
     note = forms.CharField(widget=forms.Textarea)
 
-    def __init__(self, creator_list=None, place_list=None, *args, **kwargs):
+    def __init__(self, creator_list=None, property_list=None, *args, **kwargs):
         super(OrderCreateForm, self).__init__(*args, **kwargs)
 
         if creator_list:
@@ -24,13 +24,13 @@ class OrderCreateForm(forms.Form):
                 empty_label="Select a user",
             )
 
-        if place_list:
-            self.fields['place'] = forms.ModelChoiceField(
-                queryset=place_list,
+        if property_list:
+            self.fields['property'] = forms.ModelChoiceField(
+                queryset=property_list,
                 empty_label=None,
             )
         else:
-            self.fields['place'] = forms.ModelChoiceField(
+            self.fields['property'] = forms.ModelChoiceField(
                 queryset=EmptyQuerySet(),
                 empty_label="Select a creator first",
             )
@@ -39,7 +39,7 @@ class OrderCreateForm(forms.Form):
         super(OrderCreateForm, self).clean()
 
         if 'note' in self.cleaned_data:
-            if len(self.cleaned_data['note']) < 50:
+            if len(self.cleaned_data['note']) < 20:
                 self._errors['note'] = self.error_class([u"Please enter a longer note."])
 
                 del self.cleaned_data['note']
@@ -59,3 +59,36 @@ class CommentCreateForm(forms.Form):
                 del self.cleaned_data['comment']
 
         return self.cleaned_data
+
+def make_order_edit_form(include_fields):
+    class _OrderEditForm(forms.ModelForm):
+        if 'fa_date' in include_fields:
+            fa_date = CustomDateTimeField(label="first appointment time")
+        if 'sa_date' in include_fields:
+            sa_date = CustomDateTimeField(label="second appointment time")
+
+        class Meta:
+            model = Order
+            fields = include_fields
+            widgets = {
+                'status':                forms.RadioSelect(),
+                'fa_status_creator':     forms.RadioSelect(),
+                'fa_status_vendor':      forms.RadioSelect(),
+                'quote_status_approver': forms.RadioSelect(),
+                'quote_status_owner':    forms.RadioSelect(),
+                'sa_status_creator':     forms.RadioSelect(),
+                'sa_status_vendor':      forms.RadioSelect(),
+            }
+
+        def clean(self):
+            super(_OrderEditForm, self).clean()
+
+            if 'note' in self.cleaned_data:
+                if len(self.cleaned_data['note']) < 20:
+                    self._errors['note'] = self.error_class([u"Please enter a longer note."])
+
+                    del self.cleaned_data['note']
+
+            return self.cleaned_data
+
+    return _OrderEditForm
