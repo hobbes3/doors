@@ -15,7 +15,7 @@
 {% block content %}
     <div class="content-module">
         <div class="content-module-main cf">
-            <form method="post" action="{% url django.contrib.auth.views.login %}">
+            <form method="post" action="{% url 'django.contrib.auth.views.login' %}">
                 {% csrf_token %}
 
                 <input type="hidden" name="next" value="{{ next }}" />
@@ -36,7 +36,7 @@
                         {{ form.password|add_class:"round" }}
                     </p>
                     <p>
-                        <a href="{% url auth_password_reset %}">Forgot</a> your password? <a href="{% url registration_register %}">Register.</a>
+                        <a href="{% url 'auth_password_reset' %}">Forgot</a> your password? <a href="{% url 'registration_register' %}">Register.</a>
                     </p>
 
                     <input type="submit" value="Login" class="round blue ic-right-arrow" />

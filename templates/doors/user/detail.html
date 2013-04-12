@@ -10,7 +10,7 @@
 
 {% block breadcrumbs %}
     {% breadcrumb_url "Home" %}
-    {% breadcrumb_url "Users" user_list %}
+    {% breadcrumb_url "Users" 'user_list' %}
     {% if user_object == request.user %}
         {% breadcrumb "Me" %}
     {% else %}
@@ -98,7 +98,7 @@
                             <p>
                                 <label>Property</label>
                                 {% if user_object.profile.property %}
-                                    <a href="{% url property_detail pk=user_object.profile.property.pk %}">{{ user_object.profile.property.name }}</a>
+                                    <a href="{% url 'property_detail' pk=user_object.profile.property.pk %}">{{ user_object.profile.property.name }}</a>
                                 {% else %}
                                     None
                                 {% endif %}
@@ -124,7 +124,7 @@
                                 <ul class="custom-ul">
                                 {% if property_list %}
                                     {% for property in property_list %}
-                                        <li><a href="{% url property_detail property.pk %}">{{ property.name }}</a></li>
+                                        <li><a href="{% url 'property_detail' property.pk %}">{{ property.name }}</a></li>
                                     {% endfor %}
                                 {% else %}
                                     <li>No properties</li>
@@ -140,7 +140,7 @@
                                 <ul class="custom-ul">
                                     {% if property_list %}
                                         {% for property in property_list %}
-                                            <li><a href="{% url property_detail property.pk %}">{{ property.name }}</a></li>
+                                            <li><a href="{% url 'property_detail' property.pk %}">{{ property.name }}</a></li>
                                         {% endfor %}
                                     {% else %}
                                         <li>No properties</li>
@@ -156,7 +156,7 @@
                                 <ul class="custom-ul">
                                     {% if vendor_list %}
                                         {% for vendor in vendor_list %}
-                                            <li><a href="{% url vendor_detail vendor.pk %}">{{ vendor.name }}</a></li>
+                                            <li><a href="{% url 'vendor_detail' vendor.pk %}">{{ vendor.name }}</a></li>
                                         {% endfor %}
                                     {% else %}
                                         <li>No vendors</li>
@@ -172,7 +172,7 @@
                                 <ul class="custom-ul">
                                     {% if vendor_list %}
                                         {% for vendor in vendor_list %}
-                                            <li><a href="{% url vendor_detail vendor.pk %}">{{ vendor.name }}</a></li>
+                                            <li><a href="{% url 'vendor_detail' vendor.pk %}">{{ vendor.name }}</a></li>
                                         {% endfor %}
                                     {% else %}
                                         <li>No vendors</li>

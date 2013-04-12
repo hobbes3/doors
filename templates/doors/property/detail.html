@@ -9,7 +9,7 @@
 
 {% block breadcrumbs %}
     {% breadcrumb_url "Home" %}
-    {% breadcrumb_url "Properties" property_list %}
+    {% breadcrumb_url "Properties" 'property_list' %}
     {% breadcrumb property.name %}
 {% endblock %}
 
@@ -62,7 +62,7 @@
                             {% with owner_list=property.owners.all %}
                                 {% if owner_list %}
                                     {% for owner in owner_list %}
-                                        <li><a href="{% url user_detail pk=owner.pk %}">{{ owner.get_full_name }}</a></li>
+                                        <li><a href="{% url 'user_detail' pk=owner.pk %}">{{ owner.get_full_name }}</a></li>
                                     {% endfor %}
                                 {% else %}
                                     <li>No owners</li>
@@ -76,7 +76,7 @@
                             {% with manager_list=property.managers.all %}
                                 {% if manager_list %}
                                     {% for manager in manager_list %}
-                                        <li><a href="{% url user_detail pk=manager.pk %}">{{ manager.get_full_name }}</a></li>
+                                        <li><a href="{% url 'user_detail' pk=manager.pk %}">{{ manager.get_full_name }}</a></li>
                                     {% endfor %}
                                 {% else %}
                                     <li>No managers.</li>
@@ -90,7 +90,7 @@
                         {% with tenant_list=property.tenant_list %}
                             {% if tenant_list %}
                                 {% for resident in tenant_list %}
-                                    <li><a href="{% url user_detail pk=resident.user.pk %}">{{ resident.user.get_full_name }}</a></li>
+                                    <li><a href="{% url 'user_detail' pk=resident.user.pk %}">{{ resident.user.get_full_name }}</a></li>
                                 {% endfor %}
                             {% else %}
                                 <li>None</li>

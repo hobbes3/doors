@@ -6,7 +6,7 @@
 
 {% block breadcrumbs %}
     {% breadcrumb_url "Home" %}
-    {% breadcrumb_url "Vendors" vendor_list %}
+    {% breadcrumb_url "Vendors" 'vendor_list' %}
     {% breadcrumb vendor.name %}
 {% endblock %}
 
@@ -69,7 +69,7 @@
                             {% with manager_list=vendor.managers.all %}
                                 {% if manager_list %}
                                     {% for manager in manager_list %}
-                                        <li><a href="{% url user_detail pk=manager.pk %}">{{ manager.get_full_name }}</a></li>
+                                        <li><a href="{% url 'user_detail' pk=manager.pk %}">{{ manager.get_full_name }}</a></li>
                                     {% endfor %}
                                 {% else %}
                                     <li>No managers.</li>
@@ -83,7 +83,7 @@
                             {% with representative_list=vendor.representatives.all %}
                                 {% if representative_list %}
                                     {% for representative in representative_list %}
-                                        <li><a href="{% url user_detail pk=representative.pk %}">{{ representative.get_full_name }}</a></li>
+                                        <li><a href="{% url 'user_detail' pk=representative.pk %}">{{ representative.get_full_name }}</a></li>
                                     {% endfor %}
                                 {% else %}
                                     <li>No representatives.</li>

@@ -45,7 +45,7 @@
                 {% if property_list %}
                     {% for property in property_list %}
                         <tr>
-                            <td><a href="{% url property_detail pk=property.pk %}">{{ property.name }}</a></td>
+                            <td><a href="{% url 'property_detail' pk=property.pk %}">{{ property.name }}</a></td>
                             <td>{{ property.get_property_type_display|capfirst }}</td>
                             <td>{{ property.tenant_count }}</td>
                             <td>

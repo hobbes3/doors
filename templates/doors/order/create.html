@@ -13,7 +13,7 @@
 
 {% block breadcrumbs %}
     {% breadcrumb_url "Home" %}
-    {% breadcrumb_url "Orders" order_list %}
+    {% breadcrumb_url "Orders" 'order_list' %}
     {% breadcrumb "Create order" %}
 {% endblock %}
 
@@ -39,7 +39,7 @@
                     <p>
                         Creator:
                         <input type="hidden" name="creator" value="{{ request.user.pk }}" />
-                        <a href="{% url user_detail pk=request.user.pk %}">{{ request.user.get_full_name }}</a>
+                        <a href="{% url 'user_detail' pk=request.user.pk %}">{{ request.user.get_full_name }}</a>
                 {% endif %}
                 </p>
 
@@ -58,7 +58,7 @@
                     <p>
                         Property
                         <input type="hidden" name="property" value="{{ request.user.profile.property.pk }}" />
-                        <a href="{% url property_detail pk=request.user.profile.property.pk %}">{{ request.user.profile.property.name }}</a>
+                        <a href="{% url 'property_detail' pk=request.user.profile.property.pk %}">{{ request.user.profile.property.name }}</a>
                 {% endif %}
                 </p>
 

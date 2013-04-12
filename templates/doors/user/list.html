@@ -44,7 +44,7 @@
                 {% if user_list %}
                     {% for user in user_list %}
                         <tr>
-                            <td><a href="{% url user_detail pk=user.pk %}">{{ user.username }}</a></td>
+                            <td><a href="{% url 'user_detail' pk=user.pk %}">{{ user.username }}</a></td>
                             <td>{{ user.first_name }}</td>
                             <td>{{ user.last_name }}</td>
                             <td>{{ user.userprofile_from_user.user_types.all|join:", "|capfirst|default:"None" }}</td>

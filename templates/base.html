@@ -66,25 +66,25 @@
                         <li>
                             <a href="#" class="round button dark menu-user image-left">Logged in as <strong>{{ user.first_name }}</strong></a>
                             <ul>
-                                <li><a href="{% url user_self_detail %}">Profile</a></li>
-                                <li><a href="{% url auth_password_change %}">Change Password</a></li>
-                                <li><a href="{% url auth_logout %}?next={% url auth_login %}">Logout</a></li>
+                                <li><a href="{% url 'user_self_detail' %}">Profile</a></li>
+                                <li><a href="{% url 'auth_password_change' %}">Change Password</a></li>
+                                <li><a href="{% url 'auth_logout' %}?next={% url 'auth_login' %}">Logout</a></li>
                             </ul>
                         </li>
                         <li>
-                            <a href="{% url auth_logout %}?next={% url auth_login %}" class="round button dark menu-logoff image-left">Logout</a>
+                            <a href="{% url 'auth_logout' %}?next={% url 'auth_login' %}" class="round button dark menu-logoff image-left">Logout</a>
                         </li>
                     {% else %}
                         <li>
-                            <a href="{% url auth_login %}?next={% firstof request.path '/' %}" class="round button dark menu-user image-left">Log in</a>
+                            <a href="{% url 'auth_login' %}?next={% firstof request.path '/' %}" class="round button dark menu-user image-left">Log in</a>
                         </li>
                         <li>
-                            <a href="{% url registration_register %}" class="round button dark ic-add image-left">Register</a>
+                            <a href="{% url 'registration_register' %}" class="round button dark ic-add image-left">Register</a>
                         </li>
                     {% endif %}
                     {% if user.is_staff %}
                         <li>
-                            <a href="{% url admin:index %}" class="round button dark ic-settings image-left">Admin</a>
+                            <a href="{% url 'admin:index' %}" class="round button dark ic-settings image-left">Admin</a>
                         </li>
                     {% endif %}
                 </ul>

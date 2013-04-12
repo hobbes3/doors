@@ -51,7 +51,7 @@
 
 {% block breadcrumbs %}
     {% breadcrumb_url "Home" %}
-    {% breadcrumb_url "Orders" order_list %}
+    {% breadcrumb_url "Orders" 'order_list' %}
     {% breadcrumb order.pk %}
 {% endblock %}
 
@@ -74,7 +74,7 @@
                 <br />
 
                 {# Order details #}
-                <form action="{% url order_edit pk=order.pk %}">
+                <form action="{% url 'order_edit' pk=order.pk %}">
                     <p>
                         Created on {{ order.created }}
                     </p>
@@ -82,11 +82,11 @@
                     <div class="half-size-column fl">
                         <p>
                             <label>Creator</label>
-                            <a href="{% url user_detail pk=order.creator.pk %}">{{ order.creator.get_full_name }}</a>
+                            <a href="{% url 'user_detail' pk=order.creator.pk %}">{{ order.creator.get_full_name }}</a>
                         </p>
                         <p>
                             <label>Property</label>
-                            <a href="{% url property_detail pk=order.property.pk %}">{{ order.property.name }}</a>
+                            <a href="{% url 'property_detail' pk=order.property.pk %}">{{ order.property.name }}</a>
                         </p>
                         <p>
                             <label>Work type</label>
@@ -95,7 +95,7 @@
                         <p>
                             <label>Approver</label>
                                 {% if order.approver %}
-                                    <a href="{% url user_detail pk=order.approver.pk %}">{{ order.approver.get_full_name }}</a>
+                                    <a href="{% url 'user_detail' pk=order.approver.pk %}">{{ order.approver.get_full_name }}</a>
                                 {% else %}
                                     Not assigned yet.
                                 {% endif %}
@@ -113,7 +113,7 @@
                         <p>
                             <label>Vendor</label>
                                 {% if order.vendor %}
-                                    <a href="{% url vendor_detail pk=order.vendor.pk %}">{{ order.vendor.name }}</a>
+                                    <a href="{% url 'vendor_detail' pk=order.vendor.pk %}">{{ order.vendor.name }}</a>
                                 {% else %}
                                     Not assigned yet.
                                 {% endif %}
@@ -229,7 +229,7 @@
                 <div class="stripe-separator"></div>
 
                 {# Order editing #}
-                <form action="{% url order_edit pk=order.pk %}" method="post">
+                <form action="{% url 'order_edit' pk=order.pk %}" method="post">
                     {% csrf_token %}
                     {{ order_form.non_field_errors }}
 
@@ -289,7 +289,7 @@
                         {% if comment.user %}
                             <div id="comment-{{ comment.pk }}">
                                 <h3>
-                                    {{ comment.created }} - <a href="{% url user_detail pk=comment.user.pk %}">{{ comment.user.get_full_name }}</a>
+                                    {{ comment.created }} - <a href="{% url 'user_detail' pk=comment.user.pk %}">{{ comment.user.get_full_name }}</a>
                                 </h3>
                                 <p>
                                     {{ comment.comment|linebreaksbr }}
@@ -307,7 +307,7 @@
             <div class="stripe-separator"></div>
 
             <div id="comment-form">
-                <form action="{% url comment_create order_pk=order.pk%}" method="post">
+                <form action="{% url 'comment_create' order_pk=order.pk%}" method="post">
                     {% csrf_token %}
 
                     {{ comment_form.non_field_errors }}

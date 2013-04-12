@@ -41,7 +41,7 @@
                 {% if vendor_list %}
                     {% for vendor in vendor_list %}
                         <tr>
-                            <td><a href="{% url vendor_detail pk=vendor.pk %}">{{ vendor.name }}</a></td>
+                            <td><a href="{% url 'vendor_detail' pk=vendor.pk %}">{{ vendor.name }}</a></td>
                             <td>{{ vendor.order_count }}</td>
                             <td>
                                 {{ vendor.address_line_one }}
